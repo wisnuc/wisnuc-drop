@@ -1,0 +1,40 @@
+{
+	"port": 80,
+	"redis": {
+		"port": 6379,
+		"host": "127.0.0.1",
+		"db": 0
+	},
+	"mysql": {
+		"database": "drop_test",
+    "host": "10.66.242.224",
+    "port": 3306,
+    "username": "cdb_outerroot",
+    "password": "J8D%LYr^7CnS",
+    "dialect": "mysql",
+    "isolationLevel": "READ COMMITTED",
+    "timezone": "+08:00",
+    "pool": {
+      "max": 60,
+      "min": 5,
+      "idle": 60000,
+      "maxConnections": 100,
+      "minConnections": 5,
+      "maxIdleTime": 60000
+    }
+	},
+	"wechat": {
+		"web": {
+			"appid": "wxd7e08af781bea6a2",
+			"appSecret": "05ec391572c66dcf0cc0c843da5d96e3"
+		},
+		"mobile": {
+			"appid": "wx99b54eb728323fe8",
+			"appSecret": "0a997d6d0a5484f295fd590aeeba95d5"
+		},
+		"mp": {
+			"appid": "wxdbffdf5ccfd5ccaa",
+			"appSecret": "e11bbc47d2abb6d97574a0cb4cd800f3"
+		}
+	}
+}
