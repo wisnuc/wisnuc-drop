@@ -1,5 +1,6 @@
 # wisnuc-drop
-wechat small program server
+
+Bridge Client and Nas.
 
 ## Folder Structure
 
@@ -16,36 +17,67 @@ wechat small program server
   ├── middlewares            # 自定义中间件
   ├── models                 # model层
   ├── routes                 # 路由层
-	├── schema                 # schema层
+  ├── schema                 # schema层
   ├── services               # 业务层
   └── utils                  # 工具层
 ├── test                     # 测试层     
 └── tmp                      # 缓存层
 ```
 
-# Features
+## Required
 
-- install mysql
-- install mongo
-- node version >= 7.6.0 
-- secure dependency management [yarn](https://github.com/yarnpkg/yarn)
+- [mysql](https://dev.mysql.com/downloads/mysql)
+- [mongo](https://www.mongodb.com/download-center#community)
+- [nodejs](https://nodejs.org)
 
-# Install
+## Usage
 
+### 1. Clone Repository
 ```bash
 git clone https://github.com/wisnuc/wisnuc-drop.git
-cd wisnuc-drop
-npm install or yarn install
+```
+### 2. Install node_modules
+
+#### binary package list: 
+- ursa
+
+```bash
+cd wisnuc-drop && yarn install or npm install
 ```
 
-- development environment
+### 3. Run Project
+
+Run this project.
+
+#### development environment
 ```bash
 npm start
 ```
-
-- production environment
+#### test environment
+```bash
+npm run test
+```
+#### production environment
 ```bash
 pm2 start process.json
 ```
 
+## Develop
+
+## Dependences
+
+- Client depend on user, need to check token authorization firstly.
+- Nas depend on station, need to check token authorization firstly.
+
+## Test
+
+- mocha
+
+
+## TODO
+
+- before/after
+- database tables constructure document
+- [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
+- [qcloud databases backup](https://www.qcloud.com)
 

@@ -17,8 +17,8 @@ const { host, port, database } = config.mongodb
 
 const DATABASE_URL = 'mongodb://' 
 	+ host + ':' 
-	+ port + 
-	'/' + database
+	+ port + '/' 
+	+ database
 	
 mongoose.connect(DATABASE_URL)
 
@@ -28,6 +28,7 @@ db.on('error', console.error.bind(console, 'connection error:'))
 db.once('open', function() {
 	console.log('mongodb connect successfully')
 })
+
 
 module.exports = {
 	Box: require('./box'),

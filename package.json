@@ -11,9 +11,7 @@
     "unit": "npm run mocha",
     "unit-agent": "NODE_PATH=. NODE_ENV=test nodemon --exec mocha --recursive test/agent",
     "debug-socket.io": "DEBUG=socket.io* nodemon ./bin/www",
-		"doc": "nodemon --ignore out --ignore tmp --exec 'jsdoc -c jsdoc.conf.json -t node_modules/ink-docstrap/template -r -p src'",
-		"cloud-client": "aglio --theme-template triple -i doc/cloud-client.apib -s",
-    "cloud-station": "aglio --theme-template triple -i doc/cloud-station.apib -s"
+    "doc": "nodemon --ignore out --ignore tmp --exec 'jsdoc -c jsdoc.conf.json -t node_modules/ink-docstrap/template -r -p src'"
   },
   "main": "index.js",
   "repository": "https://github.com/wisnuc/wisnuc-drop.git",
@@ -54,7 +52,6 @@
     "wafer-node-session": "^1.0.9"
   },
   "devDependencies": {
-    "aglio": "^2.3.0",
     "chai": "^3.5.0",
     "eslint": "^3.19.0",
     "gulp": "^3.9.1",
@@ -64,7 +61,9 @@
     "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
     "sinon": "^2.3.8",
-    "superagent": "^3.5.2",
     "supertest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=7.6.0"
   }
 }
