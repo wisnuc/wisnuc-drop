@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/14 14:39:37 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/01 17:48:03 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/07 16:49:41 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ const sinon = require('sinon')
 const expect = chai.expect
 const should = chai.should()
 const request = require('supertest')
-const app = require('../../../src/app')
+const app = require('src/app')
 
-const { resetAsync } = require('../lib')
+const { resetAsync } = require('../../lib')
 
 const TICKET = {
 	id: '76397be6-92c5-4cd2-9542-ee66bd65ab07'

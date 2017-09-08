@@ -17,11 +17,12 @@ const EventEmitter = require('events').EventEmitter
 const jwt = require('../lib/jwt')
 const { 
 	Station, 
-	Server, 
+	Server,
+	StationServer, 
 	WisnucDB 
 } = require('../models')
 // const serverInfo = require('../lib/serverInfo')
-
+// FIXME: get LANIP
 // const os = require('os')
 // const LANIP = os.networkInterfaces().enp2s0[0].address
 const LANIP = '10.10.9.59'
@@ -94,13 +95,30 @@ class SocketIOHandler extends EventEmitter {
 				let { station, server } = data
 				if (!station) throw new Error('no station')
 				if (!server) throw new Error('no server')
-				await Station.update({
-					isOnline: 1,
-					serverId: server.id
-				}, {
-					where: { id: stationId },
+				
+				
+				// create station and server relationship
+				let stationServer = await StationServer.find({
+					where: { stationId: stationId },
 					transaction: t
 				})
+				if (!stationServer) {
+					await StationServer.create({
+						isOnline: 1,
+						stationId: stationId,
+						serverId: server.id
+					}, {transaction: t})
+				}
+				else {
+					await StationServer.update({
+						isOnline: 1,
+						serverId: server.id
+					}, {
+						where: { stationId: stationId },
+						transaction: t
+					})
+				}
+				
 				let token = {
 					station: {
 						id: station.id,
@@ -123,7 +141,7 @@ class SocketIOHandler extends EventEmitter {
 	}
 
 	/**
-	 * send messaget to station( fetch or store )
+	 * send messaget to station (json or file)
 	 * @param {string} stationId 
 	 * @param {object} manifest 
 	 * @memberof SocketIOHandler
@@ -131,10 +149,11 @@ class SocketIOHandler extends EventEmitter {
 	async pipe(stationId, manifest) {
 		
 		let client = this.getSocket(stationId)
-		if (!client) throw new Error('map have no socket')
-			
-		let station = await Station.find({
-			where: { id: stationId , isOnline: 1 },
+		if (!client) throw new Error('have no socket, try connect again!')
+		
+		// find server with station
+		let station = await StationServer.find({
+			where: { stationId: stationId , isOnline: 1 },
 			attributes: ['serverId'],
 			raw: true
 		})
@@ -176,7 +195,7 @@ class SocketIOHandler extends EventEmitter {
 		socketIOMap.delete(client)
 		// 更新 station 为离线状态
 		let stationId = client.handshake.session.stationId
-		await Station.update({isOnline: 0}, {where: {id: stationId}})
+		await StationServer.update({isOnline: 0}, {where: {stationId: stationId}})
 	}
 	
 	/**

@@ -141,7 +141,11 @@ class TicketService {
 				attributes: ['id', 'nickName', 'avatarUrl', 'unionId']
 			})
 		})
-		props.ticket.users = props.users ? props.users : null
+		
+		if (props.ticket) {
+			props.ticket.users = props.users
+		}
+		
 		return props.ticket
 	}
 	/**

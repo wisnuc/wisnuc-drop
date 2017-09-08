@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/31 11:03:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/07 17:52:28 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ module.exports = (req, res, next) => {
 			if (getconfig['env'] === 'production') {
 				// used in production environment
 				
-				fundebug.notifyError(err)
+				// fundebug.notifyError(err)
 
 				return res.status(status).json({
 					code: status || 'no code',

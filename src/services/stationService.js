@@ -6,11 +6,16 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/31 11:03:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/08 16:36:19 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const { Station, User, UserStation } = require('../models')
+const {
+	Station, 
+	User, 
+	UserStation, 
+	StationServer
+ } = require('../models')
 
 /**
  * This is station service.
@@ -27,6 +32,7 @@ class StationService {
 		return Station.create(station)
 	}
 	/**
+	 * TODO: consider StationUser
 	 * get station
 	 * @param {string} id 
 	 * @returns 
@@ -37,7 +43,7 @@ class StationService {
 			where: {
 				id: id
 			},
-			attributes: ['id', 'name', 'isOnline', 'serverId']
+			attributes: ['id', 'name']
 		})
 	}
 	/**

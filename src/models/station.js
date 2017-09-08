@@ -24,27 +24,14 @@ module.exports = function (sequelize, DataTypes) {
 			defaultValue: 'station_' + Date.now()
 		},
 		publicKey: {
-			type: DataTypes.TEXT,
-			unique: true
+			type: DataTypes.TEXT
 		},
 		// -1: 失效, 1: 正常
 		status: {
 			type: DataTypes.INTEGER,
 			defaultValue: 1
 		},
-		// 0: 离线, 1: 在线
-		isOnline: {
-			type: DataTypes.INTEGER,
-			defaultValue: 0
-		},
-		serverId: {
-			type: DataTypes.UUID,
-			required: true,
-			unique: true
-		},
-		userIds: {
-			type: DataTypes.STRING
-		},
+	
 		createdAt: {
 			type: DataTypes.DATE,
 			get: function() {
@@ -61,11 +48,6 @@ module.exports = function (sequelize, DataTypes) {
 		freezeTableName: true,
 		tableName: 'stations',
 		indexes: [
-			{
-				name: 'isOnline',
-				method: 'BTREE',
-				fields: ['isOnline']
-			},
 			{
 				name: 'name',
 				method: 'BTREE',

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 16:21:10 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/06 13:40:39 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/07 14:58:00 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ const jwt = require('../../../middlewares/jwt')
 
 router.use('/stations', require('./stations'))
 // TODO:
-router.use('*', jwt.sAuthTest)	
-// router.use('*', jwt.sAuth)
+// router.use('*', jwt.sAuthTest)	
+router.use('*', jwt.sAuth)
 router.use('/users', require('./users'))
 router.use('/boxes', require('./boxes'))
 router.use('/tickets', require('./tickets'))

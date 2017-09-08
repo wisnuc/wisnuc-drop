@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/07 09:42:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/01 17:47:38 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/08 18:03:47 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,50 +19,73 @@ const expect = chai.expect
 const should = chai.should()
 const request = require('supertest')
 const app = require('src/app')
-const jwt = require('src/lib/jwt')
+
+const {Station} = require('src/models')
 
 const {
 	USER,
 	STATION,
-	FILES
-} = require('../lib')
-
-const USER_TOKEN = jwt.encode(USER['test'])
-const STATION_TOKEN = jwt.encode(STATION['test'])
+	clientToken
+} = require('../../lib')
 
 
-// describe(path.basename(__filename), () => {
+describe(path.basename(__filename), () => {
 
-// 	describe('no user token', () => {
+	describe('no client token', () => {
 
-// 		beforeEach(async () => {
-// 			// await resetAsync()
-// 		})
+		it('should fail auth if no client token', done => {
+			request(app)
+				.get(`/c/v1/stations/${STATION.id}`)
+				.expect(401)
+				.end(done)
+		})
+	})
 
-// 		it('should fail auth if no user token', done => {
-// 			request(app)
-// 				.get('/v1/stations')
-// 				.expect(401)
-// 				.end(done)
-// 		})
-// 	})
-
-// 	describe('have user token', () => {
-
-// 		it('POST .../pipe - store new pipe', done => {
+	describe('have client token', () => {
 			
-// 			this.timeout(0)
-			
-// 			request(app)
-// 				.post(`/v1/stations/${STATION.test.id}/pipe`)
-// 				.set('authorization', STATION_TOKEN)
-// 				.attach('account', 'tmp/account.md', 'account')
-// 				.expect(200)
-// 				.end((err, res) => {
-// 					console.log(err, res.data);
-// 					done()
-// 				})
-// 		})
+		beforeEach(async () => {
+			await Station.create(STATION)
+		})
 
-// 	})
-// })
+		afterEach(async () => {
+			await Station.destroy({
+				where: {
+					id: STATION.id
+				}
+			})
+		})
+				
+		it('get station', done => {
+			request(app)
+				.get(`/c/v1/stations/${STATION.id}`)
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
+		})
+
+		it('update station', done => {
+			request(app)
+				.patch(`/c/v1/stations/${STATION.id}`)
+				.set('Authorization', clientToken)
+				.send({name: 'name_test'})
+				.expect(200)
+				.end(done)
+		})
+
+		it('delete station', done => {
+			request(app)
+				.delete(`/c/v1/stations/${STATION.id}`)
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
+		})
+
+		it('get users', done => {
+			request(app)
+				.get(`/c/v1/stations/${STATION.id}/users`)
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
+		})
+	})
+})

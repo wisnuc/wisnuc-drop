@@ -1,18 +1,22 @@
 
+# servers
+
+INSERT INTO `drop_dev`.`servers` (`id`, `WANIP`, `LANIP`, `status`, `createdAt`, `updatedAt`) VALUES ('1f48e7c2-a04f-4cd5-94c4-04da1428d315', '10.10.9.59', '10.10.9.59', '1', '2017-07-26 10:40:51', '2017-07-26 10:40:51');
+
 # stations
 
-INSERT INTO `drop_test`.`stations`
+INSERT INTO `drop_dev`.`stations`
 (
-	`id`, `name`, `publicKey`, `status`, `isOnline`, `createdAt`, `updatedAt`
+	`id`, `name`, `publicKey`, `status`, `createdAt`, `updatedAt`
 )
 VALUES
 (
-	'05245d90-fc9b-42c3-b309-d9a09c58f72b','station_1502071625974', '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvyKrlhfU0saAacTNy1YC\n9eKP6b6VtjwOmM8+o63+sC7svnLfi4O/qHkTxemGY5c1WKR6ny/90aQaIJEVaZDs\n/DAx9sE7oXU05/elELMS70SR53evJNGLjLgb7pkObGU91vZr1s9BLg8R9dT9WdSV\nqrhWAluiAXRU80B+f3Ojbb3Vm1KqTxCcKEvl5AexJkRbqxWffrr4xf9lEf4xy93Q\nT/QjxH6Ksm8hTGAKd5mDZVvN7PxythgErOC75jK9JYHoHPtbblh/eR9p5bDTbkqU\nzbpm0QLoPMS8ttifkhE6NJsoq9AsnSE7CBui/1DT8aOz9ovwdCHfLZ4VbgwLQq8K\nhwIDAQAB\n-----END PUBLIC KEY-----\n', '1', '0', '2017-08-07 10:07:47', '2017-08-07 10:07:47'
+	'05245d90-fc9b-42c3-b309-d9a09c58f72b','station_1502071625974', '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvyKrlhfU0saAacTNy1YC\n9eKP6b6VtjwOmM8+o63+sC7svnLfi4O/qHkTxemGY5c1WKR6ny/90aQaIJEVaZDs\n/DAx9sE7oXU05/elELMS70SR53evJNGLjLgb7pkObGU91vZr1s9BLg8R9dT9WdSV\nqrhWAluiAXRU80B+f3Ojbb3Vm1KqTxCcKEvl5AexJkRbqxWffrr4xf9lEf4xy93Q\nT/QjxH6Ksm8hTGAKd5mDZVvN7PxythgErOC75jK9JYHoHPtbblh/eR9p5bDTbkqU\nzbpm0QLoPMS8ttifkhE6NJsoq9AsnSE7CBui/1DT8aOz9ovwdCHfLZ4VbgwLQq8K\nhwIDAQAB\n-----END PUBLIC KEY-----\n', '1', '2017-08-07 10:07:47', '2017-08-07 10:07:47'
 )
 
 # users
 
-INSERT INTO `drop_test`.`users`
+INSERT INTO `drop_dev`.`users`
 (
 	`id`, `status`, `password`, `email`, `phoneNO`, `unionId`, `nickName`, `avatarUrl`, `createdAt`,`updatedAt`
 )
@@ -23,7 +27,7 @@ VALUES
 
 # user_station
 
-INSERT INTO `drop_test`.`user_station`
+INSERT INTO `drop_dev`.`user_station`
 (
 	`id`, `userId`, `stationId`, `status`, `createdAt`,`updatedAt`
 )

@@ -47,6 +47,7 @@ router.patch('/:id', joiValidator({
 	}
 }), async (req, res) => {
 	try {
+		console.log(1111);
 		let station = Object.assign({}, req.params, req.body)
 		let data = await stationService.update(station)
 		return res.success(data)
@@ -126,7 +127,7 @@ router.get('/:id/json', joiValidator({
 		await server.run(req, res)
 	}
 	catch(err) {
-		// remove server from transform queue
+		// TODO: remove server from transform queue
 		console.log(1111, transformJson.map);
 		transformJson.removeServer(server.jobId)
 		return res.error(err)

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/06 10:23:11 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/08 13:38:01 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,22 +80,6 @@ router.get('/:id/stations', joiValidator({
 	try {
 		let id = req.params.id
 		let data = await userService.findAllStation(id)
-		return res.success(data)
-	}
-	catch (err) {
-		return res.error(err)
-	}
-})
-
-// get friends
-router.get('/:id/friends', joiValidator({
-	params: {
-		id: Joi.string().guid({ version: ['uuidv4'] }).required()
-	}
-}), async (req, res) => {
-	try {
-		let id = req.params.id
-		let data = await userService.findAllFriend(id)
 		return res.success(data)
 	}
 	catch (err) {

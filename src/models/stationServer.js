@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 14:28:37 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/31 11:03:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/08 16:10:54 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,11 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.UUID,
 			required: true
 		},
+		// 0: 离线, 1: 在线
+		isOnline: {
+			type: DataTypes.INTEGER,
+			defaultValue: 1
+		},
 		status: {
 			type: DataTypes.INTEGER,
 			defaultValue: 1
@@ -33,9 +38,22 @@ module.exports = function (sequelize, DataTypes) {
 	}, {
 		freezeTableName: true,
 		tableName: 'station_server',
+		indexes: [
+			{
+				name: 'stationId',
+				method: 'BTREE',
+				fields: ['stationId']
+			},
+			{
+				name: 'serverId',
+				method: 'BTREE',
+				fields: ['serverId']
+			}
+		],
 		classMethods: {
 			associate: function (models) {
-				
+				StationServer.belongsTo(models.Server, {foreignKey: 'serverId'})
+				StationServer.belongsTo(models.Station, {foreignKey: 'stationId'})
 			}
 		},
 		defaultScope: {

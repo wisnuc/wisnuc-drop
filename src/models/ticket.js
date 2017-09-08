@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/01 14:38:14 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/07 17:49:59 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,9 @@ module.exports = function (sequelize, DataTypes) {
 		tableName: 'tickets',
 		indexes: [
 			{
-				name: 'status',
-				method: 'BTREE',
-				fields: ['status']
-			},
-			{
 				name: 'creator',
 				method: 'BTREE',
 				fields: ['creator']
-			},
-			{
-				name: 'ticketId',
-				method: 'BTREE',
-				fields: ['ticketId']
 			}
 		],
 		classMethods: {

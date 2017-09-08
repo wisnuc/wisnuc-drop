@@ -62,7 +62,9 @@ npm run test
 pm2 start process.json
 ```
 
-## Develop
+## API
+
+[documentation](https://github.com/wisnuc/documentation)
 
 ## Dependences
 
@@ -73,6 +75,15 @@ pm2 start process.json
 
 - mocha
 
+## Develop
+
+- 增加一台服务器，须在 server 表中增加一条记录
+- station 第一次与服务器 socket 连接， 须与 server 绑定
+
+## Difficulties
+
+- station 在线状态切换
+- station 与 server 连接关系更新
 
 ## TODO
 

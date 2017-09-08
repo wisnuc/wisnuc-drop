@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/31 11:03:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/08 17:14:35 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,52 +19,83 @@ const expect = chai.expect
 const should = chai.should()
 const request = require('supertest')
 const app = require('src/app')
+
 const {User} = require('src/models')
 
-// mock
-const USER = {
-	'id': '03f3abf9-fe3e-4e9b-a6f5-5e53ef9fd1a5',
-	'status': 1,
-	'password': null,
-	'email': null,
-	'phoneNO': null,
-	'unionId': 'oOMKGwt3tX67LcyaG-IPaExMSvDw',
-	'nickName': 'mosaic',
-	'avatarUrl': 'http://wx.qlogo.cn/mmopen/PiajxSqBRaELMY20dSuicj4uXzO4ok9mu7Zvkh27IgomrfE65pBNV4K98NclHDfEurHUou2Yhm2CjLHXfE7amndQ/0',
-	'createdAt': '2017-07-24T07:31:59.000Z',
-	'updatedAt': '2017-07-24T07:31:59.000Z'
-}
-
+const {
+	USER,
+	STATION,
+	clientToken
+} = require('../../lib')
 
 describe(path.basename(__filename), () => {
+	
+	describe('no client token', () => {
+		it('should fail auth if no client token', done => {
+			request(app)
+				.get('/c/v1/users/' + USER.id)
+				.expect(401)
+				.end(done)
+		})
+	})
 
-	describe('no token', () => {
-
+	describe('have client token', () => {
+		
 		beforeEach(async () => {
 			// create new user
 			await User.create(USER)
 			// await resetAsync()
 		})
 
-		it('should fail auth if no client token', done => {
+		afterEach(async () => {
+			// delete user
+			await User.destroy({
+				where: {
+					id: USER.id
+				}
+			})
+		})
+		
+		it('get user', done => {
 			request(app)
-				.get('/v1/users/' + USER.id)
-				.expect(401)
+				.get(`/c/v1/users/${USER.id}`)
+				.set('Authorization', clientToken)
+				.expect(200)
 				.end(done)
 		})
-	})
-
-	describe('have wehcat token', () => {
-
-
-		it('GET /users/:id - get user', done => {
+		
+		it('update user', done => {
 			request(app)
-				.get('/v1/users/' + USER.id)
-				.set('Accept', 'application/json')
-				.expect('Content-Type', /json/)
-				.expect(200, done)
+				.patch(`/c/v1/users/${USER.id}`)
+				.send({nickName: 'test', avatarUrl: 'http://www.wisnuc.com'})
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
 		})
 
+		it('delete user', done => {
+			request(app)
+				.delete(`/c/v1/users/${USER.id}`)
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
+		})
+		
+		it('get stations', done => {
+			request(app)
+				.get(`/c/v1/users/${USER.id}/stations`)
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
+		})
+
+		it('get friends', done => {
+			request(app)
+				.get(`/c/v1/users/${USER.id}/friends`)
+				.set('Authorization', clientToken)
+				.expect(200)
+				.end(done)
+		})
 		
 	})
 })

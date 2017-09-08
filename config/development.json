@@ -6,7 +6,7 @@
 		"db": 0
 	},
 	"mysql": {
-		"database": "drop_test",
+		"database": "drop_dev",
 		"host": "127.0.0.1",
 		"port": 3306,
 		"username": "root",
@@ -24,7 +24,7 @@
 		}
 	},
 	"mongodb": {
-		"database": "drop_test",
+		"database": "drop_dev",
 		"host": "10.10.9.81",
 		"port": 27017
 	},

@@ -6,7 +6,7 @@
 		"db": 0
 	},
 	"mysql": {
-		"database": "drop_test",
+		"database": "drop_prod",
     "host": "10.66.242.224",
     "port": 3306,
     "username": "cdb_outerroot",
@@ -23,6 +23,11 @@
       "maxIdleTime": 60000
     }
 	},
+	"mongodb": {
+		"database": "drop_test",
+		"host": "10.10.9.81",
+		"port": 27017
+	},
 	"wechat": {
 		"web": {
 			"appid": "wxd7e08af781bea6a2",
@@ -36,5 +41,10 @@
 			"appid": "wxdbffdf5ccfd5ccaa",
 			"appSecret": "e11bbc47d2abb6d97574a0cb4cd800f3"
 		}
+	},
+	"server": {
+		"10.10.9.59": "10.10.9.59",
+		"10.154.250.71": "111.231.10.191",
+		"10.154.173.245": "118.89.152.59"
 	}
 }

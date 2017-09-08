@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/19 14:39:23 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/06 14:13:57 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/08 11:37:24 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ db.sequelize = sequelize
 db.Sequelize = Sequelize
 
 db.WisnucDB = sequelize
+
 // Sync all models that aren't already in the database
 // sequelize.sync().then(function () {})
 
