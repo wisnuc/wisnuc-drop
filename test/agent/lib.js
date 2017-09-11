@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 10:53:26 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/08 18:04:46 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/11 17:24:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,76 @@ const jwt = require('src/lib/jwt')
 const { 
 	User, 
 	Station, 
-	Server
+	Server,
+	sequelize
 } = require('src/models')
 
 
-const USER = {
-	id: '03f3abf9-fe3e-4e9b-a6f5-5e53ef9fd1a5',
-	status: 1,
-	unionId: 'oOMKGwt3tX67LcyaG-IPaExMSvDw',
-	nickName: 'mosaic',
-	avatarUrl: 'http://wx.qlogo.cn/mmopen/PiajxSqBRaELMY20dSuicj4uXzO4ok9mu7Zvkh27IgomrfE65pBNV4K98NclHDfEurHUou2Yhm2CjLHXfE7amndQ/0',
-	createdAt: '2017-07-24T07:31:59.000Z',
-	updatedAt: '2017-07-24T07:31:59.000Z'
+const USERS = {
+	mosaic: {
+		id: '03f3abf9-fe3e-4e9b-a6f5-5e53ef9fd1a5',
+		unionId: 'oOMKGwt3tX67LcyaG-IPaExMSvDw',
+		nickName: 'mosaic',
+		avatarUrl: 'http://wx.qlogo.cn/mmopen/PiajxSqBRaELMY20dSuicj4uXzO4ok9mu7Zvkh27IgomrfE65pBNV4K98NclHDfEurHUou2Yhm2CjLHXfE7amndQ/0'
+	},
+	jackYang: {
+		id: 'd9a50642-5e28-4338-b714-a87d09c660b6',
+		unionId: 'oOMKGwveI2u10xIVhhI3b9SMnurw',
+		nickName: 'JackYang',
+		avatarUrl: 'http://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJJQYnrTXgWgrlSfSto6QfRIY3t9gOVp3Da6ia8eNhgttK1nK7yk9VkmiaTYOU6SqeXYOhFNzqQ4ZMQ/0'
+	}
 }
 
-const STATION = {
-	id: 'b185e9e4-9665-4a89-b35d-08b7b9b08c8a',
-	name: 'station_1502071625974',
-	publicKey: 'publicKey',
-	status: 1,
-	createdAt: '2017-08-07T07:31:59.000Z',
-	updatedAt: '2017-08-07T07:31:59.000Z'
+const STATIONS = {
+	'station_1': {
+		id: 'b185e9e4-9665-4a89-b35d-08b7b9b08c8a',
+		name: 'station_1',
+		publicKey: 'publicKey_1',
+	},
+	'station_2': {
+		id: '3b8e7dd1-c232-48e8-98b3-7ce3f064dce5',
+		name: 'station_2',
+		publicKey: 'publicKey_2',
+	}
 }
 
-const SERVERS = [
-	{
+const SERVERS = {
+	'server_1': {
 		id: '1f48e7c2-a04f-4cd5-94c4-04da1428d315', 
 		WANIP: '10.10.9.59', 
-		LANIP: '10.10.9.59', 
-		status: 1, 
-		createdAt: '2017-08-07T07:31:59.000Z',
-		updatedAt: '2017-08-07T07:31:59.000Z'
+		LANIP: '10.10.9.59'
 	},
-	{
-		id: 'bf4bccf1-660b-4017-bddd-87c3139b4f00', 
+	'server_2': {
+		id: '08db5845-3377-4504-9f5f-8016928f3318', 
 		WANIP: '10.10.9.81', 
-		LANIP: '10.10.9.81', 
-		status: 1, 
-		createdAt: '2017-08-07T07:31:59.000Z',
-		updatedAt: '2017-08-07T07:31:59.000Z'
+		LANIP: '10.10.9.81'
 	}
-]
+}
+
+const TICKETS = {
+	bind: {
+		id: '7700c7d1-9289-4c58-80da-71fd27842eb5',
+		type: 'bind',
+		stationId: undefined,
+		data: 123456
+	},
+	invite: {
+		id: '4efe06ac-4b99-48d7-82f2-ed1a47d2e307',
+		type: 'invite',
+		creator: undefined,
+		stationId: undefined,
+		data: 123456
+	},
+	share: {
+		id: 'c1d6f74c-3380-4778-a983-6e6e324e7734',
+		type: 'share',
+		creator: undefined,
+		stationId: undefined,
+		data: 123456
+	} 
+}
+
+const BOXES = {}
 
 const FILES = {
 	account: {
@@ -76,27 +105,25 @@ const FILES = {
 	}
 }
 
-const createUserAsync = async () => {
+const createAsync = async () => {
 	
 }
 
 const resetAsync = async () => {
-	
+	await sequelize.sync({force: true})
 }
-
-const clientToken = jwt.encode({user: USER})
-const stationToken = jwt.encode({station: STATION})
+const cToken = jwt.encode({user: USERS['mosaic']})
+const sToken = jwt.encode({station: STATIONS['station_1']})
 
 module.exports = {
-	// async resetAsync() {
-	// 	await sequelize.sync({force: true})
-	// },
-	USER,
-	STATION,
+	USERS,
+	STATIONS,
+	TICKETS,
 	SERVERS,
+	BOXES,
 	FILES,
-	clientToken,
-	stationToken,
-	createUserAsync,
+	cToken,
+	sToken,
+	createAsync,
 	resetAsync
 }

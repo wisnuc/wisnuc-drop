@@ -47,7 +47,6 @@ router.patch('/:id', joiValidator({
 	}
 }), async (req, res) => {
 	try {
-		console.log(1111);
 		let station = Object.assign({}, req.params, req.body)
 		let data = await stationService.update(station)
 		return res.success(data)
@@ -84,7 +83,7 @@ router.get('/:id/users', joiValidator({
 	}
 })
 
-// store file for client
+// store file
 router.post('/:id/pipe', joiValidator({
 	params: {
 		id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -100,7 +99,7 @@ router.post('/:id/pipe', joiValidator({
 	}
 })
 
-// fetch file for client
+// fetch file
 router.get('/:id/pipe', joiValidator({
 	params: {
 		id: Joi.string().guid({ version: ['uuidv4'] }).required()

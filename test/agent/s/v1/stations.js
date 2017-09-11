@@ -6,27 +6,24 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/07 09:42:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/11 11:14:12 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/11 18:18:10 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const path = require('path')
-const uuid = require('uuid')
-const chai = require('chai')
-// chai.use(require('chai-as-promised'))
-const sinon = require('sinon')
-const expect = chai.expect
-const should = chai.should()
+const _ = require('lodash')
 const request = require('supertest')
 const app = require('src/app')
 
 const {Station} = require('src/models')
 const {
 	STATIONS,
+	USERS,
 	cToken
 } = require('../../lib')
 
 const station = STATIONS['station_1']
+const userIds = _.map(USERS, 'id').toString()
 
 describe(path.basename(__filename), () => {
 
@@ -41,7 +38,22 @@ describe(path.basename(__filename), () => {
 	})
 
 	describe('have client token', () => {
-			
+				
+		describe('create new station', () => {
+			it('create new station', done => {
+				request(app)
+					.post(`/s/v1/stations`)
+					.set('Authorization', cToken)
+					.send({name: 'name_test', publicKey: 'test'})
+					.expect(200)
+					.end(async (err, res) => {
+						let data = res.body.data
+						await Station.destroy({where: {id: data.id}})
+						done()
+					})
+			})
+		})
+		
 		before(async () => {
 			await Station.create(station)
 		})
@@ -54,10 +66,10 @@ describe(path.basename(__filename), () => {
 				}
 			})
 		})
-				
+		
 		it('get station', done => {
 			request(app)
-				.get(`/c/v1/stations/${station.id}`)
+				.get(`/s/v1/stations/${station.id}`)
 				.set('Authorization', cToken)
 				.expect(200)
 				.end(done)
@@ -65,16 +77,16 @@ describe(path.basename(__filename), () => {
 
 		it('update station', done => {
 			request(app)
-				.patch(`/c/v1/stations/${station.id}`)
+				.patch(`/s/v1/stations/${station.id}`)
 				.set('Authorization', cToken)
-				.send({name: 'name_test'})
+				.send({name: 'name_test', userIds: userIds})
 				.expect(200)
 				.end(done)
 		})
 
 		it('delete station', done => {
 			request(app)
-				.delete(`/c/v1/stations/${station.id}`)
+				.delete(`/s/v1/stations/${station.id}`)
 				.set('Authorization', cToken)
 				.expect(200)
 				.end(done)
@@ -82,7 +94,7 @@ describe(path.basename(__filename), () => {
 
 		it('get users', done => {
 			request(app)
-				.get(`/c/v1/stations/${station.id}/users`)
+				.get(`/s/v1/stations/${station.id}/users`)
 				.set('Authorization', cToken)
 				.expect(200)
 				.end(done)

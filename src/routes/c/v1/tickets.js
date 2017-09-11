@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/06 11:01:54 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/11 17:17:15 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,24 +20,6 @@ const jwt = require('../../../middlewares/jwt')
 const ticketService = require('../../../services/ticketService')
 
 
-// create new ticket
-router.post('/', joiValidator({
-	body: {
-		type: Joi.string().valid(['invite', 'bind', 'share']).required(),
-		stationId: Joi.string().guid({version: ['uuidv4']}).required(),
-		creator: Joi.string(),
-		data: Joi.string() // optional
-	}
-}), async (req, res) => {
-	try {
-		let data = await ticketService.create(req.body)
-		return res.success(data)
-	} 
-	catch(err) {
-		return res.error(err)
-	}
-})
-
 // get one ticket
 router.get('/:id', joiValidator({
 	params: {
@@ -48,31 +30,6 @@ router.get('/:id', joiValidator({
 		let id = req.params.id
 		let user = req.auth.user
 		let data = await ticketService.findByClient(id, user.id)
-		return res.success(data)
-	} 
-	catch(err) {
-		return res.error(err)
-	}
-})
-
-// confirm operation, update users of the ticket state.
-router.patch('/:id', joiValidator({
-	params: {
-		id: Joi.string().guid({version: ['uuidv4']}).required()
-	},
-	body: {
-		type: Joi.number().valid(['rejected', 'resolved']).required()
-	}
-}), jwt.checkStation, async (req, res) => {
-	try {
-		let id = req.params.id
-		let station = req.auth.station
-		let args = {
-			id: id,
-			stationId: station.id,
-			type: req.body.type
-		}
-		let data = await ticketService.update(args)
 		return res.success(data)
 	} 
 	catch(err) {
@@ -116,13 +73,11 @@ router.post('/:id/users', joiValidator({
 	}
 }), async (req, res) => {
 	try {
-		let id = req.params.id
-		let password = req.body.password
 		let user = req.auth.user
 		let args = {
-			id: id,
+			id: req.params.id,
 			userId: user.id,
-			password: password
+			password: req.body.password || undefined
 		}
 		let data = await ticketService.createUser(args)
 		return res.success(data)
@@ -143,29 +98,6 @@ router.get('/:id/users/:userId', joiValidator({
 		let id = req.params.id
 		let userId = req.params.userId
 		let data = await ticketService.findUser(id, userId)
-		return res.success(data)
-	} 
-	catch(err) {
-		return res.error(err)
-	}
-})
-
-// update user
-router.patch('/:id/users/:userId', joiValidator({
-	params: {
-		id: Joi.string().guid({version: ['uuidv4']}).required(),
-		userId: Joi.string().guid({version: ['uuidv4']}).required()
-	},
-	body: {
-		type: Joi.string().valid(['rejected', 'resolved']).required()
-	}
-}), async (req, res) => {
-	try {
-		let id = req.params.id
-		let userId = req.params.userId
-
-		let type = req.body.type
-		let data = await ticketService.updateUserStatus(id, type, userId)
 		return res.success(data)
 	} 
 	catch(err) {

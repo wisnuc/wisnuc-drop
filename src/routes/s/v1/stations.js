@@ -24,7 +24,7 @@ const transformJson = require('../../../services/transformJson')
 // create new station
 router.post('/', joiValidator({
 	body: {
-		name: Joi.string(),
+		name: Joi.string(),	// optional
 		publicKey: Joi.string().required()
 	}
 }), async (req, res) => {

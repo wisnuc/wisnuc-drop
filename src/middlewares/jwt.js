@@ -25,7 +25,6 @@ module.exports = {
 	 */
 	cAuth(req, res, next) {
 		const token = req.headers.authorization
-		console.log('token: ', token)
 		// decode
 		try {
 			const decoded = jwt.decode(token)
@@ -50,7 +49,6 @@ module.exports = {
 	 */
 	sAuth(req, res, next) {
 		const token = req.headers.authorization
-		console.log('token: ', token)
 		// decode
 		try {
 			const decoded = jwt.decode(token)

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/07 17:49:59 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/11 10:52:05 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.UUID, 
 			defaultValue: DataTypes.UUIDV4
 		},
+		// creator == undefinded, when type == bind
 		creator:  DataTypes.STRING,
 		
 		// invite, bind, share

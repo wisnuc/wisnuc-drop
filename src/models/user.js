@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/07 17:10:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/06 11:57:18 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/11 10:21:17 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ module.exports = function (sequelize, DataTypes) {
 					User.hasMany(models.TicketUser, { foreignKey: 'userId' })
 				}
 			},
+			// apply to find, findAll, update, count and destroy
 			defaultScope: {
 				where: {
 					status: 1
