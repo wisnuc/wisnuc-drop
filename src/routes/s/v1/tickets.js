@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/11 14:32:39 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/12 15:49:29 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ const router = express.Router()
 const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 
-const jwt = require('../../../middlewares/jwt')
 const ticketService = require('../../../services/ticketService')
 
 
@@ -64,7 +63,7 @@ router.patch('/:id', joiValidator({
 		status: Joi.number().valid([-1, 1]).required(), // -1: deleted, 1: finished
 		userId: Joi.string().guid({version: ['uuidv4']})
 	}
-}), jwt.checkStation, async (req, res) => {
+}), async (req, res) => {
 	try {
 		let id = req.params.id
 		let status = req.body.status

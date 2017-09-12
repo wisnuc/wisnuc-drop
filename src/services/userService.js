@@ -11,7 +11,15 @@
 /* ************************************************************************** */
 
 const _ = require('lodash')
-const { User, UserStation, Station, Box, BoxUser, WisnucDB } = require('../models')
+const E = require('../lib/error')
+const { 
+	User, 
+	UserStation, 
+	Station, 
+	Box, 
+	BoxUser, 
+	WisnucDB
+ } = require('../models')
 
 /**
  * This is user service.
@@ -50,13 +58,8 @@ class UserService {
 				// attributes: [ [Sequelize.col('stationId'), 'id'] ]
 			}
 		})
+		if (!user) throw new E.EUSERNOTEXIST()
 		return user
-		// return User.scope('stations')
-		// .find({
-		// 	where: {
-		// 		id: userId
-		// 	}
-		// })
 	}
 	/**
 	 * update user

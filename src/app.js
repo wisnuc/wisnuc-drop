@@ -12,11 +12,7 @@
 
 
 require('./utils/global')
-/**
- * TODO: 启动
- * 1. if is new server, create new server
- * 2. stationServer isOnline set 0
- */ 
+
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')

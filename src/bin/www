@@ -51,7 +51,7 @@ var sharedsession = require('express-socket.io-session');
 
 // Use express-session middleware for express
 app.use(session);
-400
+
 // Use shared session middleware for socket.io
 // setting autoSave:true
 io.use(sharedsession(session, {

@@ -10,11 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-var jwt = require('../lib/jwt')
+const jwt = require('../lib/jwt')
 // TODO: 验证 user 是否 存在
 
 const CLIENT_TOKEN = ''
 const STATION_TOKEN = ''
+const { User, Station } = require('../models')
 
 module.exports = {
 	/**
@@ -23,20 +24,32 @@ module.exports = {
 	 * @param {any} res 
 	 * @param {any} next 
 	 */
-	cAuth(req, res, next) {
+	async cAuth(req, res, next) {
 		const token = req.headers.authorization
 		// decode
 		try {
 			const decoded = jwt.decode(token)
 			if (!decoded)
 				return res.error('authentication failed', 401)
+			
 			// expire
 			if (!decoded.exp || decoded.exp <= Date.now())
 				return res.error('token overdue, login again please！', 401)
+			
 			if (!decoded.user) 
 				return res.error('authentication failed', 401)
+
+			let user = await User.find({
+				where: {
+					id: decoded.user.id
+				},
+				raw: true
+			})
+			if (!user) return res.error('authentication failed', 401)
+			
 			req.auth = decoded
 			next()
+
 		} catch (error) {
 			return res.error('authentication failed', 401)
 		}
@@ -47,48 +60,36 @@ module.exports = {
 	 * @param {any} res 
 	 * @param {any} next 
 	 */
-	sAuth(req, res, next) {
+	async sAuth(req, res, next) {
 		const token = req.headers.authorization
 		// decode
 		try {
 			const decoded = jwt.decode(token)
 			if (!decoded)
 				return res.error('authentication failed', 401)
+			
 			// expire
 			if (!decoded.exp || decoded.exp <= Date.now())
 				return res.error('token overdue, login again please！', 401)
+			
 			if (!decoded.station) 
 				return res.error('authentication failed', 401)
+			
+			let station = await Station.find({
+				where: {
+					id: decoded.user.id
+				},
+				raw: true
+			})
+			if (!station) return res.error('authentication failed', 401)
+
 			req.auth = decoded
 			next()
+			
 		} catch (error) {
 			return res.error('authentication failed', 401)
 		}
 	},
-	/**
-	 * check user
-	 * @param {any} req 
-	 * @param {any} res 
-	 * @param {any} next 
-	 */
-	checkUser(req, res, next) {
-		if (!req.auth.user) 
-			return res.error('jwt no user', 401)
-		next()
-	},
-
-	/**
-	 * check station
-	 * @param {any} req 
-	 * @param {any} res 
-	 * @param {any} next 
-	 */
-	checkStation(req, res, next) {
-		if (!req.auth.station)
-			return res.error('jwt no station', 401)
-		next()
-	},
-
 	/**
 	 * token example
 	 * @param {any} req 

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/07 17:52:28 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/12 15:54:33 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,14 @@ const fundebug = require('../utils/fundebug')
 const Logger = require('../utils/logger').Logger('system error')
 
 const DEFAULT_SUCCESS_STATUS = 200
-const DEFAULT_ERROR_STATUS = 500
+const DEFAULT_ERROR_STATUS = 403
 
-// FIXME: 细分 code
 //http code 
 const httpCode = {
 	200: 'ok',
 	400: 'invalid parameters',
-	401: 'Authentication',
-	403: 'forbidden',
+	401: 'Authentication failed',
+	403: 'forbidden', // 
 	404: 'not found', 
 	500: 'system error'
 }
@@ -48,7 +47,7 @@ module.exports = (req, res, next) => {
   /**
  * error response 
  * @param {any} data 
- * @param {number} status - default 500
+ * @param {number} status - default 403
  */
 	res.error = (err, status) => {
 		let message, data, stack
@@ -83,14 +82,14 @@ module.exports = (req, res, next) => {
 				return res.status(status).json({
 					code: status || 'no code',
 					message: message || 'no message',
-					data: data || ''
+					data: data || null
 				})
 			} 
 			
 			return res.status(status).json({
 				code: status || 'no code',
 				message: message || 'no message',
-				data: data || '',
+				data: data || null,
 				stack: stack
 			})
 		}
