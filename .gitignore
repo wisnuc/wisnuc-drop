@@ -65,3 +65,5 @@ demo/
 out/
 # upload layer
 tmp/
+# prod config
+production.json
