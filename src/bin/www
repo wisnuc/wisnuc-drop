@@ -3,122 +3,117 @@
 /**
  * Module dependencies.
  */
-/* eslint-disable */
-var app = require('../app');
-var debug = require('debug')('wisnuc-drop:server');
-var http = require('http');
+const app = require('../app')
+const debug = require('debug')('wisnuc-drop:server')
+const cluster = require('cluster')
+const http = require('http')
+const config = require('getconfig')
+const numCPUs = require('os').cpus().length
+const port = process.env.PORT || config.port
 
+const Logger = require('../utils/logger').Logger('cluster')
 
-/**
- * Get port from environment and store in Express.
- */
-
-var config = require('getconfig')
-
-var port = normalizePort(process.env.PORT || config.port);
-app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
-var server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
-server.on('listening', onListening);
-
-/**
- * socket.io 
- */
-var io = require('socket.io')(server)
-require('../lib/socketIO')(io)
-
-// ####################### session #########################
-// FIXME: delete session
-var session = require('express-session')({
-    secret: 'wisnuc-drop',
-    resave: true,
-    saveUninitialized: true
-});
-
-// TODO: 更改 session
-var sharedsession = require('express-socket.io-session');
-
-// Use express-session middleware for express
-app.use(session);
-
-// Use shared session middleware for socket.io
-// setting autoSave:true
-io.use(sharedsession(session, {
-    autoSave: true
-}));
-// ####################### session #########################
-
-/**
- * Normalize a port into a number, string, or false.
- */
-
-function normalizePort(val) {
-    var port = parseInt(val, 10);
-
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
-
-    if (port >= 0) {
-        // port number
-        return port;
-    }
-
-    return false;
+if (cluster.isMaster) {
+	for (let i = 0; i < numCPUs; i++) {
+		cluster.fork()
+	}
+	cluster.on('fork', (worker) => {
+		Logger.info(`Worker ${worker.process.pid} fork pid: ${worker.process.pid}`)
+	})
+	cluster.on('exit', (worker, code, signal) => {
+		Logger.log(`Worker ${worker.process.pid} died.`)
+	})
 }
+else {
+	// app.set('port', port)
+	// app.listen(port, () => {
+	// 	Logger.info(`wisnuc-drop listening on port: ${port}`)
+	// })
 
-/**
- * Event listener for HTTP server 'error' event.
- */
+	app.set('port', port)
 
-function onError(error) {
-    if (error.syscall !== 'listen') {
-        throw error;
-    }
+	/**
+	 * Create HTTP server.
+	 */
 
-    var bind = typeof port === 'string' ?
-        'Pipe ' + port :
-        'Port ' + port;
+	var server = http.createServer(app)
 
-    // handle specific listen errors with friendly messages
-    switch (error.code) {
-        case 'EACCES':
-            console.error(bind + ' requires elevated privileges');
-            process.exit(1);
-            break;
-        case 'EADDRINUSE':
-            console.error(bind + ' is already in use');
-            process.exit(1);
-            break;
-        default:
-            throw error;
-    }
+	/**
+	 * Listen on provided port, on all network interfaces.
+	 */
+
+	server.listen(port)
+	server.on('error', onError)
+	server.on('listening', onListening)
+
+	/**
+	 * socket.io 
+	 */
+	var io = require('socket.io')(server)
+	require('../lib/socketIO')(io)
+
+	// ####################### session #########################
+	// FIXME: delete session
+	var session = require('express-session')({
+		secret: 'wisnuc-drop',
+		resave: true,
+		saveUninitialized: true
+	})
+
+	// TODO: 更改 session
+	var sharedsession = require('express-socket.io-session')
+
+	// Use express-session middleware for express
+	app.use(session)
+
+	// Use shared session middleware for socket.io
+	// setting autoSave:true
+	io.use(sharedsession(session, {
+		autoSave: true
+	}))
+	// ####################### session #########################
+
+	/**
+	 * Event listener for HTTP server 'error' event.
+	 */
+
+	function onError(error) {
+		if (error.syscall !== 'listen') {
+			throw error
+		}
+
+		var bind = typeof port === 'string' ?
+			'Pipe ' + port :
+			'Port ' + port
+
+		// handle specific listen errors with friendly messages
+		switch (error.code) {
+			case 'EACCES':
+				console.error(bind + ' requires elevated privileges')
+				process.exit(1)
+				break;
+			case 'EADDRINUSE':
+				console.error(bind + ' is already in use')
+				process.exit(1)
+				break;
+			default:
+				throw error
+		}
+	}
+
+	/**
+	 * Event listener for HTTP server 'listening' event.
+	 */
+
+	function onListening() {
+		var addr = server.address()
+		var bind = typeof addr === 'string' ?
+			'pipe ' + addr :
+			'port ' + addr.port
+
+		console.info('Listening on ' + bind)
+		debug('Listening on ' + bind)
+	}
+
+	// FIXME: deal with Unhandled rejection Error
 }
-
-/**
- * Event listener for HTTP server 'listening' event.
- */
-
-function onListening() {
-    var addr = server.address();
-    var bind = typeof addr === 'string' ?
-        'pipe ' + addr :
-        'port ' + addr.port;
-
-    console.info('Listening on ' + bind);
-    debug('Listening on ' + bind);
-}
-
-// FIXME: deal with Unhandled rejection Error
