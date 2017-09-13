@@ -20,14 +20,14 @@ const DATABASE_URL = 'mongodb://'
 	+ port + '/' 
 	+ database
 	
-mongoose.connect(DATABASE_URL)
+// mongoose.connect(DATABASE_URL)
 
-const db = mongoose.connection
+// const db = mongoose.connection
 
-db.on('error', console.error.bind(console, 'connection error:'))
-db.once('open', function() {
-	console.log('mongodb connect successfully')
-})
+// db.on('error', console.error.bind(console, 'connection error:'))
+// db.once('open', function() {
+// 	console.log('mongodb connect successfully')
+// })
 
 
 module.exports = {

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 10:29:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/06 10:56:22 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/13 16:39:35 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ const joiValidator = require('../../../middlewares/joiValidator')
 const accountService = require('../../../services/accountService')
 
 
-// don`t follow the rule of restful
+// TODO: don`t follow the rule of restful
 
 // binding wechat account
 router.get('/wechat/binding', joiValidator({
