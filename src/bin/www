@@ -31,7 +31,6 @@ else {
 	// })
 
 	app.set('port', port)
-
 	/**
 	 * Create HTTP server.
 	 */

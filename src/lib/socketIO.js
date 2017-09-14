@@ -30,7 +30,7 @@ let checkWhiteList = type => {
  */
 module.exports = io => {
 	io.on('connection', client => {
-
+		console.log('process.pid:', process.pid)
 		debug(`~~~ client ${client.id}: connent successfully ~~~`)
 		/**
  		* 接受 nas 发过来的消息, 根据 type 类型选择 socketHandler

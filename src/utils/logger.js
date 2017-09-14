@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:09:03 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/31 11:03:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/14 17:41:16 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ const log4js = require('log4js')
 const path = require('path')
 
 let	log4jsConfig = {
-	replaceConsole: false,
+	replaceConsole: true,
 	appenders: [
 		{ type: 'console' },
 		{

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/12 15:49:29 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/14 18:00:32 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ const router = express.Router()
 const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 
+const jwt = require('../../../middlewares/jwt')
 const ticketService = require('../../../services/ticketService')
 
 
@@ -38,7 +39,7 @@ router.post('/', joiValidator({
 })
 
 // get one ticket
-router.get('/:id', joiValidator({
+router.get('/:id', jwt.cAuth, joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
 	}
@@ -55,7 +56,7 @@ router.get('/:id', joiValidator({
 })
 
 // update ticket
-router.patch('/:id', joiValidator({
+router.patch('/:id', jwt.cAuth, joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
 	},
@@ -82,7 +83,7 @@ router.patch('/:id', joiValidator({
 })
 
 // get all tickets
-router.get('/', joiValidator({
+router.get('/', jwt.cAuth, joiValidator({
 	query: {
 		creator: Joi.string().guid({version: ['uuidv4']}),
 		stationId: Joi.string().guid({version: ['uuidv4']}),
@@ -108,7 +109,7 @@ router.get('/', joiValidator({
 })
 
 // get user
-router.get('/:id/users/:userId', joiValidator({
+router.get('/:id/users/:userId', jwt.cAuth, joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required(),
 		userId: Joi.string().guid({version: ['uuidv4']}).required()
@@ -126,7 +127,7 @@ router.get('/:id/users/:userId', joiValidator({
 })
 
 // update user
-router.patch('/:id/users/:userId', joiValidator({
+router.patch('/:id/users/:userId', jwt.cAuth, joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required(),
 		userId: Joi.string().guid({version: ['uuidv4']}).required()
@@ -148,7 +149,7 @@ router.patch('/:id/users/:userId', joiValidator({
 })
 
 // get users
-router.get('/:id/users', joiValidator({
+router.get('/:id/users', jwt.cAuth, joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
 	}
@@ -165,7 +166,7 @@ router.get('/:id/users', joiValidator({
 
 			
 // update users
-router.patch('/:id/users', joiValidator({
+router.patch('/:id/users', jwt.cAuth, joiValidator({
 	params: {
 		ids: Joi.array().items({version: ['uuidv4']}).required()
 	},
