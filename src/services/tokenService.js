@@ -12,12 +12,45 @@
 
 const jwt = require('../lib/jwt')
 const WechatInfo = require('../lib/wechatInfo')
-const { User } = require('../models')
+const { User,WisnucDB } = require('../models')
 /**
  * This is wechat service.
  * @class TokenService
  */
 class TokenService {
+	/**
+	 * create user
+	 * @param {object} userInfo 
+	 * @memberof TokenService
+	 */
+	createUser(userInfo) {
+		let user
+		return WisnucDB.transaction(async t => {
+			user = await User.find({
+				where: {
+					unionId: userInfo.unionid
+				},
+				raw: true,
+				transaction: t
+			})
+			if (!user) {
+				// user not exist, create new user
+				user = await User.create({
+					unionId: userInfo.unionid,
+					nickName: userInfo.nickname,
+					avatarUrl: userInfo.headimgurl
+				}, {transaction: t})
+			}
+			else {
+				// update nickName, avatarUrl
+				user = await User.update({
+					nickName: userInfo.nickname,
+					avatarUrl: userInfo.headimgurl
+				}, {transaction: t})
+			}
+			return user
+		})
+	}
 	/**
 	 * web, mobile 登录
 	 * 若没有该用户 create new user and return token
@@ -27,47 +60,31 @@ class TokenService {
 	 * @memberof TokenService
 	 */
 	async oauth2(platform, code) {
-		// userInfo: {
-		// 	openid: 'ogv9iv0DstjP3OGsVl0Y0-jigwbE',
-		// 	nickname: 'mosaic',
-		// 	sex: 1,
-		// 	language: 'en',
-		// 	city: 'Nanjing',
-		// 	province: 'Jiangsu',
-		// 	country: 'CN',
-		// 	headimgurl: 'http://wx.qlogo.cn/mmopen/PiajxSqBRaELMY20dSuicj4uXzO4ok9mu7Zvkh27IgomrfE65pBNV4K98NclHDfEurHUou2Yhm2CjLHXfE7amndQ/0',
-		// 	privilege: [],
-		// 	unionid: 'oOMKGwt3tX67LcyaG-IPaExMSvDw'
-		// }
+		/**
+		userInfo: {
+			openid: 'ogv9iv0DstjP3OGsVl0Y0-jigwbE',
+			nickname: 'mosaic',
+			sex: 1,
+			language: 'en',
+			city: 'Nanjing',
+			province: 'Jiangsu',
+			country: 'CN',
+			headimgurl: 'http://wx.qlogo.cn/mmopen/PiajxSqBRaELMY20dSuicj4uXzO4ok9mu7Zvkh27IgomrfE65pBNV4K98NclHDfEurHUou2Yhm2CjLHXfE7amndQ/0',
+			privilege: [],
+			unionid: 'oOMKGwt3tX67LcyaG-IPaExMSvDw'
+		}
+		 */
 		let wechatInfo = new WechatInfo(platform)
 		let userInfo = await wechatInfo.oauth2UserInfoAsync(platform, code)
-		
-		let user
-		user = await User.find({
-			where: {
-				unionId: userInfo.unionid
-			},
-			raw: true
-		})
-		
-		// user no exist
-		if (!user) {
-			// create new user
-			user = await User.create({
-				unionId: userInfo.unionid,
-				nickName: userInfo.nickname,
-				avatarUrl: userInfo.headimgurl
-			})
+		let user = await this.createUser(userInfo)
+		const userData = {
+			id: user.id,
+			nickName: user.nickName,
+			avatarUrl: user.avatarUrl
 		}
-		const token = { user: user }
-		
 		return {
-			user: {
-				id: user.id,
-				nickName: user.nickName,
-				avatarUrl: user.avatarUrl
-			},
-			token: jwt.encode(token)
+			user: userData,
+			token: jwt.encode({ user: userData })
 		}
 	}
 
@@ -80,51 +97,33 @@ class TokenService {
 	 * @returns {object} token
 	 */
 	async mpToken(code, iv, encryptedData) {
-		// userInfo: {
-		// 	"nickName": "Band",
-		// 	"gender": 1,
-		// 	"language": "zh_CN",
-		// 	"city": "Guangzhou",
-		// 	"province": "Guangdong",
-		// 	"country": "CN",
-		// 	"avatarUrl": "http://wx.qlogo.cn/mmopen/vi_32/aSKcBBPpibyKNicHNTMM0qJVh8Kjgiak2AHWr8MHM4WgMEm7GFhsf8OYrySdbvAMvTsw3mo8ibKicsnfN5pRjl1p8HQ/0",
-		// 	"unionId": "ocMvos6NjeKLIBqg5Mr9QjxrP1FA",
-		// 	"watermark": {
-		// 		"timestamp": 1477314187,
-		// 		"appid": "wx4f4bc4dec97d474b"
-		// 	}
-		// }
+		/**
+	  userInfo: {
+			"nickName": "Band",
+			"gender": 1,
+			"language": "zh_CN",
+			"city": "Guangzhou",
+			"province": "Guangdong",
+			"country": "CN",
+			"avatarUrl": "http://wx.qlogo.cn/mmopen/vi_32/aSKcBBPpibyKNicHNTMM0qJVh8Kjgiak2AHWr8MHM4WgMEm7GFhsf8OYrySdbvAMvTsw3mo8ibKicsnfN5pRjl1p8HQ/0",
+			"unionId": "ocMvos6NjeKLIBqg5Mr9QjxrP1FA",
+			"watermark": {
+				"timestamp": 1477314187,
+				"appid": "wx4f4bc4dec97d474b"
+			}
+		}
+		 */
 		const wechatInfo = new WechatInfo('mp')
 		let userInfo = await wechatInfo.mpUserInfoAsync(code, iv, encryptedData)
-		
-		let user
-		user = await User.find({
-			where: {
-				unionId: userInfo.unionId,
-				status: 1 // normal
-			},
-			raw: true
-		})
-		
-		// user no exist
-		if (!user) {
-			// create new user
-			user = await User.create({
-				unionId: userInfo.unionId,
-				nickName: userInfo.nickName,
-				avatarUrl: userInfo.avatarUrl
-			})
+		let user = await this.createUser(userInfo)
+		const userData = {
+			id: user.id,
+			nickName: user.nickName,
+			avatarUrl: user.avatarUrl
 		}
-		
-		const token = { user: user }
-		
 		return {
-			user: {
-				id: user.id,
-				nickName: user.nickName,
-				avatarUrl: user.avatarUrl
-			},
-			token: jwt.encode(token)
+			user: userData,
+			token: jwt.encode({ user: userData })
 		}
 	}
 }
