@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   socketIO.js                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>           +#+  +:+       +#+        */
+/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/09 16:42:35 by JianJin Wu          #+#    #+#             */
-/*   Updated: 2017/08/15 10:40:51 by JianJin Wu         ###   ########.fr       */
+/*   Created: 2017/09/15 10:02:56 by JianJin Wu        #+#    #+#             */
+/*   Updated: 2017/09/15 10:02:58 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 const debug = require('debug')('socketIO')
 const socketIOHandler = require('../services/socketIOHandler')
@@ -30,7 +31,7 @@ let checkWhiteList = type => {
  */
 module.exports = io => {
 	io.on('connection', client => {
-
+		console.log('process.pid:', process.pid)
 		debug(`~~~ client ${client.id}: connent successfully ~~~`)
 		/**
  		* 接受 nas 发过来的消息, 根据 type 类型选择 socketHandler

@@ -16,12 +16,13 @@ const router = express.Router()
 const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 
+const jwt = require('../../../middlewares/jwt')
 const stationService = require('../../../services/stationService')
 const fetchFile = require('../../../services/fetchFile')
 const storeFile = require('../../../services/storeFile')
 const transformJson = require('../../../services/transformJson')
 
-// create new station
+// create new station, no token
 router.post('/', joiValidator({
 	body: {
 		name: Joi.string(),	// optional
@@ -40,8 +41,10 @@ router.post('/', joiValidator({
 	}
 })
 
+router.use('*', jwt.sAuth)
+
 // get station
-router.get('/:id', joiValidator({
+router.get('/:id',  joiValidator({
 	params: {
 		id: Joi.string().guid({ version: ['uuidv4'] }).required()
 	}

@@ -30,7 +30,7 @@ module.exports = {
 		try {
 			const decoded = jwt.decode(token)
 			if (!decoded)
-				return res.error('authentication failed', 401)
+				return res.error('decode failed', 401)
 			
 			// expire
 			if (!decoded.exp || decoded.exp <= Date.now())
@@ -38,14 +38,14 @@ module.exports = {
 			
 			if (!decoded.user) 
 				return res.error('authentication failed', 401)
-
+			
 			let user = await User.find({
 				where: {
 					id: decoded.user.id
 				},
 				raw: true
 			})
-			if (!user) return res.error('authentication failed', 401)
+			if (!user) return res.error('have no user', 401)
 			
 			req.auth = decoded
 			next()
@@ -66,7 +66,7 @@ module.exports = {
 		try {
 			const decoded = jwt.decode(token)
 			if (!decoded)
-				return res.error('authentication failed', 401)
+				return res.error('decode failed', 401)
 			
 			// expire
 			if (!decoded.exp || decoded.exp <= Date.now())
@@ -74,14 +74,13 @@ module.exports = {
 			
 			if (!decoded.station) 
 				return res.error('authentication failed', 401)
-			
 			let station = await Station.find({
 				where: {
-					id: decoded.user.id
+					id: decoded.station.id
 				},
 				raw: true
 			})
-			if (!station) return res.error('authentication failed', 401)
+			if (!station) return res.error('have no station', 401)
 
 			req.auth = decoded
 			next()
@@ -100,17 +99,8 @@ module.exports = {
 		req.auth = {
 			user:{
 				id: '6e6c0c4a-967a-489a-82a2-c6eb6fe9d991',
-				status: 1,
-				password: null,
-				email: null,
-				phoneNO: null,
-				unionId: 'oOMKGwjtQBp1bCEj88FMotdQCuMw',
 				nickName: '刘华',
 				avatarUrl: 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJBsJR1DhjgRbUKk9adPdl8TfmLj2roOlNQc0alnAySqD56HCeBd7PU5TNBxlfAqqX4ficialTRl9LA/0',
-				refreshToken: null,
-				accessToken: null,
-				createdAt: '2017-07-26T02:40:51.000Z',
-				updatedAt: '2017-07-26T02:40:51.000Z'
 			},
 			exp: 1503643276207
 		}

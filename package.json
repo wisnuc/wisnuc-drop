@@ -46,7 +46,6 @@
     "save": "^2.3.1",
     "sequelize": "^3.30.4",
     "socket.io": "^2.0.3",
-    "socket.io-client": "^2.0.3",
     "ursa": "^0.9.4",
     "uuid": "^3.0.1",
     "wafer-node-session": "^1.0.9"
@@ -61,7 +60,8 @@
     "mocha": "^3.4.2",
     "nodemon": "^1.11.0",
     "sinon": "^2.3.8",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "socket.io-client": "^2.0.3"
   },
   "engines": {
     "node": ">=7.6.0"

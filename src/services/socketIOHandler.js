@@ -57,7 +57,6 @@ class SocketIOHandler extends EventEmitter {
 		// TODO: 存入内存中
 		client.handshake.session.seed = seed
 		client.handshake.session.stationId = data.id
-
 		let message = {
 			type: 'checkLogin',
 			data: { encryptData: encryptData }
@@ -205,7 +204,7 @@ class SocketIOHandler extends EventEmitter {
 	 * @memberof SocketIOHandler
 	 */
 	error(client, error) {
-		client.error(error)
+		client.error(error.message) // return message
 	}
 }
 

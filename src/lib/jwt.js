@@ -6,14 +6,12 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/12 15:27:49 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/31 11:03:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/15 09:51:56 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const jwt = require('jwt-simple')
-
-const SECRET = 'WISNUC_DROP' // TODO:
-
+const SECRET = 'WISNUC_DROP' // secret key
 
 /**
  * JWT (JSON Web Token)
