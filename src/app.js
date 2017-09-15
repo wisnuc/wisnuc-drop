@@ -12,7 +12,7 @@
 
 
 require('./utils/global')
-
+// TODO: register in databases， when project start.
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')

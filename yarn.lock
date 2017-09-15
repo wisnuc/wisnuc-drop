@@ -1287,6 +1287,12 @@ fs-exists-sync@^0.1.0:
   version "0.1.0"
   resolved "http://registry.npm.taobao.org/fs-exists-sync/download/fs-exists-sync-0.1.0.tgz#982d6893af918e72d08dec9e8673ff2b5a8d6add"
 
+fs-ext@^0.6.0:
+  version "0.6.0"
+  resolved "http://registry.npm.taobao.org/fs-ext/download/fs-ext-0.6.0.tgz#27d32a72e2e7c3c8001712a0f307f5f8d91dfc66"
+  dependencies:
+    nan "^2.0"
+
 fs.realpath@^1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/fs.realpath/download/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
@@ -2559,7 +2565,7 @@ mysql@^2.13.0:
     safe-buffer "5.1.1"
     sqlstring "2.2.0"
 
-nan@^2.3.0, nan@^2.3.3:
+nan@^2.0, nan@^2.3.0, nan@^2.3.3:
   version "2.7.0"
   resolved "http://registry.npm.taobao.org/nan/download/nan-2.7.0.tgz#d95bf721ec877e08db276ed3fc6eb78f9083ad46"
 
