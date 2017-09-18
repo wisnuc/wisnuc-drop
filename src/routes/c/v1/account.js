@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 10:29:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/13 16:39:35 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/15 17:02:30 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,22 @@ const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 const accountService = require('../../../services/accountService')
 
-
+const uuid = require('uuid')
+let map = new Map()
 // TODO: don`t follow the rule of restful
+
+router.get('/', joiValidator({
+
+}), async (req, res) => {
+	try {
+		map.set(uuid.v4(), 2222)
+		console.log(map);
+		return res.success(map)
+	}
+	catch(err) {
+		return res.error(err)
+	}
+})
 
 // binding wechat account
 router.get('/wechat/binding', joiValidator({
