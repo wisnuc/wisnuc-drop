@@ -8,7 +8,14 @@ var app = require('../app');
 var debug = require('debug')('wisnuc-drop:server');
 var http = require('http');
 
-
+/**
+ * TODO: use cluster
+ * sokcet.io in master process, not apply to load balance
+ * socket.io 仅存在主进程，使用公网～
+ * cloud 存在内网，使用 worker～
+ * cloud 与 socket 进程通信，走异步通信机制！
+ * 项目相当于 socket 与 cloud 两部分结合
+ */
 /**
  * Get port from environment and store in Express.
  */

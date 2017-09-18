@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:22:39 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/04 16:48:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/18 16:31:54 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,8 @@ class FetchFile extends threadify(EventEmiiter) {
 			server.abort(e)
 			return res.error(e)
 		}
+		console.log(req.header['Content-Length'], req.headers['Content-Length']);
+		server.res.header('Content-Length', req.header['Content-Length'])
 		req.pipe(server.res)
 		req.on('error', () => this.abort(jobId))
 		req.on('end', () => res.end())
