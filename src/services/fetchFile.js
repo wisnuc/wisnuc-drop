@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:22:39 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/04 16:48:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/18 11:46:38 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,17 +37,26 @@ class Server extends threadify(EventEmiiter) {
 	async run(req, res) {
 		let stationId = req.params.id
 		let user = req.auth.user
+		// abort 
+		req.on('close', () => {
+			this.abort()
+		})
 		this.defineSetOnce('error', () => res.error(this.error))
 		this.defineSetOnce('formEnded', () => {
 			res.end()
 		})
 		this.res = res
-		// abort 
-		req.on('close', () => {
-			this.abort()
-		})
+		let method, resource, body
+		if (req.method === 'GET') body = req.query
+		method = body.method
+		resource = body.resource
+		delete body.method
+		delete body.resource
 		let manifest = Object.assign({}, 
 			{
+				method: method,
+				resource: resource,
+				body: body,
 				sessionId: this.jobId, 
 				user: {
 					id: user.id,
@@ -102,7 +111,7 @@ class FetchFile extends threadify(EventEmiiter) {
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('queue no server')
+		if (!server) return res.error('fetchFile queue no server')
 		// timeout, notice both side to res.end
 		if (server.isTimeOut()) {
 			let e = new Error('station: POST request timeout')

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/08 17:18:25 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/18 11:48:40 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ class Server extends threadify(EventEmitter) {
 	 */
 	setTime(timer) {
 		setTimeout(() => {
-			this.error = new Error('response timeout')
+			this.error = new Error('json response timeout')
 		}, timer)
 	}
 
