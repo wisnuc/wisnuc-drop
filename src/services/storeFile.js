@@ -48,7 +48,7 @@ class Server extends threadify(EventEmitter) {
 	 * @param {any} res 
 	 * @memberof Server
 	 */
-	parse(req, res) {
+	run(req, res) {
 
 		let stationId = req.params.id
 		let user = req.auth.user
@@ -97,15 +97,18 @@ class Server extends threadify(EventEmitter) {
 		}
 		// analysis field
 		form.on('field', async (field, value) => {
-			// console.log('field', field)
 			if (field == 'manifest') {
-				// let { sha2256, size, filename } = JSON.parse(value)
-				// if (!Number.isInteger(size)) throw new Error('size must be a integer')
-				// if (size < 0 || size > 1024 * 1024 * 1024 * 100) throw new Error('size out of range')
-				// if (!filename) throw new Error('no filename')
-				value = JSON.parse(value)
-				let manifest = Object.assign({}, value,
+				let body = JSON.parse(value)
+				let method, resource
+				method = body.method
+				resource = body.resource
+				delete body.method
+				delete body.resource
+				let manifest = Object.assign({},
 					{
+						method: method,
+						resource: resource,
+						body: body,
 						sessionId: this.jobId, 
 						user: {
 							id: user.id,
@@ -213,7 +216,7 @@ class StoreFile extends threadify(EventEmitter) {
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.getServer(jobId)
-		if (!server) return res.error('queue no server')
+		if (!server) return res.error('storeFile queue no server')
 		// timeout, notice both side to res.end
 		if (server.isTimeOut()) {
 			let e = new Error('station: GET request timeout')

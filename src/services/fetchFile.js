@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/03 16:22:39 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/18 16:31:54 by JianJin Wu       ###   ########.fr       */
+/*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
+/*   Updated: 2017/09/19 17:46:13 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,37 +17,57 @@ const threadify = require('../lib/threadify')
 const socketIOHandler = require('./socketIOHandler')
 
 /**
- * fetch file
+ * fetch file.
+ * 在 client 从 station 下载文件中起到桥接作用
+ * Notifications:
+ * 未开始下载：
+ *   1. client aborted request. 
+ *   2. websocket connect failed.
+ *   3. client request timeout.
+ * 开始下载：
+ *   1. response overtime.
+ *   2. client aborted request.
+ *   3. station response error. 
+ * 下载完毕：
+ *   1. client res.end().
+ *   2. station res.end().
+ *   3. delete worker in map.
  * @module FetchFile 
  */
 
 /**
- * 
+ * Fetch file.
  * @class Server
  * @extends {threadify(EventEmiiter)}
  */
 class Server extends threadify(EventEmiiter) {
 
-	constructor() {
+	constructor(req, res) {
 		super()
+		this.req = req
+		this.res = res
+		this.finished = false
 		this.jobId = uuid.v4()
-		this.timer = Date.now() + 3000
 	}
 
-	async run(req, res) {
-		let stationId = req.params.id
-		let user = req.auth.user
-		this.defineSetOnce('error', () => res.error(this.error))
-		this.defineSetOnce('formEnded', () => {
-			res.end()
-		})
-		this.res = res
+	async run() {
+		let stationId = this.req.params.id
+		let user = this.req.auth.user
 		// abort 
-		req.on('close', () => {
-			this.abort()
-		})
+		this.req.on('close', () => this.error(new Error('client aborted')))
+		
+		let method, resource, body
+		if (this.req.method === 'GET') body = this.req.query
+		method = body.method
+		resource = body.resource
+		delete body.method
+		delete body.resource
+		// encapsulation manifest
 		let manifest = Object.assign({}, 
 			{
+				method: method,
+				resource: resource,
+				body: body,
 				sessionId: this.jobId, 
 				user: {
 					id: user.id,
@@ -60,7 +80,7 @@ class Server extends threadify(EventEmiiter) {
 			await this.notice(stationId, manifest)
 		}
 		catch(err) {
-			this.error = err
+			this.error(err)
 		}
 	}
 	
@@ -74,16 +94,20 @@ class Server extends threadify(EventEmiiter) {
 		await socketIOHandler.pipe(stationId, manifest)
 	}
 	
-	isTimeOut() {
-		return Date.now() > this.timer ? true : false
-	}
-
 	finish() { 
-		this.formEnded = true
+		if (this.finished) return 
+		this.finished = true
+		this.close()
 	}
 
-	abort(err) { 
-		this.error = err || new Error('client aborted')
+	error(err) {
+		if (this.finished) return
+		this.finished = true
+		this.close(err)
+	}
+	
+	close(err) {
+		return err ? this.res.error(err) : this.res.success('fetch file successfully!')
 	}
 }
 
@@ -96,69 +120,86 @@ class FetchFile extends threadify(EventEmiiter) {
 	constructor(limit) {
 		super()
 		this.map = new Map()
-		this.limit = limit || 40
+		this.limit = limit || 1024
 	}
 
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('queue no server')
-		// timeout, notice both side to res.end
-		if (server.isTimeOut()) {
-			let e = new Error('station: POST request timeout')
-			server.abort(e)
-			return res.error(e)
-		}
-		console.log(req.header['Content-Length'], req.headers['Content-Length']);
-		server.res.header('Content-Length', req.header['Content-Length'])
+		if (!server) return res.error('fetchFile queue no server')
+
+		// TODO: timeout, notice both side to res.end
+		// if (server.isTimeOut()) {
+		// 	let e = new Error('station: POST request timeout')
+		// 	server.abort(e)
+		// 	return res.error(e)
+		// }
+		
+		// pipe
 		req.pipe(server.res)
-		req.on('error', () => this.abort(jobId))
-		req.on('end', () => res.end())
+		this.finish(jobId)
+		
+		req.on('error', err => {
+			res.end()
+			this.error(jobId, err)
+		})
+		
+		req.on('close', () => {
+			res.end()
+			this.error(new Error('station aborted'))
+		})
+		// server.req
+		// server.req.on('close', () => {
+		// 	res.end()
+		// 	this.error(new Error('client aborted'))
+		// })
 	}
 	
-	createServer() {
+	createServer(req, res) {
 		if (this.map.size > this.limit)
 			throw new Error('正在处理的任务过多,请稍后再试')
-		let server = new Server()
+		let server = new Server(req, res)
 		this.map.set(server.jobId, server)
 		return server
 	}
-
+	/**
+	 * TODO: timeout 
+	 * @memberof FetchFile
+	 */
+	timer() {
+		
+	}
 	/**
 	 * handle finish
 	 * @param {any} jobId 
 	 * @memberof FetchFile
 	 */
 	finish(jobId) { 
-		let server = this.map.has(jobId)
-		if (!server) return 
-		this.map.delete(jobId)
+		this.close(jobId)
 	}
-	
 	/**
 	 * handle error
+	 * @param {any} jobId 
 	 * @param {any} err 
-	 * @param {any} jobId 
 	 * @memberof FetchFile
 	 */
-	error(err, jobId) { 
-		this.abort(jobId)
-		throw err
+	error(jobId, err) { 
+		this.close(jobId, err)
 	}
-	
 	/**
-	 * handle abort
+	 * close life cycle of the instance
 	 * @param {any} jobId 
+	 * @param {any} err
 	 * @memberof FetchFile
 	 */
-	abort(jobId) {
-		let server = this.map.has(jobId)
+	close(jobId, err) {
+		let server = this.map.get(jobId)
 		if (!server) return 
+		// server response
+		err ? server.error(err) : server.finish()
+		// delete map
 		this.map.delete(jobId)
-		// server abort
-		server.abort(new Error('station aborted'))
 	}
 }
-
 
 module.exports = new FetchFile(40)

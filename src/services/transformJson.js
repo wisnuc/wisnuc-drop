@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/08 17:18:25 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/19 17:45:47 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,33 +23,28 @@ const socketIOHandler = require('./socketIOHandler')
  */
 class Server extends threadify(EventEmitter) {
 
-	constructor() {
+	constructor(req, res) {
 		super()
+		this.req = req
+		this.res = res
+		this.finished = false
 		this.jobId = uuid.v4()
-		// 3s 与 buffers 相同生命周期, 等待 get res strem 的接入
-		this.timer = Date.now() + 3000
 	}
 
-	async run(req, res) {
-		let stationId = req.params.id
-		let user = req.auth.user
+	async run() {
+		let stationId = this.req.params.id
+		let user = this.req.auth.user
 		// abort 
-		req.on('close', () => {
-			this.abort()
-		})
-		// handle error
-		this.defineSetOnce('error', () => res.error(this.error))
-		// client response end
-		this.defineSetOnce('resEnded', () => res.end())
-		this.res = res
+		this.req.on('close', () => new Error('client aborted'))
+		
 		let method, resource, body
-		if (req.method === 'GET') body = req.query
-		if (req.method === 'POST') body = req.body
+		if (this.req.method === 'GET') body = this.req.query
+		if (this.req.method === 'POST') body = this.req.body
 		method = body.method
 		resource = body.resource
 		delete body.method
 		delete body.resource
-		// 封装 manifest
+		// encapsulation manifest
 		let manifest = Object.assign({},
 			{
 				method: method,
@@ -63,12 +58,11 @@ class Server extends threadify(EventEmitter) {
 				}
 			}
 		)
-
 		try {
 			await this.notice(stationId, manifest)
 		}
 		catch (err) {
-			this.error = err
+			this.error(err)
 		}
 	}
 	/**
@@ -87,117 +81,119 @@ class Server extends threadify(EventEmitter) {
 	 */
 	setTime(timer) {
 		setTimeout(() => {
-			this.error = new Error('response timeout')
+			this.error = new Error('json response timeout')
 		}, timer)
 	}
 
-	isTimeOut() {
-		return Date.now() > this.timer ? true : false
+	finish(data) {
+		if (this.finished) return 
+		this.finished = true
+		data = data || 'transform json successfully!'
+		this.res.success(data)
 	}
 
-	clearTimeOut() {
-		this.timer = null
-	}
-
-	finish() {
-		this.resEnded = true
-	}
-
-	abort(err) {
-		this.error = err || new Error('client aborted')
+	error(err, code) {
+		if (this.finished) return 
+		this.finished = true
+		this.res.error(err, code)
 	}
 }
 
 
 /**
- * transform json
- * @class StoreFile
+ * @class TransformJson
  * @extends {threadify(EventEmitter)}
  */
-class transformJson extends threadify(EventEmitter) {
+class TransformJson extends threadify(EventEmitter) {
 
 	constructor() {
 		super()
-		this.limit = 1024 // limit 
+		this.limit = 1024
 		this.map = new Map()
 	}
-
+	/**
+	 * queue schedule
+	 * @memberof TransformJson 
+	 */
+	schedule() {} 
 	/**
 	 * find server
 	 * @param {any} jobId 
 	 * @param {any} res 
 	 * @returns 
-	 * @memberof StoreFile
+	 * @memberof TransformJson
 	 */
 	request(req, res) {
 		let jobId = req.params.jobId
-		let server = this.getServer(jobId)
-		if (!server) return res.error('queue no server')
+		let server = this.map.get(jobId)
+		if (!server) return res.error('transformJson queue no server')
+		
 		// timeout, notice both side to res.end
-		if (server.isTimeOut()) {
-			let e = new Error('station: GET request timeout')
-			server.abort(e)
-			return res.error(e)
-		}
+		// if (server.isTimeOut()) {
+		// 	let e = new Error('station: GET request timeout')
+		// 	server.abort(e)
+		// 	return res.error(e)
+		// }
+		
 		// response 
 		let responseError = req.body.error
 		if (responseError) {
-			server.res.error(responseError.message, responseError.code)
+			server.error(responseError.message, responseError.code)
 		}
 		else {
-			server.res.success(req.body)
+			server.finish(req.body)
 		}
 		res.end()
 		this.finish(jobId)
 
+		req.on('error', err => {
+			res.end()
+			this.error(jobId, err)
+		})
+		
 		req.on('close', () => {
-			this.abort(jobId)
+			res.end()
+			this.error(new Error('station aborted'))
 		})
 	}
-	/**
-	 * queue schedule
-	 * @memberof transformJson
-	 */
-	schedule() {
 
-	}
-	createServer() {
+	createServer(req, res) {
 		if (this.map.size > this.limit)
 			throw new Error('正在处理的任务过多,请稍后再试')
-		let server = new Server()
+		let server = new Server(req, res)
 		this.map.set(server.jobId, server)
 		return server
 	}
-
-	getServer(jobId) {
-		return this.map.get(jobId)
+	/**
+	 * handle finish
+	 * @param {any} jobId 
+	 * @memberof TransformJson
+	 */
+	finish(jobId) { 
+		this.close(jobId)
 	}
 	/**
-	 * remove server from transform queue
+	 * handle error
 	 * @param {any} jobId 
-	 * @memberof transformJson
+	 * @memberof TransformJson
 	 */
-	removeServer(jobId) {
-		let server = this.getServer(jobId)
-		if (!server) return
+	error(jobId, err) { 
+		this.close(jobId, err)
+	}
+	/**
+	 * close life cycle of the instance
+	 * @param {any} jobId 
+	 * @param {any} err
+	 * @memberof TransformJson
+	 */
+	close(jobId, err) {
+		let server = this.map.get(jobId)
+		if (!server) return 
+		// server response
+		err ? server.error(err) : server.finish()
+		// delete map
 		this.map.delete(jobId)
 	}
-
-	finish(jobId) {
-		let server = this.getServer(jobId)
-		if (!server) return
-		this.map.delete(jobId)
-		server.finish()
-	}
-
-	abort(jobId) {
-		let server = this.getServer(jobId)
-		if (!server) return
-		this.map.delete(jobId)
-		// server abort
-		server.abort(new Error('station aborted'))
-	}
-
 }
 
-module.exports = new transformJson()
+module.exports = new TransformJson()

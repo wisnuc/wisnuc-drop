@@ -92,7 +92,7 @@ router.post('/:id/pipe', joiValidator({
 	try {
 		let server = storeFile.createServer()
 		// TODO: consider http timeout, and limit timeout  
-		server.parse(req, res)
+		server.run(req, res)
 	}
 	catch (err) {
 		return res.error(err)
@@ -106,8 +106,9 @@ router.get('/:id/pipe', joiValidator({
 	}
 }), async (req, res) => {
 	try {
-		let server = fetchFile.createServer()
-		await server.run(req, res)
+		let server = fetchFile.createServer(req, res)
+		server.run()
+		// TODO: timeout
 	}
 	catch(err) {
 		return res.error(err)
@@ -122,13 +123,12 @@ router.get('/:id/json', joiValidator({
 }), async (req, res) => {
 	let server
 	try {
-		server = transformJson.createServer()
-		await server.run(req, res)
+		server = transformJson.createServer(req, res)
+		await server.run()
 	}
 	catch(err) {
 		// TODO: remove server from transform queue
-		console.log(1111, transformJson.map);
-		transformJson.removeServer(server.jobId)
+		// transformJson.removeServer(server.jobId)
 		return res.error(err)
 	}
 })
@@ -140,8 +140,8 @@ router.post('/:id/json', joiValidator({
 	}
 }), async (req, res) => {
 	try {
-		let server = transformJson.createServer()
-		await server.run(req, res)
+		let server = transformJson.createServer(req, res)
+		await server.run()
 	}
 	catch(err) {
 		return res.error(err)
