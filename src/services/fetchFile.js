@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/19 17:46:13 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/20 10:15:47 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ class Server extends threadify(EventEmiiter) {
 		this.req = req
 		this.res = res
 		this.finished = false
+		this.timer = Date.now() + 3000
 		this.jobId = uuid.v4()
 	}
 
@@ -94,6 +95,10 @@ class Server extends threadify(EventEmiiter) {
 		await socketIOHandler.pipe(stationId, manifest)
 	}
 	
+	isTimeOut() {
+		return Date.now() > this.timer ? true : false
+	}
+	
 	finish() { 
 		if (this.finished) return 
 		this.finished = true
@@ -119,21 +124,23 @@ class FetchFile extends threadify(EventEmiiter) {
 
 	constructor(limit) {
 		super()
+		this.limit = limit || 1024 
 		this.map = new Map()
-		this.limit = limit || 1024
 	}
 
+	// TODO: schedule
+	
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
 		if (!server) return res.error('fetchFile queue no server')
 
-		// TODO: timeout, notice both side to res.end
-		// if (server.isTimeOut()) {
-		// 	let e = new Error('station: POST request timeout')
-		// 	server.abort(e)
-		// 	return res.error(e)
-		// }
+		// timeout
+		if (server.isTimeOut()) {
+			let e = new Error('station response timeout')
+			server.abort(e)
+			return res.error(e)
+		}
 		
 		// pipe
 		req.pipe(server.res)
@@ -161,13 +168,6 @@ class FetchFile extends threadify(EventEmiiter) {
 		let server = new Server(req, res)
 		this.map.set(server.jobId, server)
 		return server
-	}
-	/**
-	 * TODO: timeout 
-	 * @memberof FetchFile
-	 */
-	timer() {
-		
 	}
 	/**
 	 * handle finish
@@ -202,4 +202,4 @@ class FetchFile extends threadify(EventEmiiter) {
 	}
 }
 
-module.exports = new FetchFile(40)
+module.exports = new FetchFile()

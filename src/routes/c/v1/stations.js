@@ -127,8 +127,6 @@ router.get('/:id/json', joiValidator({
 		await server.run()
 	}
 	catch(err) {
-		// TODO: remove server from transform queue
-		// transformJson.removeServer(server.jobId)
 		return res.error(err)
 	}
 })

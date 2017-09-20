@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/19 17:45:47 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/20 10:15:53 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ class Server extends threadify(EventEmitter) {
 		this.req = req
 		this.res = res
 		this.finished = false
+		this.timer = Date.now() + 3000
 		this.jobId = uuid.v4()
 	}
 
@@ -74,15 +75,9 @@ class Server extends threadify(EventEmitter) {
 	async notice(stationId, manifest) {
 		await socketIOHandler.pipe(stationId, manifest)
 	}
-	/**
-	 * set timeOut function
-	 * @param {any} timer 
-	 * @memberof Server
-	 */
-	setTime(timer) {
-		setTimeout(() => {
-			this.error = new Error('json response timeout')
-		}, timer)
+	
+	isTimeOut() {
+		return Date.now() > this.timer ? true : false
 	}
 
 	finish(data) {
@@ -106,9 +101,9 @@ class Server extends threadify(EventEmitter) {
  */
 class TransformJson extends threadify(EventEmitter) {
 
-	constructor() {
+	constructor(limit) {
 		super()
-		this.limit = 1024
+		this.limit = limit || 1024
 		this.map = new Map()
 	}
 	/**
@@ -128,12 +123,12 @@ class TransformJson extends threadify(EventEmitter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('transformJson queue no server')
 		
-		// timeout, notice both side to res.end
-		// if (server.isTimeOut()) {
-		// 	let e = new Error('station: GET request timeout')
-		// 	server.abort(e)
-		// 	return res.error(e)
-		// }
+		// timeout
+		if (server.isTimeOut()) {
+			let e = new Error('station response timeout')
+			server.abort(e)
+			return res.error(e)
+		}
 		
 		// response 
 		let responseError = req.body.error

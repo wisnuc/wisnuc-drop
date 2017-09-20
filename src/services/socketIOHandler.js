@@ -23,10 +23,10 @@ const {
 } = require('../models')
 // const serverInfo = require('../lib/serverInfo')
 // FIXME: get LANIP
-// const os = require('os')
-// const LANIP = os.networkInterfaces().enp2s0[0].address
-const LANIP = '10.10.9.59'
-
+const os = require('os')
+const LANIP = os.networkInterfaces().enp2s0[0].address
+// const LANIP = '10.10.9.59'
+console.log('lanip',LANIP)
 const config = require('getconfig')
 const socketIOMap = new Map()
 

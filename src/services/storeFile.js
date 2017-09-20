@@ -200,9 +200,9 @@ class Server extends threadify(EventEmitter) {
  */
 class StoreFile extends threadify(EventEmitter) {
 	
-	constructor() {
+	constructor(limit) {
 		super()
-		this.limit = 40 // limit 
+		this.limit = limit || 1024 
 		this.map = new Map()
 	}
 	
@@ -258,4 +258,4 @@ class StoreFile extends threadify(EventEmitter) {
 	
 }
 
-module.exports = new StoreFile(40)
+module.exports = new StoreFile()
