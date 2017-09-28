@@ -73,8 +73,10 @@ class SocketIOHandler extends EventEmitter {
 		let seed = socket.handshake.session.seed
 		let stationId = socket.handshake.session.stationId
 		if (data && data.seed == seed) {
-			// 存入 map, 返回 token
+
+			// 存入 map, return token
 			socketIOMap.set(stationId, socket)
+
 			// update station information, and return token
 			return WisnucDB.transaction(async t => {
 				let data = await Promise.props({
@@ -89,32 +91,23 @@ class SocketIOHandler extends EventEmitter {
 						raw: true
 					})
 				})
+
 				let { station, server } = data
 				if (!station) throw new Error('no station')
 				if (!server) throw new Error('no server info')
 				
-				
 				// create station and server relationship
-				let stationServer = await StationServer.find({
-					where: { stationId: stationId },
-					transaction: t
+				await StationServer.findOrCreate({
+					where: {
+						serverId: server.id,
+						stationId: stationId
+					}
+				}).spread(function (newObj, created) {
+					// created === true
+					if (created) return newObj
+					newObj.isOnline = 1 // update 
+					return newObj.save()
 				})
-				if (!stationServer) {
-					await StationServer.create({
-						isOnline: 1,
-						stationId: stationId,
-						serverId: server.id
-					}, {transaction: t})
-				}
-				else {
-					await StationServer.update({
-						isOnline: 1,
-						serverId: server.id
-					}, {
-						where: { stationId: stationId },
-						transaction: t
-					})
-				}
 				
 				let token = {
 					station: {
