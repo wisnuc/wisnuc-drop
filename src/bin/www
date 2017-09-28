@@ -1,0 +1,114 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ * TODO: use cluster
+ * sokcet.io in master process, not apply to load balance
+ * socket.io 仅存在主进程，使用公网～
+ * cloud 存在内网，使用 worker～
+ * cloud 与 socket 进程通信，走异步通信机制！
+ * 项目相当于 socket 与 cloud 两部分结合
+ */
+
+/* eslint-disable */
+var app = require('../app');
+var debug = require('debug')('wisnuc-drop:server');
+var http = require('http');
+var config = require('getconfig')
+var port = config.port
+
+app.set('port', config.port)
+var server = http.createServer(app)
+
+var Session = require('express-session')
+var FileStore = require('session-file-store')(Session)
+
+var session = Session({
+	store: new FileStore({ path: './sessions' }),
+	secret: 'wisnuc-drop',
+	resave: false,
+	saveUninitialized: true,
+	cookie: { secure: true }
+})
+
+// Use express-session middleware for express
+app.use(session)
+
+/**
+ * socket.io 
+ */
+var io = require('socket.io')(server)
+require('../lib/socketIO')(io)
+
+// https://stackoverflow.com/questions/23494016/socket-io-and-express-4-sessions
+// IO middleware
+io.use(function (socket, next) {
+	session(socket.handshake, {}, next)
+})
+
+// delete session
+// var sharedsession = require('express-socket.io-session');
+
+// Use shared session middleware for socket.io
+// setting autoSave:true
+// io.use(sharedsession(session, {
+//     autoSave: true
+// }));
+
+/**
+ * Listen on provided port, on all network interfaces.
+ */
+
+server.listen(port);
+server.on('error', onError);
+server.on('listening', onListening);
+
+/**
+ * Event listener for HTTP server 'error' event.
+ */
+
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string' ?
+        'Pipe ' + port :
+        'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+/**
+ * Event listener for HTTP server 'listening' event.
+ */
+
+function onListening() {
+    var addr = server.address();
+    var bind = typeof addr === 'string' ?
+        'pipe ' + addr :
+        'port ' + addr.port;
+
+    console.info('Listening on ' + bind);
+    debug('Listening on ' + bind);
+}
+
+
+// catch global error
+process.on('uncaughtException', function(err) {
+	// FIXME: handle 
+	console.error('Caught exception: ' + err);
+  console.error("Node NOT Exiting...");
+})
