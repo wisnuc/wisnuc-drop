@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/28 19:30:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/29 18:06:27 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ class Server extends threadify(EventEmitter) {
 		super()
 		this.req = req
 		this.res = res
-		this.finished = false
 		this.timer = Date.now() + 15 * 1000
 		this.jobId = uuid.v4()
 		// req error
@@ -87,15 +86,17 @@ class Server extends threadify(EventEmitter) {
 		return false
 	}
 
+	finished() {
+		return this.res.finished
+	}
+	
 	success(data) {
-		if (this.finished) return
-		this.finished = true
+		if (this.finished()) return
 		this.res.success(data)
 	}
 
 	error(err, code) {
-		if (this.finished) return
-		this.finished = true
+		if (this.finished()) return
 		this.res.error(err, code)
 	}
 }
@@ -122,7 +123,7 @@ class TransformJson extends threadify(EventEmitter) {
 	 */
 	schedule() {
 		this.map.forEach((v, k) => {
-			if(v.finished) this.map.delete(k)
+			if(v.finished()) this.map.delete(k)
 		})
 	}
 
@@ -131,7 +132,7 @@ class TransformJson extends threadify(EventEmitter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('transformJson queue no server')
 		// timeout
-		if (server.isTimeOut() || server.finished) {
+		if (server.isTimeOut() || server.finished()) {
 			let e = new Error('response time more than 15s')
 			res.error(e)
 		}
@@ -174,4 +175,4 @@ class TransformJson extends threadify(EventEmitter) {
 	}
 }
 
-module.exports = new TransformJson()
+module.exports = new TransformJson(10000)

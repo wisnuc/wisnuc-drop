@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/21 13:50:24 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/29 18:26:07 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
  URIError
  创建一个error实例，表示错误的原因：给 encodeURI()或  decodeURl()传递的参数无效。
  */
+const logger = global.Logger(__filename)
 const E = {}
 
 // generate function

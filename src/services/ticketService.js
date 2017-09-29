@@ -249,7 +249,7 @@ class TicketService {
 		
 			// invite, bind, share
 			switch (ticket.type) {
-				// TODO: need to create userStation
+				// need to create userStation
 				case 'invite':
 					// return Promise.props({
 					// 	updateTicket: Ticket.update({ status: 1 }, {

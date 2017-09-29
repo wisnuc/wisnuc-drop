@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/28 19:07:00 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/29 18:08:59 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ class Server extends threadify(EventEmiiter) {
 		super()
 		this.req = req
 		this.res = res
-		this.finished = false
 		this.timer = Date.now() + 15 * 1000
 		this.jobId = uuid.v4()
 		// req error
@@ -106,15 +105,17 @@ class Server extends threadify(EventEmiiter) {
 		return false
 	}
 
+	finished() {
+		return this.res.finished
+	}
+
 	success(data) {
-		if (this.finished) return
-		this.finished = true
+		if (this.finished()) return
 		this.res.success(data)
 	}
 
 	error(err, code) {
-		if (this.finished) return
-		this.finished = true
+		if (this.finished()) return
 		this.res.error(err, code)
 	}
 }
@@ -127,11 +128,11 @@ class FetchFile extends threadify(EventEmiiter) {
 
 	constructor(limit) {
 		super()
-		this.limit = limit || 1024 
+		this.limit = limit || 1024
 		this.map = new Map()
 		// global handle map
 		setInterval(() => {
-			if (this.map.size === 0)return 
+			if (this.map.size === 0) return
 			this.schedule() 
 		}, 30000)
 	}
@@ -139,7 +140,7 @@ class FetchFile extends threadify(EventEmiiter) {
 	// schedule
 	schedule() {
 		this.map.forEach((v, k) => {
-			if(v.finished) this.map.delete(k)
+			if(v.finished()) this.map.delete(k)
 		})
 	}
 
@@ -148,7 +149,7 @@ class FetchFile extends threadify(EventEmiiter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('fetchFile queue no server')
 		// timeout
-		if (server.isTimeOut() || server.finished) {
+		if (server.isTimeOut() || server.finished()) {
 			let e = new Error('response time more than 15s')
 			// end
 			this.close(jobId)
@@ -184,7 +185,7 @@ class FetchFile extends threadify(EventEmiiter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('fetchFile queue no server')
 		// finished
-		if (server.finished) return res.end()
+		if (server.finished()) return res.end()
 			
 		let { message, code } = req.body
 		server.error(message, code)
@@ -206,4 +207,4 @@ class FetchFile extends threadify(EventEmiiter) {
 	}
 }
 
-module.exports = new FetchFile()
+module.exports = new FetchFile(10000)

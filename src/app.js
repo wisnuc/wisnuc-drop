@@ -19,13 +19,13 @@ const bodyParser = require('body-parser')
 const log4js = require('log4js')
 
 const routes = require('./routes/index')
-const Logger = require('./utils/logger').Logger('app')
+const logger = global.Logger('app')
 
 const app = express()
 
 // app.set('trust proxy', 1) // trust first proxy
 
-app.use(log4js.connectLogger(Logger, {
+app.use(log4js.connectLogger(logger, {
 	level: 'INFO',
 	format: ':remote-addr  :method  :url  :status  :response-time' + 'ms'
 }))

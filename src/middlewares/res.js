@@ -6,14 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/12 15:54:33 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/29 18:31:18 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const { getconfig } = require('getconfig')
 
 const fundebug = require('../utils/fundebug')
-const Logger = require('../utils/logger').Logger('system error')
+const logger = global.Logger('res error')
 
 const DEFAULT_SUCCESS_STATUS = 200
 const DEFAULT_ERROR_STATUS = 403
@@ -43,12 +43,11 @@ module.exports = (req, res, next) => {
 			data: data
 		})
 	}
-
   /**
- * error response 
- * @param {any} data 
- * @param {number} status - default 403
- */
+  * error response 
+  * @param {any} data 
+  * @param {number} status - default 403
+  */
 	res.error = (err, status) => {
 		let message, data, stack
 		status = status || DEFAULT_ERROR_STATUS
@@ -65,27 +64,22 @@ module.exports = (req, res, next) => {
 			} else if (typeof err === 'object') {
 				message = err.message
 			} 
-				
 			// log
-			Logger.error({
+			logger.error({
 				method: req.method,
 				url: req.originalUrl,
 				message: message,
-				stack: stack || null
+				stack: stack
 			})
-				
+			// used in production environment
 			if (getconfig['env'] === 'production') {
-				// used in production environment
-				
 				// fundebug.notifyError(err)
-
 				return res.status(status).json({
 					code: status || 'no code',
 					message: message || 'no message',
 					data: data || null
 				})
 			} 
-			
 			return res.status(status).json({
 				code: status || 'no code',
 				message: message || 'no message',

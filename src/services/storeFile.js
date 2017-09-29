@@ -40,7 +40,6 @@ class Server extends threadify(EventEmitter) {
 		super()
 		this.req = req
 		this.res = res
-		this.finished = false
 		this.jobId = uuid.v4()
 		this.timer = Date.now()  + 15 * 1000
 		this.buffers = []
@@ -164,15 +163,17 @@ class Server extends threadify(EventEmitter) {
 		return false
 	}
 
+	finished() {
+		return this.res.finished
+	}
+
 	success(data) {
-		if (this.finished) return
-		this.finished = true
+		if (this.finished()) return
 		this.res.success(data)
 	}
 
 	error(err, code) {
-		if (this.finished) return
-		this.finished = true
+		if (this.finished()) return
 		this.res.error(err, code)
 	}
 }
@@ -199,7 +200,7 @@ class StoreFile extends threadify(EventEmitter) {
 	// schedule
 	schedule() {
 		this.map.forEach((v, k) => {
-			if(v.finished) this.map.delete(k)
+			if(v.finished()) this.map.delete(k)
 		})
 	}
 
@@ -208,7 +209,7 @@ class StoreFile extends threadify(EventEmitter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('storeFile queue no server')
 		// timeout
-		if (server.isTimeOut() || server.finished) {
+		if (server.isTimeOut() || server.finished()) {
 			let e = new Error('response time more than 15s')
 			// end
 			this.close(jobId)
@@ -244,7 +245,7 @@ class StoreFile extends threadify(EventEmitter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('storeFile queue no server')
 		// finished
-		if (server.finished) return res.end()
+		if (server.finished()) return res.end()
 
 		let { error, data } = req.body
 		// if error exist, server.error()
@@ -273,4 +274,4 @@ class StoreFile extends threadify(EventEmitter) {
 	}
 }
 
-module.exports = new StoreFile()
+module.exports = new StoreFile(10000)

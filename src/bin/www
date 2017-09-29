@@ -14,6 +14,8 @@
 var app = require('../app');
 var debug = require('debug')('wisnuc-drop:server');
 var http = require('http');
+
+var logger = global.Logger(__filename)
 var config = require('getconfig')
 var port = config.port
 
@@ -105,10 +107,7 @@ function onListening() {
     debug('Listening on ' + bind);
 }
 
-
 // catch global error
 process.on('uncaughtException', function(err) {
-	// FIXME: handle 
-	console.error('Caught exception: ' + err);
-  console.error("Node NOT Exiting...");
+    logger.error('uncaught exception: ', err)
 })
