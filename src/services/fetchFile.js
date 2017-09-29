@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/29 18:08:59 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/09/29 21:20:52 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class Server extends threadify(EventEmiiter) {
 		// req error
 		this.req.on('error', err => this.error(err))
 		// req abort 
-		this.req.on('close', () => this.error(new Error('client aborted')))
+		this.req.on('close', () => this.abort())
 	}
 
 	async run() {
@@ -118,6 +118,10 @@ class Server extends threadify(EventEmiiter) {
 		if (this.finished()) return
 		this.res.error(err, code)
 	}
+
+	abort() {
+		this.res.finished = true
+	}
 }
 
 /**
@@ -149,9 +153,14 @@ class FetchFile extends threadify(EventEmiiter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('fetchFile queue no server')
 		// timeout
-		if (server.isTimeOut() || server.finished()) {
+		if (server.isTimeOut()) {
 			let e = new Error('response time more than 15s')
 			// end
+			this.close(jobId)
+			return res.error(e)
+		}
+		if (server.finished()) {
+			let e = new Error('client response is finished')
 			this.close(jobId)
 			return res.error(e)
 		}

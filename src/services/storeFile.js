@@ -127,7 +127,7 @@ class Server extends threadify(EventEmitter) {
 			}
 		})
 
-		form.on('aborted', () => this.error(new Error('request aborted')))
+		form.on('aborted', () => this.abort())
 		form.on('error', () => this.error(new Error('form error')))
 		// last event 
 		form.on('end', () => this.formEnded = true)
@@ -176,6 +176,10 @@ class Server extends threadify(EventEmitter) {
 		if (this.finished()) return
 		this.res.error(err, code)
 	}
+
+	abort() {
+		this.res.finished = true
+	}
 }
 
 
@@ -209,9 +213,14 @@ class StoreFile extends threadify(EventEmitter) {
 		let server = this.map.get(jobId)
 		if (!server) return res.error('storeFile queue no server')
 		// timeout
-		if (server.isTimeOut() || server.finished()) {
+		if (server.isTimeOut()) {
 			let e = new Error('response time more than 15s')
 			// end
+			this.close(jobId)
+			return res.error(e)
+		}
+		if (server.finished()) {
+			let e = new Error('client response is finished')
 			this.close(jobId)
 			return res.error(e)
 		}
