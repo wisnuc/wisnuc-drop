@@ -11,12 +11,14 @@
 /* ************************************************************************** */
 
 const _ = require('lodash')
+const moment = require('moment')
 const {
 	Ticket,
 	TicketUser,
 	User,
-	Station,
 	UserStation,
+	Station,
+	StationUser,
 	WisnucDB
 } = require('../models')
 
@@ -43,6 +45,8 @@ class TicketService {
 					raw: true
 				})
 				if (!station) throw new Error('not found station')
+				// add expire date
+				ticket.expireDate = moment(Date.now()).add(1, 'd')
 				data = await Ticket.create(ticket)
 				return {
 					url: '/v1/tickets/' + data.id
@@ -75,43 +79,104 @@ class TicketService {
 	}
 	/**
 	 * 以 user 查询 ticket
+	 * if type = 'invite', 判断 ticket 是否过期
 	 * @param {string} ticketId 
 	 * @param {string} userId
 	 * @returns {object} ticket
 	 * @memberof TicketService
 	 */
 	async findByClient(ticketId, userId) {
-		let data = await Ticket.find({
-			where: {
-				id: ticketId,
-				status: 0
-			},
-			include: {
-				model: TicketUser,
-				as: 'users',
-				required: false,
+		return WisnucDB.transaction(async t => {
+			let ticket = await Ticket.find({
 				where: {
-					userId: userId,
-					status: 1
+					id: ticketId,
+					status: 0
 				},
-				attributes: ['userId','type']
-			}
+				transaction: t,
+				raw: true
+			})
+			
+			if (!ticket) throw new Error('no such ticket')
+
+			let { stationId, type, expireDate } = ticket
+
+			if (Date.now() > expireDate) 
+				throw new Error('ticket already expired')
+
+			if (type === 'invite') {
+				let stationUser = await StationUser.find({
+					where: {
+						userId: userId,
+						stationId: stationId
+					},
+					transaction: t,
+					raw: true
+				})
+				if (stationUser) throw new Error('您已成功注册！')
+			} 
+
+			let user = await TicketUser.find({
+				where: {
+					userId: userId
+				},
+				transaction: t,
+				attributes: ['userId','type'],
+				raw: true
+			})
+			ticket.user = user
+			
+			return ticket
+
+			// switch (type) {
+			// 	case 'bind':
+					
+			// 		break
+			// 	case 'invite':
+					
+			// 		break
+			// 	case 'share':
+					
+			// 		break
+			// 	default:
+			// 		break
+			// }
+			// let data = await Ticket.find({
+			// 	where: {
+			// 		id: ticketId,
+			// 		status: 0
+			// 	},
+			// 	include: {
+			// 		model: TicketUser,
+			// 		as: 'users',
+			// 		required: false,
+			// 		where: {
+			// 			userId: userId,
+			// 			status: 1
+			// 		},
+			// 		attributes: ['userId','type']
+			// 	}
+			// })
+			// if (!data) return null
+			// let ticket = data.dataValues
+			
+			// if (data.type == 'invite') {
+			// 	if (date.now() > data.expireDate) {
+			// 		throw new Error('ticket already expired')
+			// 	}
+			// } 
+			// if (ticket.users.length === 1) {
+			// 	let user = ticket.users[0]
+			// 	delete ticket.users
+			// 	ticket.userType = user.type
+			// 	ticket.userId = user.userId
+			// }
+			// else {
+			// 	delete ticket.users
+			// 	ticket.userType = null
+			// 	ticket.userId = null
+			// }
+			// return ticket
 		})
-		
-		if (!data) return null
-		let ticket = data.dataValues
-		if (ticket.users.length === 1) {
-			let user = ticket.users[0]
-			delete ticket.users
-			ticket.userType = user.type
-			ticket.userId = user.userId
-		}
-		else {
-			delete ticket.users
-			ticket.userType = null
-			ticket.userId = null
-		}
-		return ticket
 	}
 	
 	/**

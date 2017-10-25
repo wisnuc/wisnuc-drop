@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/29 18:26:07 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/25 18:14:15 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,19 @@ define('ENODENOTFOUND', 'user not in station')
 // define('ENODENOTFOUND', 'station already exist') 
 
 Object.freeze(E)
+
+
+let Code = {
+	200: 'ok',
+	400: 'invalid parameters',
+	401: 'Authentication failed',
+	403: 'forbidden', // 
+	404: 'not found', 
+	500: 'system error'
+}
+
+let ErrorCode = {
+	
+}
 
 module.exports = Object.freeze(E)

@@ -99,3 +99,9 @@ npm run cloud-station
 - [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
 - [qcloud databases backup](https://www.qcloud.com)
 
+## Error COde
+
+错误码 | 错误信息
+----- | ------
+errcode | errmsg
+111 | dfff

@@ -116,7 +116,7 @@ class TokenService {
 			let user
 			user = await User.find({
 				where: {
-					unionId: userInfo.unionid
+					unionId: userInfo.unionId
 				},
 				raw: true,
 				transaction: t
@@ -124,7 +124,7 @@ class TokenService {
 			if (!user) {
 				// user not exist, create new user
 				user = await User.create({
-					unionId: userInfo.unionid,
+					unionId: userInfo.unionId,
 					nickName: userInfo.nickName,
 					avatarUrl: userInfo.avatarUrl
 				}, {transaction: t})
@@ -136,7 +136,7 @@ class TokenService {
 					avatarUrl: userInfo.avatarUrl
 				}, {
 					where: {
-						unionId: userInfo.unionid
+						unionId: userInfo.unionId
 					},transaction: t
 				})
 			}
