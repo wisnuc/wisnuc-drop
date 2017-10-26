@@ -1,2 +1,2 @@
-ALTER TABLE `tickets` ADD COLUMN `expireDate` DATETIME NULL AFTER `data`;
+ALTER TABLE `tickets` ADD COLUMN `expiredDate` DATETIME NULL AFTER `data`;
 

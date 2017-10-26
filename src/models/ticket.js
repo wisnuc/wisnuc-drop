@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/25 15:32:23 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/26 15:24:10 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.UUID,
 			required: true
 		},
-		expireDate: {
+		expiredDate: {
 			type: DataTypes.DATE
 		},
 		data: DataTypes.TEXT,

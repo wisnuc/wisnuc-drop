@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/15 10:31:04 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/26 18:02:17 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ router.post('/', joiValidator({
 	}
 })
 
-// get one ticket
+// get ticket
 router.get('/:id', joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
@@ -86,7 +86,7 @@ router.get('/', joiValidator({
 	query: {
 		creator: Joi.string().guid({version: ['uuidv4']}),
 		stationId: Joi.string().guid({version: ['uuidv4']}),
-		status: Joi.number().valid([0,1])
+		// status: Joi.number().valid([0,1])
 	}
 }), async (req, res) => {
 	try {
@@ -99,6 +99,11 @@ router.get('/', joiValidator({
 		if (stationId) {
 			params.creator = creator
 		}
+		
+		// let params = { 
+		// 	creator: req.query.creator,
+		// 	stationId: req.query.stationId
+		// }
 		let data = await ticketService.findAll(params)
 		return res.success(data)
 	} 
@@ -125,7 +130,7 @@ router.get('/:id/users/:userId', joiValidator({
 	}
 })
 
-// update user
+// update user - station admin confirm
 router.patch('/:id/users/:userId', joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required(),

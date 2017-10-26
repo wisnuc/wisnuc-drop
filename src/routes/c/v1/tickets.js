@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/25 17:03:42 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/26 17:46:48 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ const jwt = require('../../../middlewares/jwt')
 const ticketService = require('../../../services/ticketService')
 
 
-// get one ticket
+// get ticket
 router.get('/:id', joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
@@ -30,6 +30,30 @@ router.get('/:id', joiValidator({
 		let id = req.params.id
 		let user = req.auth.user
 		let data = await ticketService.findByClient(id, user.id)
+		return res.success(data)
+	} 
+	catch(err) {
+		return res.error(err)
+	}
+})
+
+// invite user for mini program
+router.post('/:id/invite', joiValidator({
+	params: {
+		id: Joi.string().guid({version: ['uuidv4']}).required()
+	},
+	body: {
+		password: Joi.string().required()
+	}
+}), async (req, res) => {
+	try {
+		let user = req.auth.user
+		let args = {
+			ticketId: req.params.id,
+			userId: user.id,
+			password: req.body.password
+		}
+		let data = await ticketService.inviteUser(args)
 		return res.success(data)
 	} 
 	catch(err) {
@@ -68,16 +92,16 @@ router.post('/:id/users', joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
 	},
-	body: {
-		password: Joi.string() // optional
-	}
+	// body: {
+	// 	password: Joi.string() // optional
+	// }
 }), async (req, res) => {
 	try {
 		let user = req.auth.user
 		let args = {
-			id: req.params.id,
+			ticketId: req.params.id,
 			userId: user.id,
-			password: req.body.password || undefined
+			// password: req.body.password || undefined
 		}
 		let data = await ticketService.createUser(args)
 		return res.success(data)
@@ -121,24 +145,5 @@ router.get('/:id/users', joiValidator({
 	}
 })
 
-// update users
-// router.patch('/:id/users', joiValidator({
-// 	params: {
-// 		ids: Joi.array().items({version: ['uuidv4']}).required()
-// 	},
-// 	body: {
-// 		type: Joi.string().valid(['rejected', 'resolved']).required()
-// 	}
-// }), async (req, res) => {
-// 	try {
-// 		let ticketIds = req.params.ids
-// 		let type = req.body.type
-// 		let data = await ticketService.updateUserStatus(ticketIds, type)
-// 		return res.success(data)
-// 	} 
-// 	catch(err) {
-// 		return res.error(err)
-// 	}
-// })
 
 module.exports = router

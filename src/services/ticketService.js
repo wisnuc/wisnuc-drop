@@ -46,7 +46,7 @@ class TicketService {
 				})
 				if (!station) throw new Error('not found station')
 				// add expire date
-				ticket.expireDate = moment(Date.now()).add(1, 'd')
+				ticket.expiredDate = moment(Date.now()).add(1, 'd')
 				data = await Ticket.create(ticket)
 				return {
 					url: '/v1/tickets/' + data.id
@@ -79,106 +79,135 @@ class TicketService {
 	}
 	/**
 	 * 以 user 查询 ticket
-	 * if type = 'invite', 判断 ticket 是否过期
 	 * @param {string} ticketId 
 	 * @param {string} userId
 	 * @returns {object} ticket
 	 * @memberof TicketService
 	 */
 	async findByClient(ticketId, userId) {
+		
+		let ticket = await Ticket.find({
+			where: {
+				id: ticketId
+			},
+			raw: true
+		})
+		
+		if (!ticket) 
+			throw new Error('no such ticket')
+
+		let { type, expiredDate } = ticket
+		if (type == 'invite' && Date.now() > expiredDate) 
+			throw new Error('ticket already expired')
+
+		let user = await TicketUser.find({
+			where: {
+				ticketId: ticketId,
+				userId: userId
+			},
+			attributes: ['userId','type'],
+			raw: true
+		})
+
+		ticket.user = user
+		return ticket
+		
+	}
+	/**
+	 * invite user
+	 * 1. 判断 expiredDate 是否过期
+	 * 2. 判断 user 是否已注册
+	 * 3. 判断 user 是否存在其他有效的 ticket 中
+	 * @param {object} args 
+	 * @returns 
+	 * @memberof TicketService
+	 */
+	inviteUser(args) {
+
+		let { ticketId, userId, password } = args
+
 		return WisnucDB.transaction(async t => {
+			
 			let ticket = await Ticket.find({
 				where: {
 					id: ticketId,
-					status: 0
+					type: 'invite'
 				},
 				transaction: t,
 				raw: true
 			})
-			
+
 			if (!ticket) throw new Error('no such ticket')
 
-			let { stationId, type, expireDate } = ticket
+			let { stationId, type, expiredDate } = ticket
 
-			if (Date.now() > expireDate) 
+			if (Date.now() > expiredDate)
 				throw new Error('ticket already expired')
 
-			if (type === 'invite') {
-				let stationUser = await StationUser.find({
-					where: {
-						userId: userId,
-						stationId: stationId
-					},
-					transaction: t,
-					raw: true
-				})
-				if (stationUser) throw new Error('您已成功注册！')
-			} 
-
-			let user = await TicketUser.find({
+			let stationUser = await StationUser.find({
 				where: {
-					userId: userId
+					userId: userId,
+					stationId: stationId
 				},
 				transaction: t,
-				attributes: ['userId','type'],
 				raw: true
 			})
-			ticket.user = user
+			if (stationUser) throw new Error('您已成功注册！')
 			
-			return ticket
+			// 排除有效内，状态为 pending, resolved
+			let validTicket = await Ticket.find({
+				where: {
+					stationId: stationId,
+					type: 'invite',
+					expiredDate: { $gt: Date.now() }, 
+				},
+				include: {
+					model: TicketUser,
+					where: {
+						userId: userId,
+						type: ['pending', 'resolved'] // pending, resolved
+					},
+					attributes: ['userId']
+				},
+				attributes: ['id'],
+				transaction: t,
+				raw: true
+			})
 
-			// switch (type) {
-			// 	case 'bind':
-					
-			// 		break
-			// 	case 'invite':
-					
-			// 		break
-			// 	case 'share':
-					
-			// 		break
-			// 	default:
-			// 		break
-			// }
-			// let data = await Ticket.find({
+			if (validTicket) throw new Error('您已提交过申请，请等待管理员审核结果！')
+			
+			let user = await TicketUser.findOrCreate({
+				where: {
+					ticketId: ticketId,
+					userId: userId
+				},
+				defaults: args,
+				transaction: t,
+				attributes: ['userId', 'type'],
+				raw: true
+			}).spread(newObj => newObj)
+
+			// let user = await TicketUser.find({
 			// 	where: {
-			// 		id: ticketId,
-			// 		status: 0
+			// 		userId: userId
 			// 	},
 			// 	include: {
-			// 		model: TicketUser,
-			// 		as: 'users',
+			// 		model: Ticket,
 			// 		required: false,
 			// 		where: {
-			// 			userId: userId,
-			// 			status: 1
-			// 		},
-			// 		attributes: ['userId','type']
-			// 	}
+			// 			id: ticketId,
+			// 			type: 'invite'
+			// 		}
+			// 	},
+			// 	transaction: t,
+			// 	attributes: ['userId', 'type'],
+			// 	raw: true
 			// })
-			// if (!data) return null
-			// let ticket = data.dataValues
+			ticket.user = user
+			return ticket
 			
-			// if (data.type == 'invite') {
-			// 	if (date.now() > data.expireDate) {
-			// 		throw new Error('ticket already expired')
-			// 	}
-			// } 
-			// if (ticket.users.length === 1) {
-			// 	let user = ticket.users[0]
-			// 	delete ticket.users
-			// 	ticket.userType = user.type
-			// 	ticket.userId = user.userId
-			// }
-			// else {
-			// 	delete ticket.users
-			// 	ticket.userType = null
-			// 	ticket.userId = null
-			// }
-			// return ticket
 		})
 	}
-	
 	/**
 	 * 以 user 查询 ticket
 	 * @param {string} ticketId 
@@ -195,7 +224,7 @@ class TicketService {
 				},
 				raw: true
 			}),
-			users: User.findAll({                                                                                                                                              
+			users: User.findAll({
 				include: {
 					model: TicketUser,
 					where: {
@@ -206,11 +235,11 @@ class TicketService {
 				attributes: ['id', 'nickName', 'avatarUrl', 'unionId']
 			})
 		})
-		
+
 		if (props.ticket) {
 			props.ticket.users = props.users
 		}
-		
+
 		return props.ticket
 	}
 	/**
@@ -224,7 +253,7 @@ class TicketService {
 			include: {
 				model: TicketUser,
 				as: 'users',
-				attributes: ['userId','type'],
+				attributes: ['userId', 'type'],
 				include: {
 					model: User,
 					attributes: ['nickName', 'avatarUrl', 'unionId']
@@ -232,7 +261,7 @@ class TicketService {
 			}
 		})
 		_.forEach(tickets, t => {
-			let users = t.dataValues.users 
+			let users = t.dataValues.users
 			_.forEach(users, u => {
 				let user = u.User.dataValues
 				u.dataValues.nickName = user.nickName
@@ -255,7 +284,7 @@ class TicketService {
 				ticketId: id,
 				userId: userId
 			},
-			attributes: ['userId','type']
+			attributes: ['userId', 'type']
 		})
 
 		return ticket
@@ -263,29 +292,33 @@ class TicketService {
 	/**
 	 * create user
 	 * @param {object} args 
-	 * @returns {boolean} true
 	 * @memberof TicketService
 	 */
 	createUser(args) {
 
-		let { id, userId, password } = args
-		
+		let { ticketId, userId } = args
+
 		return WisnucDB.transaction(async t => {
-			let ticket = await TicketUser.find({
+			
+			let ticket = await Ticket.find({
 				where: {
-					ticketId: id,
+					id: ticketId,
+					status: 0
+				},
+				attributes: ['id', 'type', 'expiredDate'],
+				transaction: t,
+				raw: true
+			})
+			
+			if (!ticket) throw new Error('no such ticket')
+
+			return TicketUser.findOrCreate({
+				where: {
+					ticketId: ticketId,
 					userId: userId
 				},
 				transaction: t
-			})
-
-			if (ticket) throw new Error('ticket user already exist')
-
-			return TicketUser.create({
-				ticketId: id,
-				userId: userId,
-				password: password // local user 
-			}, { transaction: t })
+			}).spread(newObj => newObj)
 		})
 	}
 	/**
@@ -297,7 +330,7 @@ class TicketService {
 	 * @memberof TicketService
 	 */
 	async update(args) {
-		
+
 		let { id, stationId, status } = args
 
 		return WisnucDB.transaction(async t => {
@@ -311,7 +344,7 @@ class TicketService {
 			})
 
 			if (!ticket) throw new Error('no ticket')
-		
+
 			// invite, bind, share
 			switch (ticket.type) {
 				// need to create userStation
@@ -331,18 +364,18 @@ class TicketService {
 					// 		transaction: t
 					// 	})
 					// })
-					return Ticket.update({status: status}, {
+					return Ticket.update({ status: status }, {
 						where: {
 							id: id,
 							stationId: stationId
 						},
 						transaction: t
 					})
-				case 'bind': 
+				case 'bind':
 					// move to updateUser
 					return
-				case 'share': 
-					return 
+				case 'share':
+					return
 			}
 		})
 	}
@@ -361,7 +394,7 @@ class TicketService {
 				attributes: []
 			}
 		})
-	}	
+	}
 	/**
 	 * update user or users
 	 * @param {string} ticketId 
@@ -371,52 +404,80 @@ class TicketService {
 	 * @memberof TicketService
 	 */
 	updateUser(ticketId, type, userId) {
+
 		return WisnucDB.transaction(async t => {
 			let ticket = await Ticket.find({
 				where: {
 					id: ticketId
 				},
+				attributes: ['id', 'stationId', 'type', 'expiredDate'],
 				transaction: t,
 				raw: true
 			})
-			// bind 并且 user type 为 resolved
-			if (ticket.type === 'bind' && type === 'resolved') {
-				return Promise.props({
-					updateUserType: TicketUser.update({
+
+			let ticketType = ticket.type 
+			
+			switch (ticketType) {
+
+				case 'bind':
+					// bind 并且 user type 为 resolved
+					if (type === 'resolved') {
+						return Promise.props({
+							updateUserType: TicketUser.update({
+								type: type
+							}, {
+									where: {
+										ticketId: ticketId,
+										userId: userId
+									},
+									transaction: t
+								}),
+							updateTicketType: Ticket.update({ status: 1 }, {
+								where: {
+									id: ticketId
+								},
+								transaction: t
+							}),
+							// find or create
+							createUserStation: UserStation.findOrCreate({
+								where: {
+									userId: userId,
+									stationId: ticket.stationId
+								},
+								transaction: t
+							})
+						})
+					}
+					else {
+						// update user type
+						return TicketUser.update({
+							type: type
+						}, {
+								where: {
+									ticketId: ticketId,
+									userId: userId
+								},
+								transaction: t
+							})
+					}
+
+				case 'invite':
+					if (Date.now() > ticket.expiredDate) throw new Error('ticket 已失效！')
+					
+					return TicketUser.update({
 						type: type
 					}, {
-						where: { 
-							ticketId: ticketId, 
+						where: {
+							ticketId: ticketId,
 							userId: userId
 						},
 						transaction: t
-					}),
-					updateTicketType: Ticket.update({ status: 1 }, {
-						where: {
-							id: ticketId
-						},
-						transaction: t
-					}),
-					// find or create
-					createUserStation: UserStation.findOrCreate({
-						where: {
-							userId: userId,
-							stationId: ticket.stationId
-						},
-						transaction: t
 					})
-				})
+
+				default:
+					return 'TODO'
 			}
-			else {
-				return TicketUser.update({
-					type: type
-				}, {
-					where: { 
-						ticketId: ticketId, 
-						userId: userId
-					}
-				}) 
-			}
+
 		})
 	}
 }
