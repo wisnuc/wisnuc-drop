@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/26 18:02:17 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/27 10:15:58 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ const joiValidator = require('../../../middlewares/joiValidator')
 const ticketService = require('../../../services/ticketService')
 
 
-// create new ticket
+// create ticket
 router.post('/', joiValidator({
 	body: {
 		type: Joi.string().valid(['invite', 'bind', 'share']).required(),
@@ -81,7 +81,7 @@ router.patch('/:id', joiValidator({
 	}
 })
 
-// get all tickets
+// get tickets
 router.get('/', joiValidator({
 	query: {
 		creator: Joi.string().guid({version: ['uuidv4']}),
@@ -168,7 +168,6 @@ router.get('/:id/users', joiValidator({
 	}
 })
 
-			
 // update users
 router.patch('/:id/users', joiValidator({
 	params: {

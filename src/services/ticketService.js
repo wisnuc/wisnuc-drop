@@ -243,6 +243,7 @@ class TicketService {
 		return props.ticket
 	}
 	/**
+	 * TODO: invite 
 	 * find all tickets by params
 	 * @param {object} params
 	 * @returns {object} tickets

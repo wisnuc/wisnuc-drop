@@ -99,7 +99,17 @@ npm run cloud-station
 - [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
 - [qcloud databases backup](https://www.qcloud.com)
 
-## Error COde
+## Error Code
+
+response 
+```json
+{
+    "code": 403,
+    "message": "您已提交过申请，请等待管理员审核结果！",
+    "data": null,
+    "stack": "Error: 您已提交过申请，请等待管理员审核结果！\n    at WisnucDB.transaction (/home/mosaic/mosaic/wisnuc-drop/src/services/ticketService.js:177:27)\n    at <anonymous>"
+}
+```
 
 错误码 | 错误信息
 ----- | ------
