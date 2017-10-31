@@ -6,11 +6,11 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 10:29:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/25 13:49:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/31 18:06:36 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
+// don`t follow the rule of restful
 const express = require('express')
 const router = express.Router()
 
@@ -20,15 +20,12 @@ const accountService = require('../../../services/accountService')
 
 const uuid = require('uuid')
 let map = new Map()
-// don`t follow the rule of restful
 
-router.get('/', joiValidator({
 
-}), async (req, res) => {
+// TODO: test
+router.post('/', async (req, res) => {
 	try {
-		map.set(uuid.v4(), 2222)
-		console.log(map);
-		return res.success(map)
+		return res.success()
 	}
 	catch(err) {
 		return res.error(err)

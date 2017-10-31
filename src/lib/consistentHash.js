@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/20 11:04:55 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/25 10:23:12 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/31 16:54:29 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,21 @@ module.exports = class ConsistentHash {
     
     return this.ring[this.keys[pos]]
   }
-
+  
+  // 二分法
   getNodePosition(hash) {
-    let upper = this.getRingLength() - 1
-    let lower = 0
-    let idx = 0
+    let upper = this.getRingLength() - 1 // 最大值位置
+    let lower = 0 // 最低值位置
+    let idx = 0  // 中间值位置
     let comp = 0
     // 如果只有一个node， return 0
     if (upper == 0) return 0
     
     while (lower <= upper) {
+      // 取中间值
       idx = Math.floor((lower + upper) / 2) // 取整
       comp = this.compare(this.keys[idx], hash)
-
+            
       if (comp == 0) {
         return idx
       }
@@ -98,6 +100,7 @@ module.exports = class ConsistentHash {
     if (upper < 0) {
       upper = this.getRingLength() - 1
     }
+
     return upper    
   }
 

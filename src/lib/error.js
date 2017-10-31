@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/25 18:14:15 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/10/31 11:54:39 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,19 @@ let Code = {
 	500: 'system error'
 }
 
-let ErrorCode = {
+let Errorcode = {
 	
 }
+
+class ErrorCode extends Error {
+	constructor() {
+		
+	}
+
+	
+}
+
+
+
 
 module.exports = Object.freeze(E)
