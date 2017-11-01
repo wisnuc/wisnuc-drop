@@ -63,10 +63,7 @@ module.exports = {
 			if (!decoded)
 				return res.error('decode failed', 401)
 			
-			// expire
-			if (!decoded.exp || decoded.exp <= Date.now())
-				return res.error('token overdue, login again please！', 401)
-			
+			// no expire
 			if (!decoded.station) 
 				return res.error('authentication failed', 401)
 			let station = await Station.find({

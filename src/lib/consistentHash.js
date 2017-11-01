@@ -6,12 +6,12 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/20 11:04:55 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/31 16:54:29 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/01 17:14:22 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /**
- * 
+ * apply to add node
  */
 const crypto = require('crypto')
 
@@ -72,6 +72,23 @@ module.exports = class ConsistentHash {
     return this.ring[this.keys[pos]]
   }
   
+  getNodeArr(key) {
+    if (this.getRingLength() == 0) return 0
+    
+    let hash = this.crypto(key)
+    let pos = this.getNodePosition(hash)
+    let arr = [] 
+    // the last key
+    if (pos === (this.getRingLength() - 1)) {
+      arr.push(this.ring[this.keys[pos]], this.ring[this.keys[0]])
+    }
+    else {
+      arr.push(this.ring[this.keys[pos]], this.ring[this.keys[pos+1]])
+    }
+    return arr 
+  }
+  
+  
   // 二分法
   getNodePosition(hash) {
     let upper = this.getRingLength() - 1 // 最大值位置
@@ -82,8 +99,7 @@ module.exports = class ConsistentHash {
     if (upper == 0) return 0
     
     while (lower <= upper) {
-      // 取中间值
-      idx = Math.floor((lower + upper) / 2) // 取整
+      idx = Math.floor((lower + upper) / 2) // 取中间值
       comp = this.compare(this.keys[idx], hash)
             
       if (comp == 0) {
