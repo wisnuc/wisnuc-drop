@@ -44,7 +44,7 @@ class TicketService {
 					},
 					raw: true
 				})
-				if (!station) throw new Error('not found station')
+				if (!station) throw new E.StationNotExist()
 				// add expire date
 				ticket.expiredDate = moment(Date.now()).add(1, 'd')
 				data = await Ticket.create(ticket)
@@ -58,7 +58,7 @@ class TicketService {
 					},
 					raw: true
 				})
-				if (!station) throw new Error('not found station')
+				if (!station) throw new E.StationNotExist()
 				data = await Ticket.create(ticket)
 				return {
 					id: data.id
@@ -70,7 +70,7 @@ class TicketService {
 					},
 					raw: true
 				})
-				if (!station) throw new Error('not found station')
+				if (!station) throw new E.StationNotExist()
 				data = await Ticket.create(ticket)
 				return {
 					id: data.id
@@ -90,15 +90,25 @@ class TicketService {
 			where: {
 				id: ticketId
 			},
-			raw: true
+			include: [
+				{
+					model: User,
+					as: 'user',
+					attributes: ['id', 'nickName', 'avatarUrl']
+				},
+				{
+					model: Station,
+					as: 'station',
+					attributes: ['id', 'name']
+				}
+			]
 		})
 		
-		if (!ticket) 
-			throw new Error('no such ticket')
+		if (!ticket) throw new E.TicketNotExist()
 
 		let { type, expiredDate } = ticket
 		if (type == 'invite' && Date.now() > expiredDate) 
-			throw new Error('ticket already expired')
+			throw new E.TicketAlreadyExpired()
 
 		let user = await TicketUser.find({
 			where: {
@@ -137,12 +147,12 @@ class TicketService {
 				raw: true
 			})
 
-			if (!ticket) throw new Error('no such ticket')
+			if (!ticket) throw new E.TicketNotExist()
 
 			let { stationId, type, expiredDate } = ticket
 
 			if (Date.now() > expiredDate)
-				throw new Error('ticket already expired')
+				throw new E.TicketAlreadyExpired()
 
 			let stationUser = await StationUser.find({
 				where: {
@@ -152,7 +162,7 @@ class TicketService {
 				transaction: t,
 				raw: true
 			})
-			if (stationUser) throw new Error('您已成功注册！')
+			if (stationUser) throw new E.TicketUserNotExist()
 			
 			// 排除有效内，状态为 pending, resolved
 			let validTicket = await Ticket.find({
@@ -174,7 +184,7 @@ class TicketService {
 				raw: true
 			})
 
-			if (validTicket) throw new Error('您已提交过申请，请等待管理员审核结果！')
+			if (validTicket) throw new E.TicketAlreadyHaveUser()
 			
 			let user = await TicketUser.findOrCreate({
 				where: {
@@ -187,22 +197,6 @@ class TicketService {
 				raw: true
 			}).spread(newObj => newObj)
 
-			// let user = await TicketUser.find({
-			// 	where: {
-			// 		userId: userId
-			// 	},
-			// 	include: {
-			// 		model: Ticket,
-			// 		required: false,
-			// 		where: {
-			// 			id: ticketId,
-			// 			type: 'invite'
-			// 		}
-			// 	},
-			// 	transaction: t,
-			// 	attributes: ['userId', 'type'],
-			// 	raw: true
-			// })
 			ticket.user = user
 			return ticket
 			
@@ -311,7 +305,7 @@ class TicketService {
 				raw: true
 			})
 			
-			if (!ticket) throw new Error('no such ticket')
+			if (!ticket) throw new E.TicketNotExist()
 
 			return TicketUser.findOrCreate({
 				where: {
@@ -344,7 +338,7 @@ class TicketService {
 				transaction: t
 			})
 
-			if (!ticket) throw new Error('no ticket')
+			if (!ticket) throw new E.TicketNotExist()
 
 			// invite, bind, share
 			switch (ticket.type) {
@@ -454,16 +448,17 @@ class TicketService {
 						return TicketUser.update({
 							type: type
 						}, {
-								where: {
-									ticketId: ticketId,
-									userId: userId
-								},
-								transaction: t
-							})
+							where: {
+								ticketId: ticketId,
+								userId: userId
+							},
+							transaction: t
+						})
 					}
 
 				case 'invite':
-					if (Date.now() > ticket.expiredDate) throw new Error('ticket 已失效！')
+					if (Date.now() > ticket.expiredDate) 
+						throw new E.TicketAlreadyExpired()
 					
 					return TicketUser.update({
 						type: type

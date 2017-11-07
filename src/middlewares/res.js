@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/29 18:31:18 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/07 17:52:12 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,9 @@ module.exports = (req, res, next) => {
 		data = data || null
 		status = status || DEFAULT_SUCCESS_STATUS
 		return res.status(status).json({
-			code: status,
-			message: httpCode[status],
+			url: req.originalUrl,
+			code: 1,
+			message: 'ok',
 			data: data
 		})
 	}
@@ -49,18 +50,20 @@ module.exports = (req, res, next) => {
   * @param {number} status - default 403
   */
 	res.error = (err, status) => {
-		let message, data, stack
+		let code, message, data, stack
 		status = status || DEFAULT_ERROR_STATUS
 		if (err) {
 			if (err instanceof Error) {
+				code    = err.code
 				message = err.message
-				stack = err.stack
+				stack   = err.stack
 			} else if (typeof err === 'string') {
 				message = err
 			// 400
 			} else if (err instanceof Array) {
+				code    = 400
 				message = httpCode[status]
-				data = err
+				data    = err
 			} else if (typeof err === 'object') {
 				message = err.message
 			} 
@@ -75,13 +78,15 @@ module.exports = (req, res, next) => {
 			if (getconfig['env'] === 'production') {
 				// fundebug.notifyError(err)
 				return res.status(status).json({
-					code: status || 'no code',
+					url: req.originalUrl,
+					code: code || 403,
 					message: message || 'no message',
 					data: data || null
 				})
 			} 
 			return res.status(status).json({
-				code: status || 'no code',
+				url: req.originalUrl,
+				code: code || 403,
 				message: message || 'no message',
 				data: data || null,
 				stack: stack

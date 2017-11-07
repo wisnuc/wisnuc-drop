@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/26 15:24:10 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/07 18:32:41 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,18 +40,18 @@ module.exports = function (sequelize, DataTypes) {
 			type: DataTypes.INTEGER,
 			defaultValue: 0 // default 0
 		},
-		createdAt: {
-			type: DataTypes.DATE,
-			get: function() {
-				return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
-			}
-		},
-		updatedAt: {
-			type: DataTypes.DATE,
-			get: function() {
-				return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss')
-			}
-		}
+		// createdAt: {
+		// 	type: DataTypes.DATE,
+		// 	get: function() {
+		// 		return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
+		// 	}
+		// },
+		// updatedAt: {
+		// 	type: DataTypes.DATE,
+		// 	get: function() {
+		// 		return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss')
+		// 	}
+		// }
 	}, {
 		freezeTableName: true,
 		tableName: 'tickets',
@@ -64,8 +64,10 @@ module.exports = function (sequelize, DataTypes) {
 		],
 		classMethods: {
 			associate: function (models) {
+				Ticket.belongsTo(models.User, {foreignKey: 'creator',as: 'user'})
+				Ticket.belongsTo(models.Station, {foreignKey: 'stationId', as: 'station'})
 				Ticket.hasMany(models.TicketUser, {foreignKey: 'ticketId'})
-				Ticket.hasMany(models.TicketUser, {foreignKey: 'ticketId',as: 'users'})
+				Ticket.hasMany(models.TicketUser, {foreignKey: 'ticketId', as: 'users'})
 			}
 		},
 		defaultScope: {

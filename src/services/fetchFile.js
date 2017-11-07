@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/29 21:20:52 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/07 19:46:47 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,7 @@ class Server extends threadify(EventEmiiter) {
 	
 	isTimeOut() {
 		if (Date.now() > this.timer) {
-			let e = new Error('response time more than 15s')
+			let e = new E.PipeResponseTimeout()
 			this.error(e)
 			return true
 		}
@@ -151,16 +151,16 @@ class FetchFile extends threadify(EventEmiiter) {
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('fetchFile queue no server')
+		if (!server) return res.error(new E.FetchFileQueueNoServer())
 		// timeout
 		if (server.isTimeOut()) {
-			let e = new Error('response time more than 15s')
+			let e = new E.PipeResponseTimeout()
 			// end
 			this.close(jobId)
 			return res.error(e)
 		}
 		if (server.finished()) {
-			let e = new Error('client response is finished')
+			let e = new E.PipeResponseHaveFinished()
 			this.close(jobId)
 			return res.error(e)
 		}
@@ -178,7 +178,7 @@ class FetchFile extends threadify(EventEmiiter) {
 		this.schedule()
 		console.warn('fetch size: ', this.map.size);
 		if (this.map.size > this.limit)
-			throw new Error('too many tasks being processed, please try again later!')
+			throw new E.PipeTooMuchTask()
 		let server = new Server(req, res)
 		this.map.set(server.jobId, server)
 		return server
@@ -192,7 +192,7 @@ class FetchFile extends threadify(EventEmiiter) {
 	response(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('fetchFile queue no server')
+		if (!server) return res.error(new E.FetchFileQueueNoServer())
 		// finished
 		if (server.finished()) return res.end()
 			

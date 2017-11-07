@@ -36,18 +36,18 @@ module.exports = function (sequelize, DataTypes) {
 			defaultValue: 1
 		},
 	
-		createdAt: {
-			type: DataTypes.DATE,
-			get: function() {
-				return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
-			}
-		},
-		updatedAt: {
-			type: DataTypes.DATE,
-			get: function() {
-				return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss')
-			}
-		}
+		// createdAt: {
+		// 	type: DataTypes.DATE,
+		// 	get: function() {
+		// 		return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
+		// 	}
+		// },
+		// updatedAt: {
+		// 	type: DataTypes.DATE,
+		// 	get: function() {
+		// 		return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss')
+		// 	}
+		// }
 	}, {
 		freezeTableName: true,
 		tableName: 'stations',

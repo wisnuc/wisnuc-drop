@@ -119,7 +119,7 @@ class Server extends threadify(EventEmitter) {
 					await this.notice(stationId, manifest)
 				} 
 				else {
-					this.error(new Error('no manifest field'))
+					this.error(new E.NoManiFestField())
 				}
 			}
 			catch (err) {
@@ -128,7 +128,7 @@ class Server extends threadify(EventEmitter) {
 		})
 
 		form.on('aborted', () => this.abort())
-		form.on('error', () => this.error(new Error('form error')))
+		form.on('error', () => this.error(new E.FormError()))
 		// last event 
 		form.on('end', () => this.formEnded = true)
 		form.parse(this.req)
@@ -156,7 +156,7 @@ class Server extends threadify(EventEmitter) {
 	
 	isTimeOut() {
 		if (Date.now() > this.timer) {
-			let e = new Error('response time more than 15s')
+			let e = new E.PipeResponseTimeout()
 			this.error(e)
 			return true
 		}
@@ -211,16 +211,16 @@ class StoreFile extends threadify(EventEmitter) {
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('storeFile queue no server')
+		if (!server) return res.error(new E.StoreFileQueueNoServer())
 		// timeout
 		if (server.isTimeOut()) {
-			let e = new Error('response time more than 15s')
+			let e = new E.PipeResponseTimeout()
 			// end
 			this.close(jobId)
 			return res.error(e)
 		}
 		if (server.finished()) {
-			let e = new Error('client response is finished')
+			let e = new E.PipeResponseHaveFinished()
 			this.close(jobId)
 			return res.error(e)
 		}
@@ -238,7 +238,7 @@ class StoreFile extends threadify(EventEmitter) {
 		this.schedule()
 		console.warn('store size: ', this.map.size);
 		if (this.map.size > this.limit) 
-			throw new Error('too many tasks being processed, please try again later!')
+			throw new E.PipeTooMuchTask()
 		let server = new Server(req, res)
 		this.map.set(server.jobId, server)
 		return server
@@ -252,7 +252,7 @@ class StoreFile extends threadify(EventEmitter) {
 	response(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('storeFile queue no server')
+		if (!server) return res.error(new E.StoreFileQueueNoServer())
 		// finished
 		if (server.finished()) return res.end()
 
