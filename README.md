@@ -98,6 +98,7 @@ npm run cloud-station
 - database tables constructure document
 - [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
 - [qcloud databases backup](https://www.qcloud.com)
+- station 握着2个 websocket
 
 ## Error Code
 

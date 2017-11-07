@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/01 17:13:59 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/01 18:22:38 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/02 11:53:46 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ module.exports = class ConsistentHash {
   constructor(nodes, options) {
 
     this.nodes = [] 
-    this.keys  = []
+    this.keys  = [] // ordered array
     this.ring  = new Map()
     this.length    = (options && options.length) || 1024
     this.replicas  = (options && options.replicas) || 1
@@ -30,13 +30,13 @@ module.exports = class ConsistentHash {
     
     if (!Array.isArray(nodes)) throw new Error('nodes must be array')
     
-    // 遍历 nodes
+    // iterator nodes
     for (let node of nodes) {
       this.addNode(node)
     }
   }
   
-  // 排序
+  // keys sort
   _sort() {
     this.keys.sort((a, b) => a > b)
   }
@@ -68,7 +68,7 @@ module.exports = class ConsistentHash {
       
       if (this.keys[i] >= hash) {
         arr.push(this.ring.get(this.keys[i]))
-        // 如果
+        // if i is the last one
         if (i < keyLength -1) {
           arr.push(this.ring.get(this.keys[i+1]))
         }
@@ -83,8 +83,8 @@ module.exports = class ConsistentHash {
   
   crypto(str) {
     let hash = crypto.createHash(this.algorithm).update(new Buffer(str))
+    //
     return Math.abs(hash.digest().readInt32LE()%this.length)
-    // return crypto.createHash(this.algorithm).update(str).digest('hex')
   }
   
 }

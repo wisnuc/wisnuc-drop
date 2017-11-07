@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 10:23:17 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/21 13:58:20 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/06 14:59:50 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@ const { Server, StationServer, WisnucDB } = require('../models')
 const logger = global.Logger(__filename)
 
 /**
- * Run project:
+ * According to different server, init data:
  * 1. clear the relationship of between station and server.
  * 2. if no server information, create server info.
  */

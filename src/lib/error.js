@@ -6,63 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/31 11:54:39 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/07 16:27:24 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// reference to lunix error code
 
-/**
- 400
- 401
- 403 - 其他错误都走这
- 404
- 500 - 服务器挂了
- */
-
-/**
- EvalError
- 创建一个error实例，表示错误的原因：与 eval() 有关。
- InternalError 
- 创建一个代表Javascript引擎内部错误的异常抛出的实例。 如: "递归太多".
- RangeError
- 创建一个error实例，表示错误的原因：数值变量或参数超出其有效范围。
- ReferenceError
- 创建一个error实例，表示错误的原因：无效引用。
- SyntaxError
- 创建一个error实例，表示错误的原因：eval()在解析代码的过程中发生的语法错误。
- TypeError
- 创建一个error实例，表示错误的原因：变量或参数不属于有效类型。
- URIError
- 创建一个error实例，表示错误的原因：给 encodeURI()或  decodeURl()传递的参数无效。
- */
 const logger = global.Logger(__filename)
 const E = {}
 
-// generate function
-const EClass = (message) => {
-	return class extends Error {
-		constructor(m = message) {
-			super(m)
-		}
-	}
-}
-
-// generate new class
-const define = (code, message) => E[code] = EClass(message)
-
-define('EUSERNOTEXIST', 'user not exist')
-define('ENODENOTFOUND', 'user already exist')
-define('ENODENOTFOUND', 'user not in station')
-// user already delete
-// user already update
-// user not in box
-// user not in 
-
-// define('ENODENOTFOUND', 'station not exist') 
-// define('ENODENOTFOUND', 'station already exist') 
-
-Object.freeze(E)
 
 
 let Code = {
@@ -74,19 +25,44 @@ let Code = {
 	500: 'system error'
 }
 
-let Errorcode = {
-	
+
+// generate function
+const EClass = (code, message) => {
+  return class extends Error {
+    constructor(m = message) {
+      super(m)
+      this.code = code
+    }
+  }
 }
 
-class ErrorCode extends Error {
-	constructor() {
-		
-	}
-
-	
-}
+const define = (name, code, message) => E[name] = EClass(code, message)
 
 
-
+/**
+ * Error Code
+ * such as: 60001，固定长度为5位整数！ 
+ * 6 											 00 		     01
+ * 服务级错误（1为系统级错误）	服务模块代码	具体错误代码
+ */
+// user: 600XX
+define('UserNotExist',     60001, 'user not exist')
+define('UserAlreadyExist', 60002, 'user already exist')
+// station: 601XX
+define('StationNotExist',     60101, 'station not exist')
+define('StationAlreadyExist', 60102, 'station already exist')
+// ticket: 602XX
+define('TicketNotExist',       60201, 'ticket not exist')
+define('TicketAlreadyExist',   60202, 'ticket already exist')
+define('TicketAlreadyExpired', 60203, 'ticket already expired')
+// ticket_user
+define('TicketAlreadyHaveUser', 60204, 'ticket have already this user')
+// server
+define('ServerNotExist',       60301, 'server not exist')
+define('ServerAlreadyExist',   60302, 'server already exist')
+// box
+define('BoxNotExist',       60401, 'box not exist')
+define('BoxAlreadyExist',   60402, 'box already exist')
+define('BoxAlreadyExpired', 60403, 'box already expired')
 
 module.exports = Object.freeze(E)

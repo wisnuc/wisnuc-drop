@@ -86,10 +86,12 @@ class UserService {
 	}
 	/**
 	 * get stations
+	 * 查询 station_server, 若有一台机器在线则认为 station 在线，反之则不在线
 	 * @param {string} userId 
 	 * @returns {array} stations 
 	 */
 	async findStations(userId) { 
+
 		let stations = await Station.findAll({
 			include: [
 				{
@@ -98,21 +100,37 @@ class UserService {
 						userId: userId
 					},
 					attributes: [],
-				},
-				{
-					model: StationServer,
-					required: false,
-					attributes: ['isOnline']
 				}
 			],
 			attributes: ['id', 'name', 'LANIP'],
 			raw: true
 		})
-		stations.map((s) => {
-			s.isOnline = s['StationServers.isOnline'] ? true : false
-			delete s['StationServers.isOnline']
-			s.LANIP = s.LANIP.split(',')
+
+		let stationIds = _.map(stations, 'id')
+
+		// find online servers with this stations
+		let servers = await StationServer.findAll({
+			where: {
+				stationId: stationIds,
+				isOnline: 1 // isOnline 
+			},
+			attributes: ['isOnline', 'stationId'],
+			raw: true
 		})
+
+		for (let station of stations) {
+			station.isOnline = false
+
+			for (let server of servers) {
+
+				if (station.id === server.stationId && server.isOnline === 1) {
+					station.isOnline = true
+					break
+				}
+
+			}
+		}
+
 		return stations
 	}
 	/**
