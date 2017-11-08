@@ -46,7 +46,7 @@ class SocketIOHandler extends EventEmitter {
  	 */
 	async requestLogin(socket, data) {
 		let station = await Station.find({ where: { id: data.id } })
-		if (!station) throw new Error('no station')
+		if (!station) throw new E.StationNotExist()
 		let crt = ursa.createPublicKey(station.publicKey)
 		// random number
 		let seed = uuid.v4()
@@ -93,8 +93,8 @@ class SocketIOHandler extends EventEmitter {
 				})
 
 				let { station, server } = data
-				if (!station) throw new Error('no station')
-				if (!server) throw new Error('no server info')
+				if (!station) throw new E.StationNotExist()
+				if (!server) throw new E.ServerNotExist()
 				
 				// create station and server relationship
 				await StationServer.findOrCreate({
@@ -147,14 +147,14 @@ class SocketIOHandler extends EventEmitter {
 			attributes: ['serverId'],
 			raw: true
 		})
-		if (!station) throw new Error('this station is offline')
+		if (!station) throw new E.StationNotOnline()
 			
 		let server = await Server.find({
 			where: { id: station.serverId },
 			attributes: ['WANIP'],
 			raw: true
 		})
-		if (!server) 	throw new Error('this station haven`t server')
+		if (!server) 	throw new E.ServerNotExist()
 		
 		let message = Object.assign({}, manifest, 
 			{

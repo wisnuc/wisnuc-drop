@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/07 19:54:08 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/08 13:31:35 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,33 +47,36 @@ const define = (name, code, message) => E[name] = EClass(code, message)
 // websocket
 
 // user: 600XX
-define('UserNotExist',     60001, 'user not exist')
-define('UserAlreadyExist', 60002, 'user already exist')
+define('UserNotExist',     60000, 'user not exist')
+define('UserAlreadyExist', 60001, 'user already exist')
 // station: 601XX
-define('StationNotExist',     60101, 'station not exist')
-define('StationAlreadyExist', 60102, 'station already exist')
+define('StationNotExist',     60100, 'station not exist')
+define('StationAlreadyExist', 60101, 'station already exist')
+define('StationNotOnline',    60102, 'station not online')
 // ticket: 602XX
-define('TicketNotExist',       60201, 'ticket not exist')
-define('TicketAlreadyExist',   60202, 'ticket already exist')
-define('TicketAlreadyExpired', 60203, 'ticket already expired')
+define('TicketNotExist',       60200, 'ticket not exist')
+define('TicketAlreadyExist',   60201, 'ticket already exist')
+define('TicketAlreadyExpired', 60202, 'ticket already expired')
 // ticket_user
-define('TicketUserNotExist',    60204, 'ticket_user not exist')
-define('TicketAlreadyHaveUser', 60205, 'ticket already have this user')
+define('TicketUserNotExist',    60203, 'ticket_user not exist')
+define('TicketAlreadyHaveUser', 60204, 'ticket already have this user')
 // pipe: 603XX
-define('PipeResponseTimeout',      60301, 'pipe: response time more than 15s')
-define('PipeResponseHaveFinished', 60302, 'pipe: client response already have finished')
-define('PipeTooMuchTask',          60303, 'pipe: too much tasks being processed, please try again later')
+define('PipeResponseTimeout',      60300, 'pipe: response time more than 15s')
+define('PipeResponseHaveFinished', 60301, 'pipe: client response already have finished')
+define('PipeTooMuchTask',          60302, 'pipe: too much tasks being processed, please try again later')
 // fetch file: 6031X
-define('FetchFileQueueNoServer', 60311, 'fetchFile queue have no this server')
+define('FetchFileQueueNoServer', 60310, 'fetchFile queue have no this server')
 // store file: 6032X
-define('StoreFileQueueNoServer', 60321, 'storeFile queue have no this server')
-define('NoManiFestField', 60322, 'no manifest field')
-define('FormError', 60323, 'form error')
+define('StoreFileQueueNoServer', 60320, 'storeFile queue have no this server')
+define('NoManiFestField',        60321, 'no manifest field')
+define('FormError',              60322, 'form error')
+// transform json: 6033XX
+define('TransformJsonQueueNoServer', 60330, 'transformJson queue have no this server')
 // server: 604XX
-define('ServerNotExist',       60401, 'server not exist')
-define('ServerAlreadyExist',   60402, 'server already exist')
+define('ServerNotExist',     60400, 'server not exist')
+define('ServerAlreadyExist', 60401, 'server already exist')
 // box: 605XX
-define('BoxNotExist',       60501, 'box not exist')
-define('BoxAlreadyExist',   60502, 'box already exist')
+define('BoxNotExist',     60500, 'box not exist')
+define('BoxAlreadyExist', 60501, 'box already exist')
 
 module.exports = Object.freeze(E)

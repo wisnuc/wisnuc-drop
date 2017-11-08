@@ -93,7 +93,7 @@ class TicketService {
 			include: [
 				{
 					model: User,
-					as: 'user',
+					as: 'creatorInfo',
 					attributes: ['id', 'nickName', 'avatarUrl']
 				},
 				{
@@ -237,7 +237,7 @@ class TicketService {
 		return props.ticket
 	}
 	/**
-	 * TODO: invite 
+	 * FIXME: invite 
 	 * find all tickets by params
 	 * @param {object} params
 	 * @returns {object} tickets

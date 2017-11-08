@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/29 21:17:26 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/08 10:24:17 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ class Server extends threadify(EventEmitter) {
 
 	isTimeOut() {
 		if (Date.now() > this.timer) {
-			let e = new Error('response time more than 15s')
+			let e = new E.PipeResponseTimeout()
 			this.error(e)
 			return true
 		}
@@ -134,14 +134,14 @@ class TransformJson extends threadify(EventEmitter) {
 	request(req, res) {
 		let jobId = req.params.jobId
 		let server = this.map.get(jobId)
-		if (!server) return res.error('transformJson queue no server')
+		if (!server) return res.error(new E.TransformJsonQueueNoServer())
 		// timeout
 		if (server.isTimeOut()) {
-			let e = new Error('response time more than 15s')
+			let e = new E.PipeResponseTimeout()
 			res.error(e)
 		}
 		else if (server.finished()) {
-			let e = new Error('client response is finished')
+			let e = new E.PipeResponseHaveFinished()
 			res.error(e)
 		}
 		else {
@@ -163,7 +163,7 @@ class TransformJson extends threadify(EventEmitter) {
 		this.schedule()
 		console.warn('transform size: ', this.map.size);
 		if (this.map.size > this.limit)
-			throw new Error('too many tasks being processed, please try again later!')
+			throw new new E.PipeTooMuchTask()
 		let server = new Server(req, res)
 		this.map.set(server.jobId, server)
 		return server

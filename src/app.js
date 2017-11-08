@@ -40,7 +40,7 @@ app.use('/', routes)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-	let err = new Error('Not Found')
+	let err = new Error('Not Found') 
 	err.status = 404
 	res.status(err.status).json(err.message)
 	next()
