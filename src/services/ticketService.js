@@ -134,7 +134,7 @@ class TicketService {
 	 */
 	inviteUser(args) {
 
-		let { ticketId, userId, password } = args
+		let { ticketId, userId } = args
 
 		return WisnucDB.transaction(async t => {
 			

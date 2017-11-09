@@ -102,17 +102,60 @@ npm run cloud-station
 
 ## Error Code
 
-response 
+错误代码：
+- 系统级别错误 // TODO
+- 服务级别错误
+
+
+http code 
 ```json
 {
-    "code": 403,
-    "message": "您已提交过申请，请等待管理员审核结果！",
-    "data": null,
-    "stack": "Error: 您已提交过申请，请等待管理员审核结果！\n    at WisnucDB.transaction (/home/mosaic/mosaic/wisnuc-drop/src/services/ticketService.js:177:27)\n    at <anonymous>"
+  "200": "ok",
+  "400": "invalid parameters",
+  "401": "authentication failed",
+  "403": "forbidden",
+  "404": "not found",
+  "500": "system error"
 }
 ```
 
-错误码 | 错误信息
+服务级别错误， http code 都是 403， 并返回 json
+
+```json
+{
+  "url": "/c/v1/tickets/694c4854-b63e-4a72-a4b8-5ec472427066",
+  "code": 60202,
+  "message": "ticket already expired",
+  "data": null,
+  "stack": "Error: ticket already expired\n    at TicketService.findByClient (/home/mosaic/mosaic/wisnuc-drop/src/services/ticketService.js:111:10)\n    at <anonymous>"
+}
+```
+
+error code - such as: 60001，固定长度为5位整数！ 
+服务级错误 | 服务模块代码 | 具体错误代码
+----- | ------ | ------
+6 		|	 00 	 | 01
+
+服务级别错误代码说明
+
+错误码(error code) | 错误信息(message)
 ----- | ------
-errcode | errmsg
-111 | dfff
+60000 | user not exist
+60001 | user already exist
+60100 | station not exist
+60101 | station already exist
+60200 | ticket not exist
+60201 | ticket already exist
+60202 | ticket already expired
+60203 | ticket_user not exist
+60204 | ticket_user already exist
+60300 | pipe: response time over 15s
+60301 | pipe: client response already finished
+60302 | pipe: too much processing tasks 
+60310 | fetchFile queue have`t server
+60320 | storeFile queue have`t server
+60321 | no manifest field
+60322 | form error
+60330 | transformJson queue have`t server
+60400 | server not exist
+60401 | server already exist

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/07 17:52:12 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/09 11:10:00 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ const httpCode = {
 	200: 'ok',
 	400: 'invalid parameters',
 	401: 'Authentication failed',
-	403: 'forbidden', // 
+	403: 'forbidden', 
 	404: 'not found', 
 	500: 'system error'
 }
