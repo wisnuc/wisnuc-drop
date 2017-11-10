@@ -120,7 +120,7 @@ class UserService {
 
 		for (let station of stations) {
 			station.isOnline = false
-
+			station.LANIP = station.LANIP.split(',') // array
 			for (let server of servers) {
 
 				if (station.id === server.stationId && server.isOnline === 1) {
@@ -130,7 +130,6 @@ class UserService {
 
 			}
 		}
-
 		return stations
 	}
 	/**
