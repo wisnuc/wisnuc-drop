@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/09 13:29:36 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/09 17:13:15 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,21 +83,17 @@ router.get('/', joiValidator({
 	}
 })
 
-// fill ticket
+// fill ticket (except invite)
 router.post('/:id/users', joiValidator({
 	params: {
 		id: Joi.string().guid({version: ['uuidv4']}).required()
-	},
-	// body: {
-	// 	password: Joi.string() // optional
-	// }
+	}
 }), async (req, res) => {
 	try {
 		let user = req.auth.user
 		let args = {
 			ticketId: req.params.id,
-			userId: user.id,
-			// password: req.body.password || undefined
+			userId: user.id
 		}
 		let data = await ticketService.createUser(args)
 		return res.success(data)

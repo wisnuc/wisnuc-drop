@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/09 10:44:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/09 15:11:33 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ define('TicketAlreadyExist',   60201, 'ticket already exist')
 define('TicketAlreadyExpired', 60202, 'ticket already expired')
 // ticket_user
 define('TicketUserNotExist',    60203, 'ticket_user not exist')
-define('TicketAlreadyHaveUser', 60204, 'ticket already have user')
+define('TicketUserAlreadyExist', 60204, 'ticket_user already exist')
 // pipe: 603XX
 define('PipeResponseTimeout',      60300, 'pipe: response time over 15s')
 define('PipeResponseHaveFinished', 60301, 'pipe: client response already finished')

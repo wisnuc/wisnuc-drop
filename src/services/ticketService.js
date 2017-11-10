@@ -79,6 +79,9 @@ class TicketService {
 	}
 	/**
 	 * 以 user 查询 ticket
+	 * 1. 用户是否经在此 station 中
+	 * 2. 用户是否填写过 ticket，并返回 ticket_user info
+	 * 3. 用户是否填写过有效 ticket， 并返回 ticket_user info
 	 * @param {string} ticketId 
 	 * @param {string} userId
 	 * @returns {object} ticket
@@ -86,48 +89,76 @@ class TicketService {
 	 */
 	async findByClient(ticketId, userId) {
 		
-		let ticket = await Ticket.find({
-			where: {
-				id: ticketId
-			},
-			include: [
-				{
-					model: User,
-					as: 'creatorInfo',
-					attributes: ['id', 'nickName', 'avatarUrl']
+		return WisnucDB.transaction(async t => {
+			let ticket = await Ticket.find({
+				where: {
+					id: ticketId
 				},
-				{
-					model: Station,
-					as: 'station',
-					attributes: ['id', 'name']
-				}
-			]
+				include: [
+					{
+						model: User,
+						as: 'creatorInfo',
+						attributes: ['id', 'nickName', 'avatarUrl']
+					},
+					{
+						model: Station,
+						as: 'station',
+						attributes: ['id', 'name']
+					}
+				],
+				transaction: t
+			})
+
+			if (!ticket) throw new E.TicketNotExist()
+
+			let { type, expiredDate, stationId } = ticket
+
+			if (type == 'invite' && Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
+
+			let stationUser = await StationUser.find({
+				where: {
+					stationId: stationId,
+					userId: userId
+				},
+				transaction: t,
+				raw: true
+			})
+
+			if (stationUser) throw new E.UserAlreadyExist()
+
+			let tickets = await Ticket.findAll({
+				where: {
+					stationId: stationId,
+					type: 'invite'
+				},
+				transaction: t,
+				attributes: ['id'],
+				raw: true
+			})
+
+			let ticketIds = _.map(tickets, 'id')
+
+			let user = await TicketUser.find({
+				where: {
+					ticketId: ticketIds,
+					userId: userId
+				},
+				transaction: t,
+				attributes: ['userId', 'type'],
+				order: 'createdAt DESC',
+				raw: true
+			})
+
+			// add user
+			ticket.dataValues.user = user
+			return ticket
 		})
-		
-		if (!ticket) throw new E.TicketNotExist()
-
-		let { type, expiredDate } = ticket
-		if (type == 'invite' && Date.now() > expiredDate) 
-			throw new E.TicketAlreadyExpired()
-
-		let user = await TicketUser.find({
-			where: {
-				ticketId: ticketId,
-				userId: userId
-			},
-			attributes: ['userId','type'],
-			raw: true
-		})
-
-		ticket.user = user
-		return ticket
-		
 	}
 	/**
 	 * invite user
 	 * 1. 判断 expiredDate 是否过期
-	 * 2. 判断 user 是否已注册
-	 * 3. 判断 user 是否存在其他有效的 ticket 中
+	 * 2. 判断 user 是否已在此 ticket 中
+	 * 3. 判断 user 是否已经有 fill 过属于 station 的 ticket 
 	 * @param {object} args 
 	 * @returns 
 	 * @memberof TicketService
@@ -151,8 +182,7 @@ class TicketService {
 
 			let { stationId, type, expiredDate } = ticket
 
-			if (Date.now() > expiredDate)
-				throw new E.TicketAlreadyExpired()
+			if (Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
 
 			let stationUser = await StationUser.find({
 				where: {
@@ -162,30 +192,39 @@ class TicketService {
 				transaction: t,
 				raw: true
 			})
-			if (stationUser) throw new E.TicketUserNotExist()
-			
-			// 排除有效内，状态为 pending, resolved
-			let validTicket = await Ticket.find({
+			if (stationUser) throw new E.UserAlreadyExist()
+
+			// find station`s tickets
+			let tickets = await Ticket.findAll({
 				where: {
 					stationId: stationId,
-					type: 'invite',
-					expiredDate: { $gt: Date.now() }, 
+					type: 'invite'
 				},
-				include: {
-					model: TicketUser,
-					where: {
-						userId: userId,
-						type: ['pending', 'resolved'] // pending, resolved
-					},
-					attributes: ['userId']
-				},
-				attributes: ['id'],
 				transaction: t,
+				attributes: ['id'],
 				raw: true
 			})
 
-			if (validTicket) throw new E.TicketAlreadyHaveUser()
-			
+			let ticketIds = _.map(tickets, 'id')
+
+			/**
+			 * 找到该 user 最近一次 fill 的记录
+			 * 如果该记录为 pending、resolved 则直接返回
+			 */
+			let ticketUser = await TicketUser.find({
+				where: {
+					ticketId: ticketIds,
+					userId: userId,
+					type: ['pending', 'resolved']
+				},
+				transaction: t,
+				attributes: ['userId', 'type'],
+				order: 'createdAt DESC',
+				raw: true
+			})
+
+			if (ticketUser) return 'this user already filled ticket of station'
+
 			let user = await TicketUser.findOrCreate({
 				where: {
 					ticketId: ticketId,
@@ -198,7 +237,7 @@ class TicketService {
 			}).spread(newObj => newObj)
 
 			ticket.user = user
-			return ticket
+			return 'fill ticket successfully'
 			
 		})
 	}
