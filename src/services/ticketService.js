@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/10 11:34:55 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/14 15:29:59 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,7 @@ class TicketService {
 	 * 1. 判断 expiredDate 是否过期
 	 * 2. 判断 user 是否已在此 ticket 中
 	 * 3. 判断 user 是否已经有 fill 过属于 station 的 ticket 
+	 * 4. create left arrow
 	 * @param {object} args 
 	 * @returns 
 	 * @memberof TicketService
@@ -225,19 +226,59 @@ class TicketService {
 
 			if (ticketUser) return 'this user already filled ticket of station'
 
-			let user = await TicketUser.findOrCreate({
-				where: {
-					ticketId: ticketId,
-					userId: userId
-				},
-				defaults: args,
-				transaction: t,
-				attributes: ['userId', 'type'],
-				raw: true
-			}).spread(newObj => newObj)
+			return Promise.props({
+				// create left user_station arrow
+				createLeftArrow: UserStation.findOrCreate({
+					where: {
+						userId: userId,
+						stationId: stationId
+					},
+					defaults: {
+						userId: userId,
+						stationId: stationId
+					},
+					transaction: t,
+					raw: true
+				}),
+				// create ticket_user
+				createTicketUser: await TicketUser.findOrCreate({
+					where: {
+						ticketId: ticketId,
+						userId: userId
+					},
+					defaults: args,
+					transaction: t,
+					attributes: ['userId', 'type'],
+					raw: true
+				})
+			})
+			
+			// await UserStation.findOrCreate({
+			// 	where: {
+			// 		stationId: stationId,
+			// 		userId: userId
+			// 	},
+			// 	defaults: {
+			// 		stationId: stationId,
+			// 		userId: userId
+			// 	},
+			// 	transaction: t,
+			// 	raw: true
+			// }).spread(newObj => newObj)
+			
+			// let user = await TicketUser.findOrCreate({
+			// 	where: {
+			// 		ticketId: ticketId,
+			// 		userId: userId
+			// 	},
+			// 	defaults: args,
+			// 	transaction: t,
+			// 	attributes: ['userId', 'type'],
+			// 	raw: true
+			// }).spread(newObj => newObj)
 
-			ticket.user = user
-			return 'fill ticket successfully'
+			// ticket.user = user
+			// return 'fill ticket successfully'
 			
 		})
 	}
@@ -276,7 +317,6 @@ class TicketService {
 		return props.ticket
 	}
 	/**
-	 * FIXME: invite 
 	 * find all tickets by params
 	 * @param {object} params
 	 * @returns {object} tickets
