@@ -143,7 +143,10 @@ class SocketIOHandler extends EventEmitter {
 		
 		// find server with station
 		let station = await StationServer.find({
-			where: { stationId: stationId , isOnline: 1 },
+			where: { 
+				stationId: stationId , 
+				isOnline: 1
+			},
 			attributes: ['serverId'],
 			raw: true
 		})

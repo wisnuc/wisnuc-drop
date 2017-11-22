@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 10:23:17 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/06 14:59:50 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/11/22 13:35:07 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ function cleanStation() {
 			raw: true
 		})
 		if (!serverInfo) return
+		// destroy this server`s stations 
 		await StationServer.destroy({
 			where: {
 				serverId: serverInfo.id
