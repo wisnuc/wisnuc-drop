@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/15 10:02:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/26 14:54:40 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/06 11:54:38 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ let checkWhiteList = type => {
 
 /**
  * cloud 与 station 通信
- * @module socketIO
+ * @module socketIOflag
  */
 module.exports = io => {
 	io.on('connection', socket => {

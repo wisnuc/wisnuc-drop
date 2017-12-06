@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 require('./utils/global')
-require('../src/utils/init').start()
+// require('../src/utils/init').start() FIXME:
 
 const express = require('express')
 const cookieParser = require('cookie-parser')
@@ -22,6 +22,20 @@ const routes = require('./routes/index')
 const logger = global.Logger('app')
 
 const app = express()
+
+const Session = require('express-session')
+const FileStore = require('session-file-store')(Session)
+
+const session = Session({
+	store: new FileStore({ path: './sessions' }),
+	secret: 'wisnuc-drop',
+	resave: false,
+	saveUninitialized: true,
+	cookie: { secure: true }
+})
+
+// Use express-session middleware for express
+app.use(session)
 
 // app.set('trust proxy', 1) // trust first proxy
 

@@ -157,7 +157,7 @@ class SocketIOHandler extends EventEmitter {
 			attributes: ['WANIP'],
 			raw: true
 		})
-		if (!server) 	throw new E.ServerNotExist()
+		if (!server) throw new E.ServerNotExist()
 		
 		let message = Object.assign({}, manifest, 
 			{

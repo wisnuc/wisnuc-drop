@@ -30,6 +30,10 @@ module.exports = function (sequelize, DataTypes) {
 		LANIP: {
 			type: DataTypes.STRING
 		},
+		online: {
+			type: DataTypes.INTEGER,
+			defaultValue: 0
+		},
 		// -1: 失效, 1: 正常
 		status: {
 			type: DataTypes.INTEGER,

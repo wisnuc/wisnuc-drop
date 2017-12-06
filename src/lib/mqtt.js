@@ -6,17 +6,17 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 15:13:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/05 18:08:28 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/06 15:48:55 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-const debug = require('debug')('mqtt:cloud')
+const debug = require('debug')('mqtt')
 const mqtt = require('mqtt')
-const uuid = require('uuid')
 
-const cloudId = uuid.v4()
-const clientId = `cloud_123`
+// FIXME: 
+const MQTT_URL = 'mqtt://localhost:1883' // 'mqtt://122.152.206.50:1883'
+const mqttServiice = require('../services/mqttService')
 
 const settings = {
   clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
@@ -26,41 +26,30 @@ const settings = {
   //   payload: 'I am offline',
   //   qos: 1,
   //   retain: false
-  // }
+  // },
+  // username: 'demo',
+  // password: 'demo'
 }
-// const client = mqtt.connect('mqtt://122.152.206.50:1883', settings)
-const client = mqtt.connect('mqtt://localhost:1883', settings)
- 
+const client = mqtt.connect(MQTT_URL, settings)
 
-// station client disconnect
-// client.subscribe(diconnectUrl, {qos:1}, (err) => {
-//   debug(err)
-// })
+// subcribe topic
 client.subscribe(`station/connect`, {qos:1})
 client.subscribe(`station/disconnect`, {qos:1})
 
-client.on('connect', function (connack) {
-  
-  debug('cloud connect successfully!', connack);
-  
+// connect
+client.on('connect', connack =>  debug('cloud connect successfully!', connack))
+
+// message
+client.on('message', (...arg) => mqttServiice.message(...arg))
+
+// reconnect
+client.on('reconnect', err => {
+  debug('reconnect', err)
 })
 
-client.on('message', function (topic, message, packet) {
-  // message is Buffer
-  debug(123123, topic, message.toString(), packet)
-
-  switch (topic) {
-    case 'station/connect':
-      debug(33333)
-      break;
-    case 'station/disconnect':
-      debug(12312321)
-      break;
-  
-    default:
-      break;
-  }
-  // client.end()
+// close
+client.on('close', () => {
+  debug('close')
 })
 
 module.exports = client

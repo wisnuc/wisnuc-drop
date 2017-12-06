@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/22 14:58:34 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/06 11:53:24 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,19 @@ class StationService {
 					stationId: id
 				},
 				attributes: ['stationId']
+			}
+		})
+	}
+	/**
+	 * update station online
+	 * @param {*} stationId
+	 * @param {boolean} flag
+	 */
+	updateOnline(stationId, flag) {
+		let online = flag ? 1 : 0
+		return Station.update({online: online}, {
+			where: {
+				id: stationId
 			}
 		})
 	}

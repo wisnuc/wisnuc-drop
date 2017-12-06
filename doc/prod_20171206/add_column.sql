@@ -1,0 +1,1 @@
+ALTER TABLE `stations` ADD COLUMN `online` INT(11) NULL DEFAULT 0 AFTER `status`;

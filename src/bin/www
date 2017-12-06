@@ -22,40 +22,12 @@ var port = config.port
 app.set('port', config.port)
 var server = http.createServer(app)
 
-var Session = require('express-session')
-var FileStore = require('session-file-store')(Session)
-
-var session = Session({
-	store: new FileStore({ path: './sessions' }),
-	secret: 'wisnuc-drop',
-	resave: false,
-	saveUninitialized: true,
-	cookie: { secure: true }
-})
-
-// Use express-session middleware for express
-app.use(session)
 
 /**
- * socket.io 
+ * mqtt
  */
-var io = require('socket.io')(server)
-require('../lib/socketIO')(io)
+require('../lib/mqtt')
 
-// https://stackoverflow.com/questions/23494016/socket-io-and-express-4-sessions
-// IO middleware
-io.use(function (socket, next) {
-	session(socket.handshake, {}, next)
-})
-
-// delete session
-// var sharedsession = require('express-socket.io-session');
-
-// Use shared session middleware for socket.io
-// setting autoSave:true
-// io.use(sharedsession(session, {
-//     autoSave: true
-// }));
 
 /**
  * Listen on provided port, on all network interfaces.
