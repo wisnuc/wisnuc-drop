@@ -22,12 +22,10 @@ var port = config.port
 app.set('port', config.port)
 var server = http.createServer(app)
 
-
 /**
  * mqtt
  */
 require('../lib/mqtt')
-
 
 /**
  * Listen on provided port, on all network interfaces.

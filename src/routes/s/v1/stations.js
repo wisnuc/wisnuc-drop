@@ -42,6 +42,22 @@ router.post('/', joiValidator({
 	}
 })
 
+// get token
+router.get('/:id/token', joiValidator({
+	params: {
+		id: Joi.string().guid({ version: ['uuidv4'] }).required()
+	}
+}), async (req, res) => {
+	try {
+		let stationId = req.params.id
+		let data = await stationService.getToken(stationId)
+		return res.success(data)
+	}
+	catch (err) {
+		return res.error(err)
+	}
+})
+
 // authorization
 router.use('*', jwt.sAuth)
 

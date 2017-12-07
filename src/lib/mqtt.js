@@ -6,16 +6,16 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 15:13:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/06 15:48:55 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/07 18:15:41 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 const debug = require('debug')('mqtt')
 const mqtt = require('mqtt')
+const config = require('getconfig')
 
-// FIXME: 
-const MQTT_URL = 'mqtt://localhost:1883' // 'mqtt://122.152.206.50:1883'
+const MQTT_URL = `mqtt://${config.mqtt.host}:${config.mqtt.port}`
 const mqttServiice = require('../services/mqttService')
 
 const settings = {

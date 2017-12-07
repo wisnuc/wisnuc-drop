@@ -6,9 +6,12 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/06 11:53:24 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/07 10:57:03 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+const ursa = require('ursa')
+const uuid = require('uuid')
 
 const {
 	Station, 
@@ -152,6 +155,36 @@ class StationService {
 				id: stationId
 			}
 		})
+	}
+	/**
+	 * get station token
+	 * @param {*} stationId 
+	 */
+	async getToken(stationId) {
+		
+		
+		let station = await Station.find({
+			where: {
+				id: stationId
+			},
+			attirbutes: ['id', 'name', 'publicKey'],
+			raw: true
+		})
+		
+		if (!station) throw E.StationNotExist()
+		
+		// random number
+		let seed = uuid.v4()
+		let crt = ursa.createPublicKey(station.publicKey)
+		let encryptData = crt.encrypt(seed, 'utf8', 'base64')
+		
+		let token = {
+			station: {
+				id: station.id,
+				name: station.name
+			}
+		}
+		return { seed, encryptData, token }
 	}
 }
 
