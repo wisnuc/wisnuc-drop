@@ -67,3 +67,6 @@ out/
 tmp/
 # config
 config/
+
+# session
+sessions/
