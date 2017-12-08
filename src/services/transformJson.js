@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/08 10:24:17 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/08 11:18:55 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ const uuid = require('uuid')
 const EventEmitter = require('events').EventEmitter
 
 const threadify = require('../lib/threadify')
-const socketIOHandler = require('./socketIOHandler')
+const mqttService = require('./mqttService')
 
 /**
  * transform json - server 
@@ -60,12 +60,7 @@ class Server extends threadify(EventEmitter) {
 				}
 			}
 		)
-		try {
-			await this.notice(stationId, manifest)
-		}
-		catch (err) {
-			this.error(err)
-		}
+		this.notice(stationId, manifest)
 	}
 	/**
 	 * websocket notice
@@ -73,8 +68,8 @@ class Server extends threadify(EventEmitter) {
 	 * @param {any} manifest 
 	 * @memberof Server
 	 */
-	async notice(stationId, manifest) {
-		await socketIOHandler.pipe(stationId, manifest)
+	notice(stationId, manifest) {
+		mqttService.pipe(stationId, manifest)
 	}
 
 	isTimeOut() {

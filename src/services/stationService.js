@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/07 10:57:03 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/08 15:13:43 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,8 +149,8 @@ class StationService {
 	 * @param {boolean} flag
 	 */
 	updateOnline(stationId, flag) {
-		let online = flag ? 1 : 0
-		return Station.update({online: online}, {
+		let isOnline = flag ? 1 : 0
+		return Station.update({isOnline: isOnline}, {
 			where: {
 				id: stationId
 			}

@@ -30,7 +30,7 @@ module.exports = function (sequelize, DataTypes) {
 		LANIP: {
 			type: DataTypes.STRING
 		},
-		online: {
+		isOnline: {
 			type: DataTypes.INTEGER,
 			defaultValue: 0
 		},
@@ -65,7 +65,6 @@ module.exports = function (sequelize, DataTypes) {
 		classMethods: {
 			associate: function (models) {
 				Station.hasMany(models.UserStation, {foreignKey: 'stationId'})
-				Station.hasMany(models.StationServer, {foreignKey: 'stationId'})
 			}
 		},
 		defaultScope: {

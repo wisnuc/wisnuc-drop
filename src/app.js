@@ -11,20 +11,19 @@
 /* ************************************************************************** */
 
 require('./utils/global')
-// require('../src/utils/init').start() FIXME:
+require('../src/utils/init').register() 
 
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 const log4js = require('log4js')
+const Session = require('express-session')
+const FileStore = require('session-file-store')(Session)
 
 const routes = require('./routes/index')
 const logger = global.Logger('app')
 
 const app = express()
-
-const Session = require('express-session')
-const FileStore = require('session-file-store')(Session)
 
 const session = Session({
 	store: new FileStore({ path: './sessions' }),

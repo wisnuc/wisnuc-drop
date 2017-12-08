@@ -15,10 +15,7 @@ const formidable = require('formidable')
 const EventEmitter = require('events').EventEmitter
 
 const threadify = require('../lib/threadify')
-const socketIOHandler = require('./socketIOHandler')
-
-// const fs = require('fs')
-// const tmpWriteStream = fs.createWriteStream(process.cwd() + '/tmp/1.jpg')
+const mqttService = require('./mqttService')
 
 /**
  * store file 
@@ -116,7 +113,7 @@ class Server extends threadify(EventEmitter) {
 						}
 					)
 					// this.replay(tmpWriteStream)
-					await this.notice(stationId, manifest)
+					this.notice(stationId, manifest)
 				} 
 				else {
 					this.error(new E.NoManiFestField())
@@ -140,8 +137,8 @@ class Server extends threadify(EventEmitter) {
 	 * @param {object} manifest - queryString
 	 * @memberof Server
 	 */
-	async notice(stationId, manifest) {
-		await socketIOHandler.pipe(stationId, manifest)
+	notice(stationId, manifest) {
+		mqttService.pipe(stationId, manifest)
 	}
 	
 	/**

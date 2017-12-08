@@ -108,7 +108,7 @@ class UserService {
 
 		let stationIds = _.map(stations, 'id')
 
-		// find online servers with this stations
+		// find online servers with this stations FIXME:
 		let servers = await StationServer.findAll({
 			where: {
 				stationId: stationIds,
