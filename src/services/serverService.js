@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/02 14:50:33 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/02 18:07:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/12 10:52:26 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,20 @@ class ServerService {
   /**
    * 
    */
-  findServers() {
-    return Server.findAll({
+  async serverInfo() {
+    let LANIP = ip.LANIP()
+    let WANIP = await ip.WANIP()
+  
+    return Server.find({
       where: {
-        status: 1
+        WANIP: WANIP,
+        LANIP: LANIP
+      
       },
       raw: true
     })
   }
-  /**
-   * @param {string} WANIP 
-   */
-  isSame(WANIP) {
-    return WANIP != this.WANIP ? false : true
-  }
-  /**
-   * @param {string} hostname 
-   */
-  exist(hostname) {
-    
-  }
+ 
 }
 
 module.exports = new ServerService()

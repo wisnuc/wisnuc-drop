@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 10:29:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/10/31 18:06:36 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/12 10:56:37 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ const uuid = require('uuid')
 let map = new Map()
 
 
-// TODO: test
+// wechat test api
 router.post('/', async (req, res) => {
 	try {
 		return res.success()

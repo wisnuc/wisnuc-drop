@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 15:13:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/08 18:39:18 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/12 10:54:43 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,12 @@ const debug = require('debug')('mqtt')
 const mqtt = require('mqtt')
 const config = require('getconfig')
 
-const MQTT_URL = `mqtt://${config.mqtt.host}:${config.mqtt.port}`
 const mqttService = require('../services/mqttService')
 
+const MQTT_URL = `mqtt://${config.mqtt.host}:${config.mqtt.port}`
 const settings = {
   clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
-  clean: false, 
-  // will: {
-  //   topic: `${stationId}/diconnect`,
-  //   payload: 'I am offline',
-  //   qos: 1,
-  //   retain: false
-  // },
-  // username: 'demo',
-  // password: 'demo'
+  clean: true
 }
 const client = mqtt.connect(MQTT_URL, settings)
 
