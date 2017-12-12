@@ -113,7 +113,7 @@ class Server extends threadify(EventEmitter) {
 						}
 					)
 					// this.replay(tmpWriteStream)
-					this.notice(stationId, manifest)
+					await this.notice(stationId, manifest)
 				} 
 				else {
 					this.error(new E.NoManiFestField())
@@ -137,8 +137,8 @@ class Server extends threadify(EventEmitter) {
 	 * @param {object} manifest - queryString
 	 * @memberof Server
 	 */
-	notice(stationId, manifest) {
-		mqttService.pipe(stationId, manifest)
+	async notice(stationId, manifest) {
+		await mqttService.pipe(stationId, manifest)
 	}
 	
 	/**

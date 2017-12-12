@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 15:13:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 10:54:43 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/12 16:23:25 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ const settings = {
 const client = mqtt.connect(MQTT_URL, settings)
 
 // subcribe topic
-client.subscribe(`station/connect`, {qos:1})
-client.subscribe(`station/disconnect`, {qos:1})
+client.subscribe(`$queue/station/connect`, {qos:1})
+client.subscribe(`$queue/station/disconnect`, {qos:1})
 
 // connect
 client.on('connect', connack =>  debug('cloud connect successfully!', connack))
@@ -34,7 +34,7 @@ client.on('connect', connack =>  debug('cloud connect successfully!', connack))
 // message
 // client.on('message', (topic, message, packet) =>  debug(`message`, topic, message.toString(), packet))
 
-// reconnect
+// reconnect FIXME:
 client.on('reconnect', err => {
   debug('reconnect', err)
 })

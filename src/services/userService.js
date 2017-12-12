@@ -15,8 +15,8 @@ const E = require('../lib/error')
 const { 
 	User, 
 	UserStation, 
-	Station, 
-	StationServer,
+	Station,
+	StationUser,
 	Box, 
 	BoxUser
  } = require('../models')
@@ -87,6 +87,26 @@ class UserService {
 	/**
 	 * get stations
 	 * 查询 station_server, 若有一台机器在线则认为 station 在线，反之则不在线
+	 * data [
+        {
+					"id": "4e286576-d459-4ea1-81d7-7e957cd3e41c",
+					"name": "HomeStation",
+					"LANIP": [
+							"10.10.9.239"
+					],
+					"isOnline": false,
+          "isValid": true
+        },
+        {
+					"id": "0686031d-a7b4-4b58-8994-0784661d0a8f",
+					"name": "HomeStation",
+					"LANIP": [
+							"10.10.9.130"
+					],
+					"isOnline": true,
+          "isValid": false
+        }
+    ]   
 	 * @param {string} userId 
 	 * @returns {array} stations 
 	 */
@@ -102,32 +122,30 @@ class UserService {
 					attributes: [],
 				}
 			],
-			attributes: ['id', 'name', 'LANIP'],
+			attributes: ['id', 'name', 'isOnline', 'LANIP'],
 			raw: true
 		})
+		if (stations.length < 1) return stations
 
 		let stationIds = _.map(stations, 'id')
-
-		// find online servers with this stations FIXME:
-		let servers = await StationServer.findAll({
+		let stationCopys = await StationUser.findAll({
 			where: {
-				stationId: stationIds,
-				isOnline: 1 // isOnline 
+				userId: userId,
+				stationId: {$in: stationIds }
 			},
-			attributes: ['isOnline', 'stationId'],
+			attributes: ['stationId'],
 			raw: true
 		})
-
+		
 		for (let station of stations) {
-			station.isOnline = false
+			station.isOnline = Boolean(station.isOnline)
 			station.LANIP = station.LANIP.split(',') // array
-			for (let server of servers) {
-
-				if (station.id === server.stationId && server.isOnline === 1) {
-					station.isOnline = true
+			station.isValid = false
+			for (let sc of stationCopys) {
+				if (station.id === sc.stationId) {
+					station.isValid = true
 					break
 				}
-
 			}
 		}
 		return stations

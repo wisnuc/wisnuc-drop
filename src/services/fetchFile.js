@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/08 18:39:46 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/12 16:54:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,12 @@ class Server extends threadify(EventEmiiter) {
 				}
 			}
 		)
-		this.notice(stationId, manifest)
+		try {
+			await this.notice(stationId, manifest)
+		}
+		catch(err) {
+			this.error(err)
+		}
 	}
 	
 	/**
@@ -87,8 +92,8 @@ class Server extends threadify(EventEmiiter) {
 	 * @param {object} manifest - queryString
 	 * @memberof Server
 	 */
-	notice(stationId, manifest) {
-		mqttService.pipe(stationId, manifest)
+	async notice(stationId, manifest) {
+		await mqttService.pipe(stationId, manifest)
 	}
 	
 	isTimeOut() {

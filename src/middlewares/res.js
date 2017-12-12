@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 11:23:35 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/12 15:54:36 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,29 +67,36 @@ module.exports = (req, res, next) => {
 			} else if (typeof err === 'object') {
 				message = err.message
 			} 
-			// log
-			logger.error({
-				method: req.method,
-				url: req.originalUrl,
-				message: message,
-				stack: stack
-			})
+			
+			code = code || 403
+			message = message || 'no message'
+			data = data || null
+
+			// make a record in error.log when httpcode = 403
+			if(code && code === 403) {
+				logger.error({
+					method: req.method,
+					url: req.originalUrl,
+					message: message,
+					stack: stack
+				})
+			}
+			// FIXME: delete fundebug
+			fundebug.notifyError(err)
 			// used in production environment
 			if (getconfig['env'] === 'production') {
-				// fundebug.notifyError(err)
 				return res.status(status).json({
 					url: req.originalUrl,
-					code: code || 403,
-					message: message || 'no message',
-					data: data || null
+					code: code,
+					message: message,
+					data: data
 				})
 			} 
-			// FIXME: Only httpcode: 403, record in error.log 
 			return res.status(status).json({
 				url: req.originalUrl,
-				code: code || 403,
-				message: message || 'no message',
-				data: data || null,
+				code: code,
+				message: message,
+				data: data,
 				stack: stack
 			})
 		}

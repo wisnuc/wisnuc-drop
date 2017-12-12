@@ -28,7 +28,7 @@ module.exports = {
 			if (!decoded)
 				return res.error('decode failed', 401)
 			
-			// expire
+			// expire FIXME:
 			// if (!decoded.exp || decoded.exp <= Date.now())
 			// 	return res.error('token overdue, login again please！', 401)
 			

@@ -1248,9 +1248,9 @@ fstream@^1.0.0, fstream@^1.0.10, fstream@^1.0.2:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-fundebug-nodejs@^0.0.8:
-  version "0.0.8"
-  resolved "http://registry.npm.taobao.org/fundebug-nodejs/download/fundebug-nodejs-0.0.8.tgz#1520dee79b29cba9ee8dc12b5b943f9d142d59e0"
+fundebug-nodejs@^0.0.9:
+  version "0.0.9"
+  resolved "http://registry.npm.taobao.org/fundebug-nodejs/download/fundebug-nodejs-0.0.9.tgz#77cfde0d6739420b9ab38506d12006b863f2598c"
 
 gauge@~2.7.3:
   version "2.7.4"
