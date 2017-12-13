@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/05 15:26:17 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 17:01:10 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/13 10:26:55 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ client.on('message', (topic, message, packet) => {
   catch (err) {
     throw err
   }
-  
 })
 
 class MqttService {

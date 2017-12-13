@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 15:54:36 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/13 15:42:30 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,61 +45,49 @@ module.exports = (req, res, next) => {
 		})
 	}
   /**
-  * error response 
+	* error response、
+	* 区分 status 类型
   * @param {any} data 
   * @param {number} status - default 403
   */
 	res.error = (err, status) => {
-		let code, message, data, stack
+		let code    = 'no code'
+		let message = 'no message'
+		let data    = null
+		let stack   = null
 		status = status || DEFAULT_ERROR_STATUS
 		if (err) {
 			if (err instanceof Error) {
-				code    = err.code
+				code    = err.code || status
 				message = err.message
 				stack   = err.stack
-			} else if (typeof err === 'string') {
-				message = err
+			} 
 			// 400
-			} else if (err instanceof Array) {
+			if (err instanceof Array) {
 				code    = 400
 				message = httpCode[status]
 				data    = err
-			} else if (typeof err === 'object') {
-				message = err.message
 			} 
-			
-			code = code || 403
-			message = message || 'no message'
-			data = data || null
-
 			// make a record in error.log when httpcode = 403
-			if(code && code === 403) {
+			if(status === 403) {
 				logger.error({
 					method: req.method,
 					url: req.originalUrl,
 					message: message,
 					stack: stack
 				})
+				fundebug.notifyError(err)
 			}
-			// FIXME: delete fundebug
-			fundebug.notifyError(err)
-			// used in production environment
-			if (getconfig['env'] === 'production') {
-				return res.status(status).json({
-					url: req.originalUrl,
-					code: code,
-					message: message,
-					data: data
-				})
-			} 
-			return res.status(status).json({
-				url: req.originalUrl,
-				code: code,
-				message: message,
-				data: data,
-				stack: stack
-			})
 		}
+		let response = {
+			url: req.originalUrl,
+			code: code,
+			message: message,
+			data: data
+		}
+		// show stack in production environment
+		if (getconfig['env'] === 'production') response.stack = statck
+		return res.status(status).json(response)
 	}
 	next()
 }

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/22 18:14:29 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/13 15:58:54 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -548,9 +548,6 @@ class TicketService {
 						},
 						transaction: t
 					})
-
-				default:
-					return 'TODO'
 			}
 
 		})

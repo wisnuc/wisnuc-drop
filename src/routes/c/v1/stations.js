@@ -29,7 +29,7 @@ function checkDoubleArrow() {
 		return stationService.clientCheckStation(userId, stationId)
 		.then(flag => {
 			if (!flag) {
-				return res.error('check double arrow failed', 401)
+				return res.error(new Error('check double arrow failed'), 401)
 			}
 			next()
 		})

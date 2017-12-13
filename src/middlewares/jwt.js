@@ -26,27 +26,28 @@ module.exports = {
 		try {
 			const decoded = jwt.decode(token)
 			if (!decoded)
-				return res.error('decode failed', 401)
+				return res.error(new Error('decode failed'), 401)
 			
 			// expire
 			if (!decoded.exp || decoded.exp <= Date.now())
-				return res.error('token overdue, login again please！', 401)
+				return res.error(new Error('token overdue, login again please！'), 401)
 			
 			if (!decoded.user) 
-				return res.error('authentication failed', 401)
+				return res.error(new Error('authentication failed'), 401)
+			
 			let user = await User.find({
 				where: {
 					id: decoded.user.id
 				},
 				raw: true
 			})
-			if (!user) return res.error('have no user', 401)
+			if (!user) return res.error(E.UserNotExist(), 401)
 			
 			req.auth = decoded
 			next()
 
 		} catch (error) {
-			return res.error('authentication failed', 401)
+			return res.error(new Error('authentication failed'), 401)
 		}
 	},
 	/**
@@ -61,24 +62,25 @@ module.exports = {
 		try {
 			const decoded = jwt.decode(token)
 			if (!decoded)
-				return res.error('decode failed', 401)
+				return res.error(new Error('decode failed'), 401)
 			
 			// no expire
 			if (!decoded.station) 
-				return res.error('authentication failed', 401)
+				return res.error(new Error('authentication failed'), 401)
+			
 			let station = await Station.find({
 				where: {
 					id: decoded.station.id
 				},
 				raw: true
 			})
-			if (!station) return res.error('have no station', 401)
+			if (!station) return res.error(E.StationNotExist(), 401)
 
 			req.auth = decoded
 			next()
 			
 		} catch (error) {
-			return res.error('authentication failed', 401)
+			return res.error(new Error('authentication failed'), 401)
 		}
 	}
 }

@@ -6,22 +6,28 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/11/09 15:11:33 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/13 15:25:29 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
+/**
+ * FIXME: 优化构造函数
+ * 资源级别的 error，带入唯一标识符 id， 
+ * 方便直接在 error 日志明确具体的资源位置定位 error 并且能快速修复
+ * such as： new UserNotExist(userId)
+ * log: userId: xxxxxxx not exist
+ */
 const logger = global.Logger(__filename)
 const E = {}
-
 
 
 let Code = {
 	200: 'ok',
 	400: 'invalid parameters',
 	401: 'Authentication failed',
-	403: 'forbidden', // 
-	404: 'not found', 
+	403: 'forbidden',
+	404: 'not found',
 	500: 'system error'
 }
 
@@ -44,7 +50,6 @@ const define = (name, code, message) => E[name] = EClass(code, message)
  * 6 											 00 		     01
  * 服务级错误（1为系统级错误）	服务模块代码	具体错误代码
  */
-// websocket
 
 // user: 600XX
 define('UserNotExist',     60000, 'user not exist')

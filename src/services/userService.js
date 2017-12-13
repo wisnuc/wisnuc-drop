@@ -139,7 +139,7 @@ class UserService {
 		
 		for (let station of stations) {
 			station.isOnline = Boolean(station.isOnline)
-			station.LANIP = station.LANIP.split(',') // array
+			station.LANIP = station.LANIP ? station.LANIP.split(',') : null
 			station.isValid = false
 			for (let sc of stationCopys) {
 				if (station.id === sc.stationId) {
