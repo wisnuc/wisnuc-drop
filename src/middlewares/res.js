@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/13 15:42:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/13 17:58:33 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ module.exports = (req, res, next) => {
 			data: data
 		}
 		// show stack in production environment
-		if (getconfig['env'] === 'production') response.stack = statck
+		if (getconfig['env'] === 'production') response.stack = stack
 		return res.status(status).json(response)
 	}
 	next()
