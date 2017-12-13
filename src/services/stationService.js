@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 16:43:37 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/13 18:00:50 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ class StationService {
 			raw: true
 		})
 		
-		if (!station) throw E.StationNotExist()
+		if (!station) throw new E.StationNotExist()
 		
 		// random number
 		let seed = uuid.v4()

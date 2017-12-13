@@ -41,7 +41,7 @@ module.exports = {
 				},
 				raw: true
 			})
-			if (!user) return res.error(E.UserNotExist(), 401)
+			if (!user) return res.error(new E.UserNotExist(), 401)
 			
 			req.auth = decoded
 			next()
@@ -74,7 +74,7 @@ module.exports = {
 				},
 				raw: true
 			})
-			if (!station) return res.error(E.StationNotExist(), 401)
+			if (!station) return res.error(new E.StationNotExist(), 401)
 
 			req.auth = decoded
 			next()
