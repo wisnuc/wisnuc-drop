@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 10:23:17 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/11 18:25:01 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/14 14:05:54 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,24 +26,30 @@ const logger = global.Logger(__filename)
 */
 let register = () => {
 	return new Promise(async (resolve, reject) => {
-		let LANIP = ip.LANIP()
-		let WANIP = await ip.WANIP()
-	
-		return Server.findOrCreate({
-			where: {
-				$or: [
-					{ LANIP: LANIP },
-					{ WANIP: WANIP }
-				]
-			},
-			defaults: {
-				LANIP: LANIP,
-				WANIP: WANIP
-			}
-		}).spread(function (newObj, created) {
-			if (created) return newObj
-			return newObj.save()
-		})
+		try {
+			let LANIP = ip.LANIP()
+			let WANIP = await ip.WANIP()
+		
+			return Server.findOrCreate({
+				where: {
+					$or: [
+						{ LANIP: LANIP },
+						{ WANIP: WANIP }
+					]
+				},
+				defaults: {
+					LANIP: LANIP,
+					WANIP: WANIP
+				}
+			}).spread(function (newObj, created) {
+				if (created) return newObj
+				return newObj.save()
+			})
+		}
+		catch (err) {
+			reject(err)
+		}
+		
 	})
 }
 
