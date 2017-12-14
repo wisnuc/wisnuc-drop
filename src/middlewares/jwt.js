@@ -65,7 +65,7 @@ module.exports = {
 				return res.error(new Error('decode failed'), 401)
 			
 			// no expire
-			if (!decoded.station) 
+			if (!decoded.station)
 				return res.error(new Error('authentication failed'), 401)
 			
 			let station = await Station.find({

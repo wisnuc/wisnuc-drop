@@ -6,13 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/13 18:00:50 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/14 11:14:39 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const ursa = require('ursa')
 const uuid = require('uuid')
 
+const jwt = require('../lib/jwt')
 const {
 	Station, 
 	User, 
@@ -184,7 +185,7 @@ class StationService {
 				name: station.name
 			}
 		}
-		return { seed, encryptData, token }
+		return { seed, encryptData, token: jwt.encode(token) }
 	}
 }
 
