@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/27 17:38:50 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/28 14:38:18 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/15 15:38:22 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ const BASE_URL = 'http://localhost:4000'
 const URL = BASE_URL + `/c/v1/stations/${stationId}/json?resource=L21lZGlh&method=GET`
 
 autocannon({
-	url: URL,
-	headers: {
-		authorization: cToken
-	},
+  url: URL,
+  headers: {
+    authorization: cToken
+  },
   connections: 100, // default 0.1k
   pipelining: 1, 	 	// default
   duration: 10000   // default 10k

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 14:01:22 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/05 10:37:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/15 15:46:26 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,9 @@ const WXBizDataCrypt = require('../lib/WXBizDataCrypt')
  */
 class WechatInfo {
 
-	constructor(type) {
-		this.CONFIG = config.wechat[type]
-	}
+  constructor(type) {
+    this.CONFIG = config.wechat[type]
+  }
 
 	/**
 	 * get access token 
@@ -39,70 +39,70 @@ class WechatInfo {
 	 * @param {function} callback
 	 * @returns {object} accessToken    
 	 */
-	accessToken(code, callback) {
-		let url = BASE_URL + '/sns/oauth2/access_token?' +
-			'appid=' + this.CONFIG.appid +
-			'&secret=' + this.CONFIG.appSecret +
-			'&code=' + code +
-			'&grant_type=authorization_code'
+  accessToken(code, callback) {
+    let url = BASE_URL + '/sns/oauth2/access_token?' +
+      'appid=' + this.CONFIG.appid +
+      '&secret=' + this.CONFIG.appSecret +
+      '&code=' + code +
+      '&grant_type=authorization_code'
 
-		request({
-			method: 'GET',
-			uri: url
-		},
-			function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					let data = JSON.parse(body)
-					if (data && data.errcode) {
-						callback(data.errmsg)
-					}
-					else {
-						callback(null, data)
-					}
-				}
-				else {
-					callback(error)
-				}
-			})
-	}
+    request({
+      method: 'GET',
+      uri: url
+    },
+      function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          let data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          }
+          else {
+            callback(null, data)
+          }
+        }
+        else {
+          callback(error)
+        }
+      })
+  }
 
 	/**
 	 * 刷新access_token有效期
 	 * @param {*} callback 
 	 * @param {string} refreshToken
 	 */
-	refreshToken(refreshToken, callback) {
-		let url = BASE_URL + '/sns/oauth2/refresh_token?' +
-			'appid=' + this.CONFIG.appid +
-			'&grant_type=refresh_token' +
-			'&refresh_token=' + refreshToken
+  refreshToken(refreshToken, callback) {
+    let url = BASE_URL + '/sns/oauth2/refresh_token?' +
+      'appid=' + this.CONFIG.appid +
+      '&grant_type=refresh_token' +
+      '&refresh_token=' + refreshToken
 
-		request({
-			method: 'GET',
-			uri: url
-		},
-			function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					let data = JSON.parse(body)
-					if (data && data.errcode) {
-						callback(data.errmsg)
-					}
-					else {
-						callback(null, data)
-					}
-				}
-				else {
-					callback(error)
-				}
-			})
-	}
+    request({
+      method: 'GET',
+      uri: url
+    },
+      function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          let data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          }
+          else {
+            callback(null, data)
+          }
+        }
+        else {
+          callback(error)
+        }
+      })
+  }
 
 	/**
 	 * 检验授权凭证（access_token）是否有效
 	 * @param {*} access_token 
 	 * @param {*} openid 
 	 */
-	checkToken(access_token, openid) { }
+  checkToken(access_token, openid) { }
 
 
 	/**
@@ -111,30 +111,30 @@ class WechatInfo {
 	 * @param {string} openid
 	 * @param {function} callback
 	 */
-	userInfo(accessToken, openid, callback) {
-		let url = BASE_URL + '/sns/userinfo?' +
-			'access_token=' + accessToken +
-			'&openid=' + openid
+  userInfo(accessToken, openid, callback) {
+    let url = BASE_URL + '/sns/userinfo?' +
+      'access_token=' + accessToken +
+      '&openid=' + openid
 
-		request({
-			method: 'GET',
-			uri: url
-		},
-			function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					let data = JSON.parse(body)
-					if (data && data.errcode) {
-						callback(data.errmsg)
-					}
-					else {
-						callback(null, data)
-					}
-				}
-				else {
-					callback(error)
-				}
-			})
-	}
+    request({
+      method: 'GET',
+      uri: url
+    },
+      function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          let data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          }
+          else {
+            callback(null, data)
+          }
+        }
+        else {
+          callback(error)
+        }
+      })
+  }
 
 	/**
 	 * get wechat user information
@@ -142,30 +142,30 @@ class WechatInfo {
 	 * @param {function} callback
 	 * @returns {object} userInfo 
 	 */
-	oauth2UserInfo(type, code, callback) {
-		let _this = this
-		_this.accessToken(code, function (error, data) {
-			if (error)
-				return callback(error)
+  oauth2UserInfo(type, code, callback) {
+    let _this = this
+    _this.accessToken(code, function (error, data) {
+      if (error)
+        return callback(error)
 
-			_this.refreshToken(data.refresh_token, function (err, refresh) {
-				if (err)
-					return callback(err)
+      _this.refreshToken(data.refresh_token, function (err, refresh) {
+        if (err)
+          return callback(err)
 
-				_this.userInfo(refresh.access_token, data.openid, function (er, userInfo) {
-					if (er)
-						return callback(er)
+        _this.userInfo(refresh.access_token, data.openid, function (er, userInfo) {
+          if (er)
+            return callback(er)
 
-					callback(null, userInfo)
-				})
-			})
+          callback(null, userInfo)
+        })
+      })
 
-		})
-	}
+    })
+  }
 
-	async oauth2UserInfoAsync(platform, code) {
-		return Promise.promisify(this.oauth2UserInfo).bind(this)(platform, code)
-	}
+  async oauth2UserInfoAsync(platform, code) {
+    return Promise.promisify(this.oauth2UserInfo).bind(this)(platform, code)
+  }
 
 	/**
  * @param {string} code
@@ -175,32 +175,32 @@ class WechatInfo {
 		"session_key": "SESSIONKEY"
 	}
  */
-	getSessionKey(code, callback) {
-		let url = BASE_URL +
-			'/sns/jscode2session?' +
-			'appid=' + this.CONFIG.appid +
-			'&secret=' + this.CONFIG.appSecret +
-			'&js_code=' + code +
-			'&grant_type=authorization_code'
-		request({
-			method: 'GET',
-			uri: url
-		},
-			function (error, response, body) {
-				if (!error && response.statusCode == 200) {
-					let data = JSON.parse(body)
-					if (data && data.errcode) {
-						callback(data.errmsg)
-					}
-					else {
-						callback(null, data)
-					}
-				}
-				else {
-					callback(error)
-				}
-			})
-	}
+  getSessionKey(code, callback) {
+    let url = BASE_URL +
+      '/sns/jscode2session?' +
+      'appid=' + this.CONFIG.appid +
+      '&secret=' + this.CONFIG.appSecret +
+      '&js_code=' + code +
+      '&grant_type=authorization_code'
+    request({
+      method: 'GET',
+      uri: url
+    },
+      function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+          let data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          }
+          else {
+            callback(null, data)
+          }
+        }
+        else {
+          callback(error)
+        }
+      })
+  }
 
 	/**
 	 * 获取小程序信息
@@ -223,20 +223,20 @@ class WechatInfo {
 		}
 	}
 	 */
-	mpUserInfo(code, iv, encryptedData, callback) {
-		this.getSessionKey(code, (err, result) => {
-			if (err)
-				return callback(err)
-			let pc = new WXBizDataCrypt(this.CONFIG.appid, result.session_key)
-			let data = pc.decryptData(encryptedData, iv)
+  mpUserInfo(code, iv, encryptedData, callback) {
+    this.getSessionKey(code, (err, result) => {
+      if (err)
+        return callback(err)
+      let pc = new WXBizDataCrypt(this.CONFIG.appid, result.session_key)
+      let data = pc.decryptData(encryptedData, iv)
 
-			return callback(null, data)
-		})
-	}
+      return callback(null, data)
+    })
+  }
 
-	async mpUserInfoAsync(code, iv, encryptedData) {
-		return Promise.promisify(this.mpUserInfo).bind(this)(code, iv, encryptedData)
-	}
+  async mpUserInfoAsync(code, iv, encryptedData) {
+    return Promise.promisify(this.mpUserInfo).bind(this)(code, iv, encryptedData)
+  }
 }
 
 

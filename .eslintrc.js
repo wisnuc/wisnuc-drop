@@ -1,11 +1,19 @@
+// http://eslint.org/docs/user-guide/configuring
+
 module.exports = {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "E": true,
+    "Logger": true
   },
   "extends": "eslint:recommended",
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaVersion": 8
   },
   "rules": {
     "indent": [
@@ -18,7 +26,7 @@ module.exports = {
     ],
     "quotes": [
       "error",
-      null
+      "single"
     ],
     "semi": [
       "error",
@@ -27,28 +35,3 @@ module.exports = {
   }
 };
 
-
-// http://eslint.org/docs/user-guide/configuring
-
-// module.exports = {
-// 	env: {
-//     es6: true,
-// 		node: true,
-// 		mocha: true
-//   },
-//   parserOptions: {
-// 		sourceType: 'module',
-// 		ecmaVersion: 8
-//   },
-//   extends: 'eslint:recommended',
-//   'rules': {
-// 		quotes: [
-// 			'error',
-// 			'single'
-// 		],
-// 		semi: [
-// 			'error',
-// 			'never'
-// 		]
-//   }
-// }

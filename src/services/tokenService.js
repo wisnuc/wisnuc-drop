@@ -12,7 +12,7 @@
 
 const jwt = require('../lib/jwt')
 const WechatInfo = require('../lib/wechatInfo')
-const { User,WisnucDB } = require('../models')
+const { User, WisnucDB } = require('../models')
 /**
  * This is wechat service.
  * @class TokenService
@@ -26,7 +26,7 @@ class TokenService {
 	 * @returns {object} token
 	 * @memberof TokenService
 	 */
-	async oauth2(platform, code) {
+  async oauth2(platform, code) {
 		/**
 		userInfo: {
 			openid: 'ogv9iv0DstjP3OGsVl0Y0-jigwbE',
@@ -41,49 +41,49 @@ class TokenService {
 			unionid: 'oOMKGwt3tX67LcyaG-IPaExMSvDw'
 		}
 		 */
-		return WisnucDB.transaction(async t => {
-			let wechatInfo = new WechatInfo(platform)
-			let userInfo = await wechatInfo.oauth2UserInfoAsync(platform, code)
-			let user
-			user = await User.find({
-				where: {
-					unionId: userInfo.unionid
-				},
-				raw: true,
-				transaction: t
-			})
-			if (!user) {
-				// user not exist, create new user
-				user = await User.create({
-					unionId: userInfo.unionid,
-					nickName: userInfo.nickname,
-					avatarUrl: userInfo.headimgurl
-				}, {transaction: t})
-			}
-			else {
-				// update nickName, avatarUrl
-				await User.update({
-					nickName: userInfo.nickname,
-					avatarUrl: userInfo.headimgurl
-				}, {
-					where: {
-						unionId: userInfo.unionid
-					},transaction: t
-				})
-			}
-			const userData = {
-				id: user.id,
-				nickName: user.nickName,
-				avatarUrl: user.avatarUrl
-			}
-			const token = { user: userData }
-			return {
-				user: userData,
-				token: jwt.encode(token)
-			}
-		})
-		
-	}
+    return WisnucDB.transaction(async t => {
+      let wechatInfo = new WechatInfo(platform)
+      let userInfo = await wechatInfo.oauth2UserInfoAsync(platform, code)
+      let user
+      user = await User.find({
+        where: {
+          unionId: userInfo.unionid
+        },
+        raw: true,
+        transaction: t
+      })
+      if (!user) {
+        // user not exist, create new user
+        user = await User.create({
+          unionId: userInfo.unionid,
+          nickName: userInfo.nickname,
+          avatarUrl: userInfo.headimgurl
+        }, { transaction: t })
+      }
+      else {
+        // update nickName, avatarUrl
+        await User.update({
+          nickName: userInfo.nickname,
+          avatarUrl: userInfo.headimgurl
+        }, {
+            where: {
+              unionId: userInfo.unionid
+            }, transaction: t
+          })
+      }
+      const userData = {
+        id: user.id,
+        nickName: user.nickName,
+        avatarUrl: user.avatarUrl
+      }
+      const token = { user: userData }
+      return {
+        user: userData,
+        token: jwt.encode(token)
+      }
+    })
+
+  }
 
 	/**
 	 * mp 登录
@@ -93,7 +93,7 @@ class TokenService {
 	 * @param {*} encryptedData 
 	 * @returns {object} token
 	 */
-	async mpToken(code, iv, encryptedData) {
+  async mpToken(code, iv, encryptedData) {
 		/**
 	  userInfo: {
 			"nickName": "Band",
@@ -110,48 +110,48 @@ class TokenService {
 			}
 		}
 		 */
-		return WisnucDB.transaction(async t => {
-			const wechatInfo = new WechatInfo('mp')
-			let userInfo = await wechatInfo.mpUserInfoAsync(code, iv, encryptedData)
-			let user
-			user = await User.find({
-				where: {
-					unionId: userInfo.unionId
-				},
-				raw: true,
-				transaction: t
-			})
-			if (!user) {
-				// user not exist, create new user
-				user = await User.create({
-					unionId: userInfo.unionId,
-					nickName: userInfo.nickName,
-					avatarUrl: userInfo.avatarUrl
-				}, {transaction: t})
-			}
-			else {
-				// update nickName, avatarUrl
-				await User.update({
-					nickName: userInfo.nickName,
-					avatarUrl: userInfo.avatarUrl
-				}, {
-					where: {
-						unionId: userInfo.unionId
-					},transaction: t
-				})
-			}
-			const userData = {
-				id: user.id,
-				nickName: user.nickName,
-				avatarUrl: user.avatarUrl
-			}
-			const token = { user: userData }
-			return {
-				user: userData,
-				token: jwt.encode(token)
-			}
-		})
-	}
+    return WisnucDB.transaction(async t => {
+      const wechatInfo = new WechatInfo('mp')
+      let userInfo = await wechatInfo.mpUserInfoAsync(code, iv, encryptedData)
+      let user
+      user = await User.find({
+        where: {
+          unionId: userInfo.unionId
+        },
+        raw: true,
+        transaction: t
+      })
+      if (!user) {
+        // user not exist, create new user
+        user = await User.create({
+          unionId: userInfo.unionId,
+          nickName: userInfo.nickName,
+          avatarUrl: userInfo.avatarUrl
+        }, { transaction: t })
+      }
+      else {
+        // update nickName, avatarUrl
+        await User.update({
+          nickName: userInfo.nickName,
+          avatarUrl: userInfo.avatarUrl
+        }, {
+            where: {
+              unionId: userInfo.unionId
+            }, transaction: t
+          })
+      }
+      const userData = {
+        id: user.id,
+        nickName: user.nickName,
+        avatarUrl: user.avatarUrl
+      }
+      const token = { user: userData }
+      return {
+        user: userData,
+        token: jwt.encode(token)
+      }
+    })
+  }
 }
 
 module.exports = new TokenService()

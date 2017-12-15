@@ -3,22 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   userService.js                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>           +#+  +:+       +#+        */
+/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/09 18:09:26 by JianJin Wu          #+#    #+#             */
-/*   Updated: 2017/08/30 18:05:52 by JianJin Wu         ###   ########.fr       */
+/*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
+/*   Updated: 2017/12/15 15:43:13 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const _ = require('lodash')
 const E = require('../lib/error')
-const { 
-	User, 
-	UserStation, 
-	Station,
-	StationUser,
-	Box, 
-	BoxUser
+const {
+	User,
+  UserStation,
+  Station,
+  StationUser,
+  Box,
+  BoxUser
  } = require('../models')
 
 /**
@@ -32,58 +32,58 @@ class UserService {
 	 * @returns 
 	 * @memberof UserService
 	 */
-	create(user) {
-		return User.create(user)
-	}
+  create(user) {
+    return User.create(user)
+  }
 	/**
 	 * get user information
 	 * @param {string} userId 
 	 * @returns {object} user 
 	 */
-	async find(userId) {
-		let user = await User.find({
-			where: {
-				id: userId
-			},
-			include: {
-				model: UserStation,
-				as: 'stations',
-				required: false,
-				where: {
-					userId: userId,
-					status: 1
-				},
-				attributes: ['stationId']
-				// attributes: [ [Sequelize.col('stationId'), 'id'] ]
-			}
-		})
-		if (!user) throw new E.EUSERNOTEXIST()
-		return user
-	}
+  async find(userId) {
+    let user = await User.find({
+      where: {
+        id: userId
+      },
+      include: {
+        model: UserStation,
+        as: 'stations',
+        required: false,
+        where: {
+          userId: userId,
+          status: 1
+        },
+        attributes: ['stationId']
+        // attributes: [ [Sequelize.col('stationId'), 'id'] ]
+      }
+    })
+    if (!user) throw new E.EUSERNOTEXIST()
+    return user
+  }
 	/**
 	 * update user
 	 * @param {any} user 
 	 * @memberof UserService
 	 */
-	update(user) {
-		return User.update(user, {
-			where: {
-				id: user.id
-			}
-		})
-	}
+  update(user) {
+    return User.update(user, {
+      where: {
+        id: user.id
+      }
+    })
+  }
 	/**
 	 * delete user
 	 * @param {any} userId 
 	 * @memberof UserService
 	 */
-	delete(userId) {
-		return User.update({status: -1}, {
-			where: {
-				id: userId
-			}
-		})
-	}
+  delete(userId) {
+    return User.update({ status: -1 }, {
+      where: {
+        id: userId
+      }
+    })
+  }
 	/**
 	 * get stations
 	 * 查询 station_server, 若有一台机器在线则认为 station 在线，反之则不在线
@@ -110,46 +110,46 @@ class UserService {
 	 * @param {string} userId 
 	 * @returns {array} stations 
 	 */
-	async findStations(userId) { 
+  async findStations(userId) {
 
-		let stations = await Station.findAll({
-			include: [
-				{
-					model: UserStation,
-					where: {
-						userId: userId
-					},
-					attributes: [],
-				}
-			],
-			attributes: ['id', 'name', 'isOnline', 'LANIP'],
-			raw: true
-		})
-		if (stations.length < 1) return stations
+    let stations = await Station.findAll({
+      include: [
+        {
+          model: UserStation,
+          where: {
+            userId: userId
+          },
+          attributes: [],
+        }
+      ],
+      attributes: ['id', 'name', 'isOnline', 'LANIP'],
+      raw: true
+    })
+    if (stations.length < 1) return stations
 
-		let stationIds = _.map(stations, 'id')
-		let stationCopys = await StationUser.findAll({
-			where: {
-				userId: userId,
-				stationId: {$in: stationIds }
-			},
-			attributes: ['stationId'],
-			raw: true
-		})
-		
-		for (let station of stations) {
-			station.isOnline = Boolean(station.isOnline)
-			station.LANIP = station.LANIP ? station.LANIP.split(',') : null
-			station.isValid = false
-			for (let sc of stationCopys) {
-				if (station.id === sc.stationId) {
-					station.isValid = true
-					break
-				}
-			}
-		}
-		return stations
-	}
+    let stationIds = _.map(stations, 'id')
+    let stationCopys = await StationUser.findAll({
+      where: {
+        userId: userId,
+        stationId: { $in: stationIds }
+      },
+      attributes: ['stationId'],
+      raw: true
+    })
+
+    for (let station of stations) {
+      station.isOnline = Boolean(station.isOnline)
+      station.LANIP = station.LANIP ? station.LANIP.split(',') : null
+      station.isValid = false
+      for (let sc of stationCopys) {
+        if (station.id === sc.stationId) {
+          station.isValid = true
+          break
+        }
+      }
+    }
+    return stations
+  }
 	/**
 	 * get friends TODO:
 	 * 1. users in the boxes owned by me.
@@ -157,37 +157,37 @@ class UserService {
 	 * @param {any} userId 
 	 * @memberof UserService
 	 */
-	findFriends(userId) {
-		let result = Promise.props({
-			ownerIds: BoxUser.findAll({
-				include: {
-					model: Box,
-					where: {
-						ownerId: userId
-					}
-				},
-				attributes: ['userId']
-			}),
-			userIds: Box.findAll({
-				include: {
-					model: BoxUser,
-					as: 'users',
-					where: {
-						userId: userId
-					}
-				},
-				attributes: ['ownerId']
-			})
-		})
-		let { ownerIds, userIds } = result
-		let friendIds = _.union(ownerIds, userIds)
-		// friendIds
-		return User.findAll({
-			where: {
-				id: friendIds
-			}
-		})
-	}
+  findFriends(userId) {
+    let result = Promise.props({
+      ownerIds: BoxUser.findAll({
+        include: {
+          model: Box,
+          where: {
+            ownerId: userId
+          }
+        },
+        attributes: ['userId']
+      }),
+      userIds: Box.findAll({
+        include: {
+          model: BoxUser,
+          as: 'users',
+          where: {
+            userId: userId
+          }
+        },
+        attributes: ['ownerId']
+      })
+    })
+    let { ownerIds, userIds } = result
+    let friendIds = _.union(ownerIds, userIds)
+    // friendIds
+    return User.findAll({
+      where: {
+        id: friendIds
+      }
+    })
+  }
 }
 
 module.exports = new UserService()

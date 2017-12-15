@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 10:29:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 10:56:37 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/15 15:44:43 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,30 +24,30 @@ let map = new Map()
 
 // wechat test api
 router.post('/', async (req, res) => {
-	try {
-		return res.success()
-	}
-	catch(err) {
-		return res.error(err)
-	}
+  try {
+    return res.success()
+  }
+  catch (err) {
+    return res.error(err)
+  }
 })
 
 // binding wechat account
 router.get('/wechat/binding', joiValidator({
-	body: {
-		code: Joi.string().required(),
-		platform: Joi.string().valid(['web', 'mobile']).required()
-	}
+  body: {
+    code: Joi.string().required(),
+    platform: Joi.string().valid(['web', 'mobile']).required()
+  }
 }), async (req, res) => {
-	try {
-		let code = req.query.code
-		let platform = req.query.platform
-		let data = await accountService.bindingWechat(platform, code)
-		return res.success(data)
-	}
-	catch(err) {
-		return res.error(err)
-	}
+  try {
+    let code = req.query.code
+    let platform = req.query.platform
+    let data = await accountService.bindingWechat(platform, code)
+    return res.success(data)
+  }
+  catch (err) {
+    return res.error(err)
+  }
 })
 
 

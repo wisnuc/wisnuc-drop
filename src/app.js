@@ -21,7 +21,7 @@ const Session = require('express-session')
 const FileStore = require('session-file-store')(Session)
 
 const routes = require('./routes/index')
-const logger = global.Logger('app')
+const logger = Logger('app')
 
 const app = express()
 

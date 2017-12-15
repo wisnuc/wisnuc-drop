@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/12 15:27:49 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/15 09:51:56 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/15 15:46:46 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,20 @@ class Jwt {
 	 * @returns {object} token
 	 * @memberof Jwt
 	 */
-	encode(payload) {
-		// exp: default 30d
-		payload.exp = Date.now() + 1000 * 3600 * 24 * 30
-		return jwt.encode(payload, SECRET)
-	}
+  encode(payload) {
+    // exp: default 30d
+    payload.exp = Date.now() + 1000 * 3600 * 24 * 30
+    return jwt.encode(payload, SECRET)
+  }
 	/**
 	 * 解密
 	 * @param {object} token 
 	 * @returns {object} decoded data
 	 * @memberof Jwt
 	 */
-	decode(token) {
-		return jwt.decode(token, SECRET)
-	}
+  decode(token) {
+    return jwt.decode(token, SECRET)
+  }
 }
 
 

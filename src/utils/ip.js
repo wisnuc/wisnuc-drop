@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 16:52:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/08 15:03:05 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/15 15:39:11 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,25 @@ module.exports = {
 	 * get local ip
 	 * @returns 
 	 */
-	LANIP() {
-		let interfaces = os.networkInterfaces()
-		for (let devName in interfaces) {
-			let iface = interfaces[devName]
-			for (let i = 0; i < iface.length; i++) {
-				let alias = iface[i]
-				if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-					return alias.address
-				}
-			}
-		}
-	},
+  LANIP() {
+    let interfaces = os.networkInterfaces()
+    for (let devName in interfaces) {
+      let iface = interfaces[devName]
+      for (let i = 0; i < iface.length; i++) {
+        let alias = iface[i]
+        if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+          return alias.address
+        }
+      }
+    }
+  },
 	/**
 	 * get wan ip
 	 * @returns 
 	 */
-	WANIP() {
-		return publicIp.v4()
-	}
+  WANIP() {
+    return publicIp.v4()
+  }
 }
 
 
