@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 require('./utils/global')
-require('../src/utils/init').register() 
+require('../src/utils/init').register()
 
 const express = require('express')
 const cookieParser = require('cookie-parser')
@@ -26,11 +26,11 @@ const logger = global.Logger('app')
 const app = express()
 
 const session = Session({
-	store: new FileStore({ path: './sessions' }),
-	secret: 'wisnuc-drop',
-	resave: false,
-	saveUninitialized: true,
-	cookie: { secure: true }
+  store: new FileStore({ path: './sessions' }),
+  secret: 'wisnuc-drop',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: true }
 })
 
 // Use express-session middleware for express
@@ -39,8 +39,8 @@ app.use(session)
 // app.set('trust proxy', 1) // trust first proxy
 
 app.use(log4js.connectLogger(logger, {
-	level: 'INFO',
-	format: ':remote-addr  :method  :url  :status  :response-time' + 'ms'
+  level: 'INFO',
+  format: ':remote-addr  :method  :url  :status  :response-time' + 'ms'
 }))
 app.use(bodyParser.json({ limit: '10000kb' }))
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -53,10 +53,10 @@ app.use('/', routes)
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
-	let err = new Error('Not Found') 
-	err.status = 404
-	res.status(err.status).json(err.message)
-	next()
+  let err = new Error('Not Found')
+  err.status = 404
+  res.status(err.status).json(err.message)
+  next()
 })
 
 module.exports = app
