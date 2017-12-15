@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/01 15:13:34 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/13 14:11:09 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/15 11:28:42 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ const config = require('getconfig')
 
 const MQTT_URL = `mqtt://${config.mqtt.host}:${config.mqtt.port}`
 const settings = {
-  clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
+  clientId: 'cloud_' + Math.random().toString(16).substr(2, 8),
   clean: true,
   keepalive: 3,
   reconnectPeriod: 5 * 1000,
@@ -26,8 +26,8 @@ const settings = {
 const client = mqtt.connect(MQTT_URL, settings)
 
 // subcribe topic
-client.subscribe(`$queue/station/connect`, {qos:1})
-client.subscribe(`$queue/station/disconnect`, {qos:1})
+client.subscribe(`$queue/station/connect`, { qos: 1 })
+client.subscribe(`$queue/station/disconnect`, { qos: 1 })
 
 // connect
 client.on('connect', connack => debug('cloud connect successfully!', connack))
