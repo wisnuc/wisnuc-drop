@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 11:39:13 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:44:17 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/19 15:45:08 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,53 @@ const joiValidator = require('../../../middlewares/joiValidator')
 const tokenService = require('../../../services/tokenService')
 
 /**
- * web, mobile login
- * return token
+ * @swagger
+ * definitions:
+ *   CToken:
+ *     type: object
+ *     properties:
+ *       user:
+ *         type: object
+ *         properties:
+ *           id: 
+ *             type: string
+ *             example: 6e6c0c4a-967a-489a-82a2-c6eb6fe9d991
+ *           nickName:
+ *             type: string
+ *             example: mosaic
+ *           avatarUrl:
+ *             type: string
+ *             example: https://wx.qlogo.cn
+ *       token:
+ *         type: string
+ *         example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+ */
+
+
+/**
+ * @swagger
+ * /c/v1/token:
+ *   get:
+ *     summary: return web, mobile token
+ *     tags:
+ *       - /c/token
+ *     parameters:
+ *       - name: code
+ *         in: query
+ *         required: true
+ *         description: code
+ *         type: string
+ *       - name: platform
+ *         in: query
+ *         required: true
+ *         description: web or mobile
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/CToken'
+ *          
  */
 router.get('/', joiValidator({
   query: {
@@ -39,8 +84,33 @@ router.get('/', joiValidator({
 })
 
 /**
- * mp login
- * return token
+ * @swagger
+ * /c/v1/token:
+ *   post:
+ *     summary: return small program token
+ *     tags:
+ *       - /c/token
+ *     parameters:
+ *       - name: code
+ *         in: body
+ *         required: true
+ *         description: code
+ *         type: string
+ *       - name: iv
+ *         in: body
+ *         required: true
+ *         description: iv
+ *         type: string
+ *       - name: encryptedData
+ *         in: body
+ *         required: true
+ *         description: encryptedData
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/CToken'
  */
 router.post('/', joiValidator({
   body: {

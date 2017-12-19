@@ -98,7 +98,10 @@ npm run cloud-station
 - database tables constructure document
 - [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
 - [qcloud databases backup](https://www.qcloud.com)
-- station 握着2个 websocket
+- 
+- 项目自动部署
+- api兼容问题
+- 数据迁移
 
 ## Error Code
 
