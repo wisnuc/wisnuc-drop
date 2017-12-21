@@ -6,7 +6,7 @@
     "start": "nodemon src/bin/www",
     "start-once": "node src/bin/www",
     "debug": "DEBUG=*. node src/bin/www",
-    "test": "NODE_ENV=test nodemon src/bin/www",
+    "test": "NODE_ENV=test nodemon --delay 1.5 src/bin/www",
     "test-once": "NODE_ENV=test node src/bin/www",
     "mocha": "NODE_PATH=. NODE_ENV=test nodemon --ignore out --exec mocha --recursive --sort",
     "unit": "npm run mocha",
