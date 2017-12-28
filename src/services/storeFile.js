@@ -6,17 +6,19 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:42:34 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/28 18:17:56 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const debug = require('debug')('pipe')
+const debug = require('debug')('dicer')
 const uuid = require('uuid')
-const formidable = require('formidable')
+const Dicer = require('dicer')
 const EventEmitter = require('events').EventEmitter
 
 const threadify = require('../lib/threadify')
 const mqttService = require('./mqttService')
+
+const RE_BOUNDARY = /^multipart\/.+?(?: boundary=(?:(?:"(.+)")|(?:([^\s]+))))$/i
 
 /**
  * store file 
@@ -28,7 +30,7 @@ const mqttService = require('./mqttService')
 */
 
 /**
- * formidable upload file - server 
+ * pload file
  * @class Server 
  * @extends {EventEmitter}
  */
@@ -38,63 +40,107 @@ class Server extends threadify(EventEmitter) {
     super()
     this.req = req
     this.res = res
-    this.jobId = uuid.v4()
+    this.jobId = 'b2524869-cc25-4c08-b480-a8ab8080c4b2' // uuid.v4()
     this.timer = Date.now() + 15 * 1000
-    this.buffers = []
+    this.req.on('close', err => {
+      debug('request close')
+      this.error(err)
+    })
     // req error
-    this.req.on('error', err => this.error(err))
+    this.req.on('error', err => {
+      debug('request error')
+      this.error(err)
+    })
+    this.req.on('abort', err => {
+      debug('request abort')
+      this.error(err)
+    })
   }
 
-  // formidable
+  // dicer
   async run() {
+
     let stationId = this.req.params.id
     let user = this.req.auth.user
-    let form = new formidable.IncomingForm()
-
-    // define formEnded action 
-    this.defineSetOnce('formEnded', () => {
-      // this.ws exist and this.buffers = null
-      if (this.ws && !this.buffers) {
-        this.ws.end() // station response end 
-      }
-    })
+    
+    const m = RE_BOUNDARY.exec(this.req.headers['content-type'])
+    let dicer = new Dicer({ boundary: m[1] || m[2] })
+    
+    let filePart
 
     // until ws come in, emit different action
     this.defineSetOnce('ws', () => {
-      // if formEnded = true, this.ws.end()
-      if (this.formEnded) {
-        this.buffers.forEach((buf) => this.ws.write(buf))
-        this.ws.end()
-      }
-      else {
-        this.buffers.forEach((buf) => this.ws.write(buf))
-        this.buffers = null
-        form.resume()
-      }
+      debug('ws defineSetOnce')
+      return filePart && onFile(filePart)
     })
-
-    form.onPart = part => {
-      if (!part.filename) {
-        // let formidable handle all non-file parts
-        return form.handlePart(part)
-      }
-      form.pause()
-      part.on('data', data => {
-        if (this.ws) {
-          this.ws.write(data)
-        }
-        else {
-          this.buffers.push(data)
-        }
+    
+    // two part
+    const dicerOnPart = part => {
+      debug('New Part')
+      
+      // hanlder error
+      part.on('error', err => {
+        debug(`part err${err}`)
+        part.removeAllListeners()
+        part.on('error', () => {})
+        errorHandler()
       })
-      part.on('end', () => { })
-      part.on('error', () => { })
+      
+      // Request header
+      part.on('header', function (header) {
+        // { 'content-disposition': [ 'form-data; name="manifest"' ] }
+        // { 'content-disposition': [ 'form-data; name="file"; filename="nodejs-server-server-generated.zip"' ], 'content-type': [ 'application/zip' ] }
+        // let x = header['content-disposition'][0].split('; ')
+        try {
+          let name = parseHeader(header)
+          if (name === 'manifest') {
+            onField(part)
+          }
+          else {
+            filePart = part
+          }
+        }
+        catch(err) {
+          return this.error(err)
+        }
+        
+      })
     }
-    // analysis field
-    form.on('field', async (field, value) => {
-      try {
-        if (field == 'manifest') {
-          let body = JSON.parse(value)
+    
+    const errorHandler = () => {
+      if(dicer) {
+        dicer.removeAllListeners()
+        dicer.on('error', () => {})
+        this.req.unpipe(dicer)
+        dicer.end()
+        dicer = null
+      }
+    }
+    
+    const parseHeader = header => {
+      let x = Buffer.from(header['content-disposition'][0], 'binary').toString('utf8').replace(/%22/g, '"').split('; ')
+      //fix %22
+      if (x[0] !== 'form-data') throw new Error('not form-data')
+      if (!x[1].startsWith('name="') || !x[1].endsWith('"')) throw new Error('invalid name') 
+      let name = x[1].slice(6, -1)
+      return name
+    }
+    
+    // const schedule = () => filePart && this.ws 
+    
+    const onFile = part => {
+      debug('file data: ')
+      part.on('data', data => {
+        let chunk = Buffer.from(data)
+        this.ws.write(chunk)
+      })
+    }
+    
+    const onField = part => {
+      part.on('data', async data => {
+        try {
+          debug('field data: ' + data)
+          let body = JSON.parse(data)
           let method, resource
           method = body.method
           resource = body.resource
@@ -115,23 +161,40 @@ class Server extends threadify(EventEmitter) {
           )
           // this.replay(tmpWriteStream)
           await this.notice(stationId, manifest)
+          // schedule()
         }
-        else {
-          this.error(new E.NoManiFestField())
+        catch (err) {
+          this.error(err)
         }
-      }
-      catch (err) {
-        this.error(err)
-      }
+      })
+
+      part.on('end', function () {
+        debug('End of part\n')
+      })
+
+      part.on('err', err => {
+        debug(`error: ${err}`)
+      })
+      
+    }
+
+    dicer.on('part', dicerOnPart)
+
+    dicer.on('finish', () => {
+      dicer = null
+      debug('End of parts')
+      this.res.success('Form submission successful!')
+    })
+    
+    dicer.on('error', err => {
+      this.req.unpipe(dicer)
+      dicer.end()
+      dicer = null
+      this.res.error(err)
     })
 
-    form.on('aborted', () => this.abort())
-    form.on('error', () => this.error(new E.FormError()))
-    // last event 
-    form.on('end', () => this.formEnded = true)
-    form.parse(this.req)
+    this.req.pipe(dicer)
   }
-
 	/**
 	 * find matched station, and send message
 	 * @param {string} stationId 
@@ -139,7 +202,8 @@ class Server extends threadify(EventEmitter) {
 	 * @memberof Server
 	 */
   async notice(stationId, manifest) {
-    await mqttService.pipe(stationId, manifest)
+    debug(`manifest pipe successfully`) // TODO:
+    // await mqttService.pipe(stationId, manifest)
   }
 
 	/**
@@ -148,8 +212,13 @@ class Server extends threadify(EventEmitter) {
 	 * @memberof Server
 	 */
   repay(writeStream) {
+    debug(`hello world`)
     // this.ws 是个转折点
     this.ws = writeStream
+    // const fs = require('fs')
+    
+    // const FILE_PATH = process.cwd() + '/tmp/xxxxx'
+    // let ws = fs.createWriteStream(FILE_PATH)
   }
 
   isTimeOut() {
@@ -162,6 +231,7 @@ class Server extends threadify(EventEmitter) {
   }
 
   finished() {
+    debug(123123, this.res.finished)
     return this.res.finished
   }
 
@@ -171,6 +241,7 @@ class Server extends threadify(EventEmitter) {
   }
 
   error(err, code) {
+    debug(123123, err)
     if (this.finished()) return
     this.res.error(err, code)
   }
@@ -184,12 +255,10 @@ class Server extends threadify(EventEmitter) {
 /**
  * formidable upload file
  * @class StoreFile
- * @extends {threadify(EventEmitter)}
  */
-class StoreFile extends threadify(EventEmitter) {
+class StoreFile {
 
   constructor(limit) {
-    super()
     this.limit = limit || 1024
     this.map = new Map()
     // global handle map

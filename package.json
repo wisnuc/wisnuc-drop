@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon --delay 1.5 src/bin/www",
+    "start": "NODE_ENV=test nodemon --delay 1.5 src/bin/www",
     "start-once": "node src/bin/www",
     "debug": "DEBUG=*. node src/bin/www",
     "test": "NODE_ENV=test nodemon src/bin/www",
@@ -24,6 +24,7 @@
     "body-parser": "^1.17.1",
     "cookie-parser": "^1.4.3",
     "debug": "^2.6.6",
+    "dicer": "^0.2.5",
     "express": "^4.15.2",
     "express-session": "^1.15.3",
     "formidable": "^1.1.1",
@@ -42,7 +43,6 @@
     "request-promise": "^4.2.1",
     "sequelize": "^3.30.4",
     "session-file-store": "^1.1.2",
-    "socket.io": "^2.0.3",
     "ursa": "^0.9.4",
     "uuid": "^3.0.1"
   },
@@ -54,9 +54,8 @@
     "jsdoc": "^3.4.3",
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.4.2",
-    "nodemon": "^1.11.0",
+    "nodemon": "^1.14.1",
     "sinon": "^2.3.8",
-    "socket.io-client": "^2.0.3",
     "supertest": "^3.0.0"
   },
   "engines": {
