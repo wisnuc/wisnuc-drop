@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/28 18:17:56 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/29 17:24:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,7 @@ class Server extends threadify(EventEmitter) {
     }
     
     const errorHandler = () => {
+      debug('errror')
       if(dicer) {
         dicer.removeAllListeners()
         dicer.on('error', () => {})
