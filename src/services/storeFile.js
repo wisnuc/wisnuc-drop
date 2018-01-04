@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/29 17:24:04 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/04 17:13:26 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ class Server extends threadify(EventEmitter) {
     // const schedule = () => filePart && this.ws 
     
     const onFile = part => {
-      debug('file data: ')
+      debug('file data start')
       part.on('data', data => {
         let chunk = Buffer.from(data)
         this.ws.write(chunk)
@@ -140,7 +140,7 @@ class Server extends threadify(EventEmitter) {
     const onField = part => {
       part.on('data', async data => {
         try {
-          debug('field data: ' + data)
+          debug('field data start')
           let body = JSON.parse(data)
           let method, resource
           method = body.method
@@ -168,23 +168,17 @@ class Server extends threadify(EventEmitter) {
           this.error(err)
         }
       })
-
-      part.on('end', function () {
-        debug('End of part\n')
-      })
-
-      part.on('err', err => {
-        debug(`error: ${err}`)
-      })
       
+      part.on('end', () => debug('End of part\n'))
+      part.on('err', err => debug(`error: ${err}`))
     }
 
     dicer.on('part', dicerOnPart)
 
     dicer.on('finish', () => {
       dicer = null
+      if (this.ws) this.ws.end()
       debug('End of parts')
-      this.res.success('Form submission successful!')
     })
     
     dicer.on('error', err => {
@@ -213,11 +207,10 @@ class Server extends threadify(EventEmitter) {
 	 * @memberof Server
 	 */
   repay(writeStream) {
-    debug(`hello world`)
+    debug(`this ws start`)
     // this.ws 是个转折点
     this.ws = writeStream
     // const fs = require('fs')
-    
     // const FILE_PATH = process.cwd() + '/tmp/xxxxx'
     // let ws = fs.createWriteStream(FILE_PATH)
   }
@@ -232,7 +225,6 @@ class Server extends threadify(EventEmitter) {
   }
 
   finished() {
-    debug(123123, this.res.finished)
     return this.res.finished
   }
 
@@ -242,7 +234,6 @@ class Server extends threadify(EventEmitter) {
   }
 
   error(err, code) {
-    debug(123123, err)
     if (this.finished()) return
     this.res.error(err, code)
   }

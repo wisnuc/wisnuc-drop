@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:30:34 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/04 14:14:39 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ module.exports = (req, res, next) => {
           message: message,
           stack: stack
         })
-        fundebug.notifyError(err)
       }
     }
     let response = {
@@ -86,7 +85,10 @@ module.exports = (req, res, next) => {
       data: data
     }
     // show stack in production environment
-    if (getconfig['env'] === 'production') response.stack = stack
+    if (getconfig['env'] === 'production') {
+      response.stack = stack
+      fundebug.notifyError(err)
+    }
     return res.status(status).json(response)
   }
   next()
