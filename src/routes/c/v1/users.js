@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:44:14 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2017/12/19 16:49:10 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,46 @@ const joiValidator = require('../../../middlewares/joiValidator')
 const userService = require('../../../services/userService')
 
 
-// get user
+/**
+ * @swagger
+ * definitions:
+ *   User:
+ *     type: object
+ *     properties:
+ *       id:
+ *         type: string
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
+ *       status:
+ *         type: number
+ *         example: 1
+ *       nickName:
+ *         type: string
+ *         example: mosaic
+ *       avatarUrl:
+ *         type: string
+ *         example: https://wx.qlogo.cn
+ */
+
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: return user
+ *     tags:
+ *       - /c/users
+ *     parameters:
+ *       - name: id
+ *         in: query
+ *         required: true
+ *         description: code
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/User'
+ */
 router.get('/:id', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
