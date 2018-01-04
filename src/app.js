@@ -59,7 +59,7 @@ const options = {
       description: 'This document is the restful api of wisnuc cloud for client and station.',
       version: '1.0.0', // Version (required)
     },
-    host: 'http://test.siyouqun.org'
+    host: 'http://test.siyouqun.com'
   },
   apis: ['./src/routes/*/*.js', './src/routes/*/*/*.js', './src/routes/*/*/*/*.js'], // Path to the API docs
 }
