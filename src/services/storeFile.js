@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/04 17:13:26 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/05 14:34:33 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class Server extends threadify(EventEmitter) {
     super()
     this.req = req
     this.res = res
-    this.jobId = 'b2524869-cc25-4c08-b480-a8ab8080c4b2' // uuid.v4()
+    this.jobId = uuid.v4()
     this.timer = Date.now() + 15 * 1000
     this.req.on('close', err => {
       debug('request close')
@@ -197,8 +197,8 @@ class Server extends threadify(EventEmitter) {
 	 * @memberof Server
 	 */
   async notice(stationId, manifest) {
-    debug(`manifest pipe successfully`) // TODO:
-    // await mqttService.pipe(stationId, manifest)
+    debug(`manifest pipe successfully`)
+    await mqttService.pipe(stationId, manifest)
   }
 
 	/**
