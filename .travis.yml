@@ -1,0 +1,9 @@
+language: node_js
+node_js: 8
+branches: 
+  only:
+  - master
+  - test
+install:
+  - cnpm install
+  - pm2 restart 0
