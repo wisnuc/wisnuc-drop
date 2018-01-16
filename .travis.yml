@@ -5,4 +5,4 @@ branches:
   - master
   - test
 install:
-  - cnpm install
+  - npm install
