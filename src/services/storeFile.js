@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/05 14:34:33 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/12 14:59:01 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,11 @@ class Server extends threadify(EventEmitter) {
     
     const onFile = part => {
       debug('file data start')
-      part.on('data', data => {
-        let chunk = Buffer.from(data)
-        this.ws.write(chunk)
-      })
+      // part.on('data', data => {
+      //   let chunk = Buffer.from(data)
+      //   this.ws.write(chunk)
+      // })
+      part.pipe(this.ws)
     }
     
     const onField = part => {
