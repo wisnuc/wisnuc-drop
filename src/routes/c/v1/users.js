@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/19 16:49:10 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/18 18:12:52 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,9 +42,9 @@ const userService = require('../../../services/userService')
 
 /**
  * @swagger
- * /users:
+ * /c/v1/users:
  *   get:
- *     summary: return user
+ *     summary: return users
  *     tags:
  *       - /c/users
  *     parameters:

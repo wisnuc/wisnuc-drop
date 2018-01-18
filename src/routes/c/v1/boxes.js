@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:44:39 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/18 18:16:07 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,57 @@ const tweetService = require('../../../services/tweetService')
 
 // TODO: boxes authorization
 
+/**
+ * @swagger
+ * definitions:
+ *   Box:
+ *     type: object
+ *     properties:
+ *       uuid:
+ *         type: string
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
+ *       name:
+ *         type: string
+ *         example: 私有群
+ *       owner:
+ *         type: object
+ *         schema: 
+ *            $ref: '#/definitions/User'
+ *       avatarUrl:
+ *         type: string
+ *         example: https://wx.qlogo.cn
+ */
+
+
+/**
+ * @swagger
+ * /c/v1/boxes:
+ *   get:
+ *     summary: return boxes
+ *     tags:
+ *       - /c/boxes
+ *     parameters:
+ *       - name: id
+ *         in: query
+ *         required: true
+ *         description: code
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Box'
+ */
+router.get('/', async (req, res) => {
+  try {
+    let user = req.auth.user
+    let data = await boxService.findAll(user.id)
+    return res.success(data)
+  }
+  catch (err) {
+    return res.error(err)
+  }
+})
 
 /**
  * batch operations
@@ -96,18 +147,6 @@ router.delete('/:id', joiValidator({
   let id = req.params.id
   let data = await boxService.delete(id)
   return res.success(data)
-})
-
-// get boxes
-router.get('/', async (req, res) => {
-  try {
-    let user = req.auth.user
-    let data = await boxService.findAll(user.id)
-    return res.success(data)
-  }
-  catch (err) {
-    return res.error(err)
-  }
 })
 
 // get users

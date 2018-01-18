@@ -6,15 +6,20 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:42:01 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/18 16:05:17 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 const mongoose = require('mongoose')
+
 const BoxSchema = mongoose.Schema({
+  uuid: String,
   name: String,
-  title: { type: String, required: true }
+  onwer: { type: String, required: true },
+  users: Array,
+  
 })
 
 
-module.exports = mongoose.model('box', BoxSchema)
+module.exports = mongoose.model('Box', BoxSchema)

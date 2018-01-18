@@ -1,15 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   tweet.js                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/01/18 16:05:03 by JianJin Wu        #+#    #+#             */
+/*   Updated: 2018/01/18 16:17:13 by JianJin Wu       ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 const mongoose = require('mongoose')
 
 const TweetSchema = mongoose.Schema({
   uuid: String,
-  tweeter: {},
+  type: String,
+  tweeter: [],
   ctime: Number,
   comment: String,
-  type: String,
   id: String,
-  list: [],
   index: { type: Number, index: true },
   deleted: Boolean
 })
 
-module.exports = boxid => mongoose.model(boxid + '-tweet', TweetSchema)
+module.exports = mongoose.model('Tweet', TweetSchema)

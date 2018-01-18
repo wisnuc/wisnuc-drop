@@ -12,6 +12,7 @@
 
 require('./utils/global')
 require('../src/utils/init').register()
+require('../src/schema')
 
 const express = require('express')
 const cookieParser = require('cookie-parser')

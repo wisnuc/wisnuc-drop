@@ -64,7 +64,8 @@ pm2 start process.json
 
 ## API
 
-[documentation](https://github.com/wisnuc/documentation)
+- [old documentation](https://github.com/wisnuc/documentation) *deprecated*
+- [new documentation](http://test.siyouqun.com/api-docs)
 
 ### run api 
 ```bash
