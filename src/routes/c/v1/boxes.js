@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/18 18:16:07 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/19 18:01:51 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,9 @@ const tweetService = require('../../../services/tweetService')
  *         type: string
  *         example: 私有群
  *       owner:
- *         type: object
- *         schema: 
- *            $ref: '#/definitions/User'
- *       avatarUrl:
- *         type: string
- *         example: https://wx.qlogo.cn
+ *         allOf:
+ *         - $ref: '#/definitions/User'
+ *         - type: object
  */
 
 
@@ -73,6 +70,123 @@ router.get('/', async (req, res) => {
 })
 
 /**
+ * @swagger
+ * /c/v1/boxes:
+ *   post:
+ *     summary: new box 
+ *     tags:
+ *       - /c/boxes
+ *     parameters:
+ *       - name: id
+ *         in: query
+ *         required: true
+ *         description: code
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Box'
+ */
+router.post('/', joiValidator({
+  body: {
+    name: Joi.string().required(),
+    ownerId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  let options = Object.assign({}, req.body)
+  let data = await boxService.create(options)
+  return res.success(data)
+})
+
+/**
+ * @swagger
+ * /c/v1/boxes/{id}:
+ *   get:
+ *     summary: get box
+ *     tags:
+ *       - /c/boxes
+ *     parameters:
+ *       - name: id
+ *         in: query
+ *         required: true
+ *         description: uuid
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Box'
+ */
+router.get('/:id', joiValidator({
+  params: {
+    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  let id = req.params.id
+  let data = await boxService.find(id)
+  return res.success(data)
+})
+
+/**
+ * @swagger
+ * /c/v1/boxes/{id}:
+ *   patch:
+ *     summary: update box
+ *     tags:
+ *       - /c/boxes
+ *     parameters:
+ *       - name: id
+ *         in: query
+ *         required: true
+ *         description: uuid
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Box'
+ */
+router.patch('/:id', joiValidator({
+  params: {
+    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  let id = req.params.id
+  let data = await boxService.update(id)
+  return res.success(data)
+})
+
+/**
+ * @swagger
+ * /c/v1/boxes/{id}:
+ *   delete:
+ *     summary: delete box
+ *     tags:
+ *       - /c/boxes
+ *     parameters:
+ *       - name: id
+ *         in: query
+ *         required: true
+ *         description: uuid
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Box'
+ */
+router.delete('/:id', joiValidator({
+  params: {
+    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  let id = req.params.id
+  let data = await boxService.delete(id)
+  return res.success(data)
+})
+
+/**
  * batch operations
   {
     "create":  [array of models to create]
@@ -101,51 +215,6 @@ router.post('/batch', joiValidator({
   if (destroy) {
     data = await boxService.bulkDestroy(destroy)
   }
-  return res.success(data)
-})
-
-// create new box
-router.post('/', joiValidator({
-  body: {
-    name: Joi.string().required(),
-    ownerId: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  let options = Object.assign({}, req.body)
-  let data = await boxService.create(options)
-  return res.success(data)
-})
-
-// get box
-router.get('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.find(id)
-  return res.success(data)
-})
-
-// update box
-router.patch('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.update(id)
-  return res.success(data)
-})
-
-// delete box
-router.delete('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.delete(id)
   return res.success(data)
 })
 

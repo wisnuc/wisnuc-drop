@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 16:21:10 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/09/26 18:19:56 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/19 14:52:18 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ router.use('*', jwt.cAuth)
 router.use('/tickets', require('./tickets'))
 router.use('/stations', require('./stations'))
 router.use('/users', require('./users'))
-
-// router.use('/boxes', require('./boxes'))
+router.use('/boxes', require('./boxes'))
 
 module.exports = router
