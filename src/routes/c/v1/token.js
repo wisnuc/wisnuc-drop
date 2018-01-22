@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 11:39:13 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/19 15:45:08 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 14:04:35 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,18 @@ const tokenService = require('../../../services/tokenService')
  *   get:
  *     summary: return web, mobile token
  *     tags:
- *       - /c/token
+ *     - /c/token
  *     parameters:
- *       - name: code
- *         in: query
- *         required: true
- *         description: code
- *         type: string
- *       - name: platform
- *         in: query
- *         required: true
- *         description: web or mobile
- *         type: string
+ *     - name: code
+ *       in: query
+ *       required: true
+ *       description: code
+ *       type: string
+ *     - name: platform
+ *       in: query
+ *       required: true
+ *       description: web or mobile
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -91,21 +91,21 @@ router.get('/', joiValidator({
  *     tags:
  *       - /c/token
  *     parameters:
- *       - name: code
- *         in: body
- *         required: true
- *         description: code
- *         type: string
- *       - name: iv
- *         in: body
- *         required: true
- *         description: iv
- *         type: string
- *       - name: encryptedData
- *         in: body
- *         required: true
- *         description: encryptedData
- *         type: string
+ *     - name: code
+ *       in: body
+ *       required: true
+ *       description: code
+ *       type: string
+ *     - name: iv
+ *       in: body
+ *       required: true
+ *       description: iv
+ *       type: string
+ *     - name: encryptedData
+ *       in: body
+ *       required: true
+ *       description: encryptedData
+ *       type: string
  *     responses:
  *       200:
  *         description: success

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/18 18:12:52 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 14:04:50 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,13 +46,13 @@ const userService = require('../../../services/userService')
  *   get:
  *     summary: return users
  *     tags:
- *       - /c/users
+ *     - /c/users
  *     parameters:
- *       - name: id
- *         in: query
- *         required: true
- *         description: code
- *         type: string
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: code
+ *       type: string
  *     responses:
  *       200:
  *         description: success

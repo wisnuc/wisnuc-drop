@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/19 18:01:51 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 14:03:20 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,13 @@ const tweetService = require('../../../services/tweetService')
  *   get:
  *     summary: return boxes
  *     tags:
- *       - /c/boxes
+ *     - /c/boxes
  *     parameters:
- *       - name: id
- *         in: query
- *         required: true
- *         description: code
- *         type: string
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: code
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -75,13 +75,13 @@ router.get('/', async (req, res) => {
  *   post:
  *     summary: new box 
  *     tags:
- *       - /c/boxes
+ *     - /c/boxes
  *     parameters:
- *       - name: id
- *         in: query
- *         required: true
- *         description: code
- *         type: string
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: code
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -103,15 +103,15 @@ router.post('/', joiValidator({
  * @swagger
  * /c/v1/boxes/{id}:
  *   get:
- *     summary: get box
+ *     summary: return box
  *     tags:
- *       - /c/boxes
+ *     - /c/boxes
  *     parameters:
- *       - name: id
- *         in: query
- *         required: true
- *         description: uuid
- *         type: string
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: uuid
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -134,13 +134,13 @@ router.get('/:id', joiValidator({
  *   patch:
  *     summary: update box
  *     tags:
- *       - /c/boxes
+ *     - /c/boxes
  *     parameters:
- *       - name: id
- *         in: query
- *         required: true
- *         description: uuid
- *         type: string
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: uuid
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -163,13 +163,13 @@ router.patch('/:id', joiValidator({
  *   delete:
  *     summary: delete box
  *     tags:
- *       - /c/boxes
+ *     - /c/boxes
  *     parameters:
- *       - name: id
- *         in: query
- *         required: true
- *         description: uuid
- *         type: string
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: uuid
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -187,38 +187,24 @@ router.delete('/:id', joiValidator({
 })
 
 /**
- * batch operations
-  {
-    "create":  [array of models to create]
-    "update":  [array of models to update]
-    "destroy": [array of model ids to destroy]
-  }
+ * @swagger
+ * /c/v1/boxes/{id}/users:
+ *   get:
+ *     summary: delete box
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/User'
  */
-router.post('/batch', joiValidator({
-  body: {
-    create: Joi.array(),
-    update: Joi.array(),
-    destroy: Joi.array()
-  }
-}), async (req, res) => {
-  let { create, update, destroy } = req.body
-  let data
-  // create boxes
-  if (create) {
-    data = await boxService.bulkCreate(create)
-  }
-  // update boxes
-  if (update) {
-    data = await boxService.bulkUpdate(update)
-  }
-  // destroy boxes
-  if (destroy) {
-    data = await boxService.bulkDestroy(destroy)
-  }
-  return res.success(data)
-})
-
-// get users
 router.get('/:id/users', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -229,7 +215,25 @@ router.get('/:id/users', joiValidator({
   return res.success(data)
 })
 
-// get user
+/**
+ * @swagger
+ * /c/v1/boxes/{id}/users/{userId}:
+ *   get:
+ *     summary: delete box
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/User'
+ */
 router.get('/:id/users/userId', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required(),
@@ -249,8 +253,48 @@ router.get('/:id/users/userId', joiValidator({
   return res.success(data)
 })
 
-router.get('/:id/tweets', joiValidator({
+/**
+ * @swagger
+ * definitions:
+ *   Tweet:
+ *     type: object
+ *     properties:
+ *       uuid:
+ *         type: string
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
+ *       name:
+ *         type: string
+ *         example: 私有群
+ *       owner:
+ *         allOf:
+ *         - $ref: '#/definitions/User'
+ *         - type: object
+ */
 
+/**
+ * @swagger
+ * /c/v1/boxes/{id}/tweets/{tweetId}:
+ *   get:
+ *     summary: delete box
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Tweet'
+ */
+router.get('/:id/tweets/tweetId', joiValidator({
+  params: {
+    id: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    tweetId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
 }), async (req, res) => {
   try {
     let data = await tweetService.find(req.params.id, req.query)
@@ -259,5 +303,37 @@ router.get('/:id/tweets', joiValidator({
     res.status(500).json({ error: e.message })
   }
 })
+
+/**
+ * batch operations
+  {
+    "create":  [array of models to create]
+    "update":  [array of models to update]
+    "destroy": [array of model ids to destroy]
+  }
+ */
+// router.post('/batch', joiValidator({
+//   body: {
+//     create: Joi.array(),
+//     update: Joi.array(),
+//     destroy: Joi.array()
+//   }
+// }), async (req, res) => {
+//   let { create, update, destroy } = req.body
+//   let data
+//   // create boxes
+//   if (create) {
+//     data = await boxService.bulkCreate(create)
+//   }
+//   // update boxes
+//   if (update) {
+//     data = await boxService.bulkUpdate(update)
+//   }
+//   // destroy boxes
+//   if (destroy) {
+//     data = await boxService.bulkDestroy(destroy)
+//   }
+//   return res.success(data)
+// })
 
 module.exports = router
