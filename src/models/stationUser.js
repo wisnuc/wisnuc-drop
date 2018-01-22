@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/06 15:43:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:45:36 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:18:59 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,37 +34,37 @@ module.exports = function (sequelize, DataTypes) {
 
 
   }, {
-      freezeTableName: true,
-      tableName: 'station_user',
-      indexes: [
-        {
-          name: 'userId',
-          method: 'BTREE',
-          fields: ['userId']
-        },
-        {
-          name: 'stationId',
-          method: 'BTREE',
-          fields: ['stationId']
-        }
-      ],
-      classMethods: {
-        associate: function (models) {
-          StationUser.belongsTo(models.User, { foreignKey: 'userId' })
-          StationUser.belongsTo(models.Station, { foreignKey: 'stationId' })
-        }
+    freezeTableName: true,
+    tableName: 'station_user',
+    indexes: [
+      {
+        name: 'userId',
+        method: 'BTREE',
+        fields: ['userId']
       },
-      defaultScope: {
-        where: {
-          status: 1
-        }
-      },
-      scopes: {
-        deleted: {
-          status: 0
-        }
+      {
+        name: 'stationId',
+        method: 'BTREE',
+        fields: ['stationId']
       }
-    })
+    ],
+    classMethods: {
+      associate: function (models) {
+        StationUser.belongsTo(models.User, { foreignKey: 'userId' })
+        StationUser.belongsTo(models.Station, { foreignKey: 'stationId' })
+      }
+    },
+    defaultScope: {
+      where: {
+        status: 1
+      }
+    },
+    scopes: {
+      deleted: {
+        status: 0
+      }
+    }
+  })
 
   return StationUser
 }

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/18 16:01:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/18 16:01:07 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:31:59 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ module.exports = {
         return res.error(new Error('decode failed'), 401)
 
       // expire
-      if (!decoded.exp || decoded.exp <= Date.now())
-        return res.error(new Error('token overdue, login again please！'), 401)
+      // if (!decoded.exp || decoded.exp <= Date.now())
+      //   return res.error(new Error('token overdue, login again please！'), 401)
 
       if (!decoded.user)
         return res.error(new Error('authentication failed'), 401)

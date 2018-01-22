@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 14:08:51 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:45:10 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:20:01 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,23 +47,23 @@ module.exports = function (sequelize, DataTypes) {
       }
     }
   }, {
-      freezeTableName: true,
-      tableName: 'servers',
-      classMethods: {
-        associate: function (models) {
+    freezeTableName: true,
+    tableName: 'servers',
+    classMethods: {
+      associate: function (models) {
 
-        }
-      },
-      defaultScope: {
-        where: {
-          status: 1
-        }
-      },
-      scopes: {
-        deleted: {
-          status: 0
-        }
       }
-    })
+    },
+    defaultScope: {
+      where: {
+        status: 1
+      }
+    },
+    scopes: {
+      deleted: {
+        status: 0
+      }
+    }
+  })
   return Server
 }

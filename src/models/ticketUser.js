@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:02:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:45:49 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:18:10 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,39 +41,39 @@ module.exports = function (sequelize, DataTypes) {
   }, {
       freezeTableName: true,
       tableName: 'ticket_user',
-      indexes: [
-        {
-          name: 'status',
-          method: 'BTREE',
-          fields: ['status']
-        },
-        {
-          name: 'userId',
-          method: 'BTREE',
-          fields: ['userId']
-        },
-        {
-          name: 'ticketId',
-          method: 'BTREE',
-          fields: ['ticketId']
-        }
-      ],
-      classMethods: {
-        associate: function (models) {
-          TicketUser.belongsTo(models.User, { foreignKey: 'userId' })
-        }
+    indexes: [
+      {
+        name: 'status',
+        method: 'BTREE',
+        fields: ['status']
       },
-      defaultScope: {
-        where: {
-          status: 1
-        }
+      {
+        name: 'userId',
+        method: 'BTREE',
+        fields: ['userId']
       },
-      scopes: {
-        deleted: {
-          status: 0
-        }
+      {
+        name: 'ticketId',
+        method: 'BTREE',
+        fields: ['ticketId']
       }
-    })
+    ],
+    classMethods: {
+      associate: function (models) {
+        TicketUser.belongsTo(models.User, { foreignKey: 'userId' })
+      }
+    },
+    defaultScope: {
+      where: {
+        status: 1
+      }
+    },
+    scopes: {
+      deleted: {
+        status: 0
+      }
+    }
+  })
 
   return TicketUser
 }

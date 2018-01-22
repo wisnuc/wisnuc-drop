@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/07 17:10:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:45:52 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:18:47 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,49 +49,49 @@ module.exports = function (sequelize, DataTypes) {
     // 	}
     // }
   }, {
-      freezeTableName: true,
-      tableName: 'users',
-      indexes: [
-        {
-          name: 'status',
-          method: 'BTREE',
-          fields: ['status']
-        },
-        {
-          name: 'nickName',
-          method: 'BTREE',
-          fields: ['nickName']
-        }
-      ],
-      classMethods: {
-        associate: function (models) {
-          User.hasMany(models.UserStation, { foreignKey: 'userId', as: 'stations' })
-          User.hasMany(models.TicketUser, { foreignKey: 'userId' })
-        }
+    freezeTableName: true,
+    tableName: 'users',
+    indexes: [
+      {
+        name: 'status',
+        method: 'BTREE',
+        fields: ['status']
       },
-      // apply to find, findAll, update, count and destroy
-      defaultScope: {
-        where: {
-          status: 1
-        }
-      },
-      scopes: {
-        deleted: {
-          status: 0
-        },
-        stations: {
-          include: {
-            model: UserStation,
-            where: {
-              status: 1
-            },
-            attributes: ['stationId']
-            // attributes: [ [Sequelize.col('stationId'), 'id'] ]
-          }
-
-        }
+      {
+        name: 'nickName',
+        method: 'BTREE',
+        fields: ['nickName']
       }
-    })
+    ],
+    classMethods: {
+      associate: function (models) {
+        User.hasMany(models.UserStation, { foreignKey: 'userId', as: 'stations' })
+        User.hasMany(models.TicketUser, { foreignKey: 'userId' })
+      }
+    },
+    // apply to find, findAll, update, count and destroy
+    defaultScope: {
+      where: {
+        status: 1
+      }
+    },
+    scopes: {
+      deleted: {
+        status: 0
+      },
+      stations: {
+        include: {
+          model: UserStation,
+          where: {
+            status: 1
+          },
+          attributes: ['stationId']
+          // attributes: [ [Sequelize.col('stationId'), 'id'] ]
+        }
+
+      }
+    }
+  })
 
   return User
 }

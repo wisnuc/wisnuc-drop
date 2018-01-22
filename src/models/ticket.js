@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:45:42 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:21:00 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.DATE
     },
     data: DataTypes.TEXT,
-    // -1 失效 0 未消费 1 已使用
+    // 0 未消费 1 已使用
     status: {
       type: DataTypes.INTEGER,
       defaultValue: 0 // default 0
@@ -53,38 +53,38 @@ module.exports = function (sequelize, DataTypes) {
     // 	}
     // }
   }, {
-      freezeTableName: true,
-      tableName: 'tickets',
-      indexes: [
-        {
-          name: 'creator',
-          method: 'BTREE',
-          fields: ['creator']
-        }
-      ],
-      classMethods: {
-        associate: function (models) {
-          Ticket.belongsTo(models.User, { foreignKey: 'creator', as: 'creatorInfo' })
-          Ticket.belongsTo(models.Station, { foreignKey: 'stationId', as: 'station' })
-          Ticket.hasMany(models.TicketUser, { foreignKey: 'ticketId' })
-          Ticket.hasMany(models.TicketUser, { foreignKey: 'ticketId', as: 'users' })
-        }
-      },
-      defaultScope: {
-        where: {
-          status: 0
-        }
-      },
-      scopes: {
-        deleted: {
-          status: -1
-        },
-        used: {
-          status: 1
-        }
-
+    freezeTableName: true,
+    tableName: 'tickets',
+    indexes: [
+      {
+        name: 'creator',
+        method: 'BTREE',
+        fields: ['creator']
       }
-    })
+    ],
+    classMethods: {
+      associate: function (models) {
+        Ticket.belongsTo(models.User, { foreignKey: 'creator', as: 'creatorInfo' })
+        Ticket.belongsTo(models.Station, { foreignKey: 'stationId', as: 'station' })
+        Ticket.hasMany(models.TicketUser, { foreignKey: 'ticketId' })
+        Ticket.hasMany(models.TicketUser, { foreignKey: 'ticketId', as: 'users' })
+      }
+    },
+    defaultScope: {
+      where: {
+        status: 0
+      }
+    },
+    scopes: {
+      deleted: {
+        status: -1
+      },
+      used: {
+        status: 1
+      }
+
+    }
+  })
 
   return Ticket
 }

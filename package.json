@@ -3,8 +3,8 @@
   "version": "1.1.1",
   "private": true,
   "scripts": {
-    "start": "node_modules/.bin/nodemon src/bin/www",
-    "dev": "NODE_ENV=test node_modules/.bin/nodemon src/bin/www",
+    "start": "NODE_ENV=test node_modules/.bin/nodemon src/bin/www",
+    "dev": "NODE_ENV=dev node_modules/.bin/nodemon src/bin/www",
     "test": "NODE_ENV=test node_modules/.bin/nodemon --delay 1.5 src/bin/www",
     "test-once": "NODE_ENV=test node src/bin/www",
     "mocha": "NODE_PATH=. NODE_ENV=test node_modules/.bin/nodemon --ignore out --exec mocha --recursive --sort",

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 14:03:20 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 14:12:16 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ const tweetService = require('../../../services/tweetService')
  *         - $ref: '#/definitions/User'
  *         - type: object
  */
-
 
 /**
  * @swagger

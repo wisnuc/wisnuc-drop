@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:42:54 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/22 15:28:03 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,44 +37,44 @@ class TicketService {
   async create(ticket) {
     let station, data
     switch (ticket.type) {
-      case 'invite':
-        station = await Station.find({
-          where: {
-            id: ticket.stationId
-          },
-          raw: true
-        })
-        if (!station) throw new E.StationNotExist()
-        // add expire date
-        ticket.expiredDate = moment(Date.now()).add(1, 'd')
-        data = await Ticket.create(ticket)
-        return {
-          url: '/v1/tickets/' + data.id
-        }
-      case 'bind':
-        station = await Station.find({
-          where: {
-            id: ticket.stationId
-          },
-          raw: true
-        })
-        if (!station) throw new E.StationNotExist()
-        data = await Ticket.create(ticket)
-        return {
-          id: data.id
-        }
-      case 'share':
-        station = await Station.find({
-          where: {
-            id: ticket.stationId
-          },
-          raw: true
-        })
-        if (!station) throw new E.StationNotExist()
-        data = await Ticket.create(ticket)
-        return {
-          id: data.id
-        }
+    case 'invite':
+      station = await Station.find({
+        where: {
+          id: ticket.stationId
+        },
+        raw: true
+      })
+      if (!station) throw new E.StationNotExist()
+      // add expire date
+      ticket.expiredDate = moment(Date.now()).add(1, 'd')
+      data = await Ticket.create(ticket)
+      return {
+        url: '/v1/tickets/' + data.id
+      }
+    case 'bind':
+      station = await Station.find({
+        where: {
+          id: ticket.stationId
+        },
+        raw: true
+      })
+      if (!station) throw new E.StationNotExist()
+      data = await Ticket.create(ticket)
+      return {
+        id: data.id
+      }
+    case 'share':
+      station = await Station.find({
+        where: {
+          id: ticket.stationId
+        },
+        raw: true
+      })
+      if (!station) throw new E.StationNotExist()
+      data = await Ticket.create(ticket)
+      return {
+        id: data.id
+      }
     }
   }
 	/**
@@ -181,7 +181,7 @@ class TicketService {
 
       if (!ticket) throw new E.TicketNotExist()
 
-      let { stationId, type, expiredDate } = ticket
+      let { stationId, expiredDate } = ticket
 
       if (Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
 
@@ -252,34 +252,6 @@ class TicketService {
           raw: true
         })
       })
-
-      // await UserStation.findOrCreate({
-      // 	where: {
-      // 		stationId: stationId,
-      // 		userId: userId
-      // 	},
-      // 	defaults: {
-      // 		stationId: stationId,
-      // 		userId: userId
-      // 	},
-      // 	transaction: t,
-      // 	raw: true
-      // }).spread(newObj => newObj)
-
-      // let user = await TicketUser.findOrCreate({
-      // 	where: {
-      // 		ticketId: ticketId,
-      // 		userId: userId
-      // 	},
-      // 	defaults: args,
-      // 	transaction: t,
-      // 	attributes: ['userId', 'type'],
-      // 	raw: true
-      // }).spread(newObj => newObj)
-
-      // ticket.user = user
-      // return 'fill ticket successfully'
-
     })
   }
 	/**
@@ -421,35 +393,35 @@ class TicketService {
 
       // invite, bind, share
       switch (ticket.type) {
-        // need to create userStation
-        case 'invite':
-          // return Promise.props({
-          // 	updateTicket: Ticket.update({ status: 1 }, {
-          // 		where: {
-          // 			id: id,
-          // 			stationId: stationId
-          // 		},
-          // 		transaction: t
-          // 	}),
-          // 	updateUser: TicketUser.update({ type: type }, {
-          // 		where: {
-          // 			stationId: stationId
-          // 		},
-          // 		transaction: t
-          // 	})
-          // })
-          return Ticket.update({ status: status }, {
-            where: {
-              id: id,
-              stationId: stationId
-            },
-            transaction: t
-          })
-        case 'bind':
-          // move to updateUser
-          return
-        case 'share':
-          return
+      // need to create userStation
+      case 'invite':
+        // return Promise.props({
+        // 	updateTicket: Ticket.update({ status: 1 }, {
+        // 		where: {
+        // 			id: id,
+        // 			stationId: stationId
+        // 		},
+        // 		transaction: t
+        // 	}),
+        // 	updateUser: TicketUser.update({ type: type }, {
+        // 		where: {
+        // 			stationId: stationId
+        // 		},
+        // 		transaction: t
+        // 	})
+        // })
+        return Ticket.update({ status: status }, {
+          where: {
+            id: id,
+            stationId: stationId
+          },
+          transaction: t
+        })
+      case 'bind':
+        // move to updateUser
+        return
+      case 'share':
+        return
       }
     })
   }
@@ -493,38 +465,11 @@ class TicketService {
 
       switch (ticketType) {
 
-        case 'bind':
-          // bind 并且 user type 为 resolved
-          if (type === 'resolved') {
-            return Promise.props({
-              updateUserType: TicketUser.update({
-                type: type
-              }, {
-                where: {
-                  ticketId: ticketId,
-                  userId: userId
-                },
-                transaction: t
-              }),
-              updateTicketType: Ticket.update({ status: 1 }, {
-                where: {
-                  id: ticketId
-                },
-                transaction: t
-              }),
-              // find or create
-              createUserStation: UserStation.findOrCreate({
-                where: {
-                  userId: userId,
-                  stationId: ticket.stationId
-                },
-                transaction: t
-              })
-            })
-          }
-          else {
-            // update user type
-            return TicketUser.update({
+      case 'bind':
+        // bind 并且 user type 为 resolved
+        if (type === 'resolved') {
+          return Promise.props({
+            updateUserType: TicketUser.update({
               type: type
             }, {
               where: {
@@ -532,13 +477,25 @@ class TicketService {
                 userId: userId
               },
               transaction: t
+            }),
+            updateTicketType: Ticket.update({ status: 1 }, {
+              where: {
+                id: ticketId
+              },
+              transaction: t
+            }),
+            // find or create
+            createUserStation: UserStation.findOrCreate({
+              where: {
+                userId: userId,
+                stationId: ticket.stationId
+              },
+              transaction: t
             })
-          }
-
-        case 'invite':
-          if (Date.now() > ticket.expiredDate)
-            throw new E.TicketAlreadyExpired()
-
+          })
+        }
+        else {
+          // update user type
           return TicketUser.update({
             type: type
           }, {
@@ -548,6 +505,21 @@ class TicketService {
             },
             transaction: t
           })
+        }
+
+      case 'invite':
+        if (Date.now() > ticket.expiredDate)
+          throw new E.TicketAlreadyExpired()
+
+        return TicketUser.update({
+          type: type
+        }, {
+          where: {
+            ticketId: ticketId,
+            userId: userId
+          },
+          transaction: t
+        })
       }
 
     })
