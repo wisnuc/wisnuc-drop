@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/05 17:17:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:17:37 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/23 16:44:46 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,9 @@ define('StationNotOnline', 60102, 'station not online')
 define('TicketNotExist', 60200, 'ticket not exist')
 define('TicketAlreadyExist', 60201, 'ticket already exist')
 define('TicketAlreadyExpired', 60202, 'ticket already expired')
-// ticket_user
-define('TicketUserNotExist', 60203, 'ticket_user not exist')
-define('TicketUserAlreadyExist', 60204, 'ticket_user already exist')
+// ticket_user 6021X
+define('TicketUserNotExist', 60210, 'user of ticket not exist')
+define('TicketUserAlreadyExist', 60211, 'user of ticket already exist')
 // pipe: 603XX
 define('PipeResponseTimeout', 60300, 'pipe: response time over 15s')
 define('PipeResponseHaveFinished', 60301, 'pipe: client response already finished')
@@ -71,5 +71,11 @@ define('ServerAlreadyExist', 60401, 'server already exist')
 // box: 605XX
 define('BoxNotExist', 60500, 'box not exist')
 define('BoxAlreadyExist', 60501, 'box already exist')
+// box_user
+define('BoxUserNotExist', 60510, 'user of box not exist')
+define('BoxUserAlreadyExist', 60511, 'user of box already exist')
+// box: 606XX
+define('TweetNotExist', 60600, 'tweet not exist')
+define('TweetAlreadyExist', 60601, 'tweet already exist')
 
 module.exports = Object.freeze(E)

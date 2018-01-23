@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:28:03 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/23 16:48:31 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ const {
   WisnucDB
 } = require('../models')
 
+const { Box } = require('../schema')
 /**
  * This is ticket service.
  * @class TicketService
@@ -88,7 +89,6 @@ class TicketService {
 	 * @memberof TicketService
 	 */
   async findByClient(ticketId, userId) {
-
     return WisnucDB.transaction(async t => {
       let ticket = await Ticket.find({
         where: {
@@ -108,13 +108,9 @@ class TicketService {
         ],
         transaction: t
       })
-
       if (!ticket) throw new E.TicketNotExist()
-
       let { type, expiredDate, stationId } = ticket
-
       if (type == 'invite' && Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
-
       let stationUser = await StationUser.find({
         where: {
           stationId: stationId,
@@ -123,9 +119,7 @@ class TicketService {
         transaction: t,
         raw: true
       })
-
       if (stationUser) throw new E.UserAlreadyExist()
-
       let tickets = await Ticket.findAll({
         where: {
           stationId: stationId,
@@ -135,9 +129,7 @@ class TicketService {
         attributes: ['id'],
         raw: true
       })
-
       let ticketIds = _.map(tickets, 'id')
-
       let user = await TicketUser.find({
         where: {
           ticketId: ticketIds,
@@ -148,7 +140,6 @@ class TicketService {
         order: 'createdAt DESC',
         raw: true
       })
-
       // add user
       ticket.dataValues.user = user
       return ticket
@@ -165,11 +156,8 @@ class TicketService {
 	 * @memberof TicketService
 	 */
   inviteUser(args) {
-
     let { ticketId, userId } = args
-
     return WisnucDB.transaction(async t => {
-
       let ticket = await Ticket.find({
         where: {
           id: ticketId,
@@ -178,13 +166,9 @@ class TicketService {
         transaction: t,
         raw: true
       })
-
       if (!ticket) throw new E.TicketNotExist()
-
       let { stationId, expiredDate } = ticket
-
       if (Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
-
       let stationUser = await StationUser.find({
         where: {
           userId: userId,
@@ -194,7 +178,6 @@ class TicketService {
         raw: true
       })
       if (stationUser) throw new E.UserAlreadyExist()
-
       // find station`s tickets
       let tickets = await Ticket.findAll({
         where: {
@@ -205,9 +188,7 @@ class TicketService {
         attributes: ['id'],
         raw: true
       })
-
       let ticketIds = _.map(tickets, 'id')
-
 			/**
 			 * 找到该 user 最近一次 fill 的记录
 			 * 如果该记录为 pending、resolved 则直接返回
@@ -223,9 +204,7 @@ class TicketService {
         order: 'createdAt DESC',
         raw: true
       })
-
       if (ticketUser) return 'this user already filled ticket of station'
-
       return Promise.props({
         // create left user_station arrow
         createLeftArrow: UserStation.findOrCreate({
@@ -252,6 +231,32 @@ class TicketService {
           raw: true
         })
       })
+    })
+  }
+  /**
+   * invite user to come in box
+   * 1. 判断 ticket 是否存在、过期
+   * 2. 判断 box 是否存在
+   * 3. 判断 user 是否存在
+   * 4. add this user to ticket_user
+   * @param {object} args 
+   * @memberof TicketService
+   */
+  shareBox(args) {
+    let { ticketId, boxId, userId } = args
+    return WisnucDB.transaction(async t => {
+      let ticket = await Ticket.find({
+        where: {
+          id: ticketId
+        },
+        transaction: t,
+        raw: true
+      })
+      if (!ticket) throw new E.TicketNotExist()
+      let box = await Box.findOne({ uuid: boxId }).exec()
+      if (!box) throw new E.BoxNotExist()
+      // FIXME:
+      return box
     })
   }
 	/**

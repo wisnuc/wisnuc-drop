@@ -153,8 +153,8 @@ error code - such as: 60001，固定长度为5位整数！
 60200 | ticket not exist
 60201 | ticket already exist
 60202 | ticket already expired
-60203 | ticket_user not exist
-60204 | ticket_user already exist
+60210 | user of ticket not exist
+60211 | user of ticket already exist
 60300 | pipe: response time over 15s
 60301 | pipe: client response already finished
 60302 | pipe: too much processing tasks 
@@ -165,3 +165,9 @@ error code - such as: 60001，固定长度为5位整数！
 60330 | transformJson queue have`t server
 60400 | server not exist
 60401 | server already exist
+60500 | box not exist
+60501 | box already exist
+60510 | user of box not exist
+60511 | user of box already exist
+60600 | tweet not exist
+60601 | tweet already exist

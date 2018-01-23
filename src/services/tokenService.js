@@ -66,10 +66,10 @@ class TokenService {
           nickName: userInfo.nickname,
           avatarUrl: userInfo.headimgurl
         }, {
-            where: {
-              unionId: userInfo.unionid
-            }, transaction: t
-          })
+          where: {
+            unionId: userInfo.unionid
+          }, transaction: t
+        })
       }
       const userData = {
         id: user.id,
@@ -135,10 +135,10 @@ class TokenService {
           nickName: userInfo.nickName,
           avatarUrl: userInfo.avatarUrl
         }, {
-            where: {
-              unionId: userInfo.unionId
-            }, transaction: t
-          })
+          where: {
+            unionId: userInfo.unionId
+          }, transaction: t
+        })
       }
       const userData = {
         id: user.id,

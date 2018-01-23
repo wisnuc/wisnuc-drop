@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/18 18:02:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/23 16:36:29 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ const { host, port, database } = config.mongodb
 
 const DATABASE_URL = `mongodb://${host}:${port}/${database}`
 
-mongoose.connect(DATABASE_URL)
+mongoose.connect(DATABASE_URL, {
+  promiseLibrary: Promise
+})
 
 const db = mongoose.connection
 
