@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/23 17:28:42 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/24 16:06:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,41 @@ const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 const boxService = require('../../../services/boxService')
 const tweetService = require('../../../services/tweetService')
-const blackListService = require('../../../services/blackListService')
+
+/**
+ * @swagger
+ * definitions:
+ *   Box:
+ *     type: object
+ *     properties:
+ *       uuid:
+ *         type: string
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
+ *       name:
+ *         type: string
+ *         example: 私有群
+ *       owner:
+ *         allOf:
+ *         - $ref: '#/definitions/User'
+ *         - type: object
+ *       users:
+ *         type: array
+ *         items: 
+ *           type: string
+ *           example: f7b71a94-6827-4532-a8f2-5a9ee454355b
+ *       ctime:
+ *         type: number
+ *         example: 1515996040812
+ *       mtime:
+ *         type: number
+ *         example: 1515996040812
+ *       status:
+ *         type: number
+ *         enum: 
+ *         - 0
+ *         - 1
+ *         default: 0
+ */
 
 /**
  * @swagger
@@ -32,17 +66,26 @@ const blackListService = require('../../../services/blackListService')
  *       required: true
  *       description: box name
  *       type: string
+ *     - name: uuid
+ *       in: body
+ *       required: true
+ *       type: uuid
  *     - name: owner
  *       in: body
  *       required: true
  *       description: box owner
  *       type: uuid
+ *     - name: users
+ *       in: body
+ *       required: false
+ *       description: box users
+ *       type: array
  *     - name: ctime
  *       in: body
  *       required: true
  *       description: box create timestamp
  *       type: uuid
-*     - name: mtime
+ *     - name: mtime
  *       in: body
  *       required: true
  *       description: box update timestamp
@@ -54,54 +97,84 @@ const blackListService = require('../../../services/blackListService')
 router.post('/', joiValidator({
   body: {
     name: Joi.string().required(),
-    ownerId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     ctime: Joi.number().required(),
     mtime: Joi.number().required()
   }
 }), async (req, res) => {
-  let options = Object.assign({}, req.body)
-  let data = await boxService.create(options)
-  return res.success(data)
+  try {
+    let options = Object.assign({}, req.body)
+    let data = await boxService.create(options)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
 })
 
 /**
  * @swagger
- * /s/v1/boxes/{id}:
+ * /s/v1/boxes/{boxId}:
  *   patch:
  *     summary: update box
  *     tags:
  *     - /s/boxes
  *     parameters:
- *     - name: id
- *       in: query
+ *     - name: boxId
+ *       in: params
  *       required: true
- *       description: uuid
+ *       description: box uuid
  *       type: string
+ *     - name: name
+ *       in: body
+ *       required: false
+ *       description: box name
+ *       type: string
+ *     - name: users
+ *       in: body
+ *       required: false
+ *       description: box users
+ *       type: array
+ *     - name: mtime
+ *       in: body
+ *       required: false
+ *       description: box update timestamp
+ *       type: uuid
  *     responses:
  *       200:
  *         description: success
- *         schema:
- *           $ref: '#/definitions/Box'
  */
-router.patch('/:id', joiValidator({
+router.patch('/:boxId', joiValidator({
   params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  },
+  body: {
+    name: Joi.string(),
+    users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
+    mtime: Joi.number()
   }
 }), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.update(id)
-  return res.success(data)
+  try {
+    let options = Object.assign({}, { uuid: req.params.boxId }, req.body)
+    let data = await boxService.update(options)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
 })
 
 /**
  * @swagger
- * /s/v1/boxes/{id}:
+ * /s/v1/boxes/{boxId}:
  *   delete:
  *     summary: delete box
  *     tags:
  *     - /s/boxes
  *     parameters:
- *     - name: id
+ *     - name: boxId
  *       in: query
  *       required: true
  *       description: uuid
@@ -112,14 +185,19 @@ router.patch('/:id', joiValidator({
  *         schema:
  *           $ref: '#/definitions/Box'
  */
-router.delete('/:id', joiValidator({
+router.delete('/:boxId', joiValidator({
   params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
 }), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.delete(id)
-  return res.success(data)
+  try {
+    let boxId = req.params.boxId
+    let data = await boxService.delete(boxId)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
 })
 
 

@@ -6,11 +6,13 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:40:52 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/24 16:17:30 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const { Box, User, BoxUser, UserBox } = require('../models')
+const debug = require('debug')('app:box')
+const { User} = require('../models')
+const { Box } = require('../schema')
 
 /**
  * This is box service.
@@ -19,12 +21,14 @@ const { Box, User, BoxUser, UserBox } = require('../models')
 class BoxService {
 	/**
 	 * create new box
-	 * @param {any} options 
+	 * @param {object} options 
 	 * @returns 
 	 * @memberof BoxService
 	 */
   create(options) {
-    return Box.create(options)
+    let box = new Box(options)
+    box.save()
+    return box
   }
 	/**
 	 * get box
@@ -32,25 +36,31 @@ class BoxService {
 	 * @returns 
 	 * @memberof BoxService
 	 */
-  find(boxId) {
-    return Box.find({
+  async find(boxId) {
+    
+    let box = await Box.findOne({ uuid: boxId }).exec()
+    if (!box) throw new E.BoxNotExist()
+    
+    let user = await User.find({
       where: {
-        id: boxId
-      }
+        id: box.owner
+      },
+      attributes: ['nickName', 'avatarUrl', 'id', 'status'],
+      raw: true
     })
+    if (!user) throw new E.UserNotExist()
+    
+    box.owner = user
+    return box
   }
 	/**
 	 * update box
 	 * @param {object} box 
-	 * @returns {number} count - effect raw count
+	 * @returns
 	 * @memberof BoxService
 	 */
-  update(box) {
-    return Box.update(box, {
-      where: {
-        id: box.id
-      }
-    })
+  update(options) {
+    return Box.findOneAndUpdate({ uuid: options.uuid }, options).exec()
   }
 	/**
 	 * delete box
@@ -59,9 +69,7 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   delete(boxId) {
-    return Box.update({ status: -1 }, {
-      where: { id: boxId }
-    })
+    return Box.deleteOne({ uuid: boxId })
   }
 	/**
 	 * get boxes
@@ -70,14 +78,7 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   findAll(userId) {
-    return Box.findAll({
-      include: {
-        model: UserBox,
-        where: {
-          userId: userId
-        }
-      }
-    })
+    return Box.find().exec()
   }
 	/**
 	 * create boxes

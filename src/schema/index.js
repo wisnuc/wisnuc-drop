@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/23 16:36:29 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/24 10:53:01 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,6 @@ db.once('open', () => debug('mongodb connect successfully'))
 module.exports = {
   Box: require('./box'),
   BlackList: require('./blackList'),
+  // TweetModelCreater: require('./tweet'),
   Tweet: require('./tweet')
 }

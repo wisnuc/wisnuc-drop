@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/23 17:42:45 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/24 16:06:17 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,36 +18,6 @@ const joiValidator = require('../../../middlewares/joiValidator')
 const boxService = require('../../../services/boxService')
 
 // TODO: boxes authorization
-
-/**
- * @swagger
- * definitions:
- *   Box:
- *     type: object
- *     properties:
- *       uuid:
- *         type: string
- *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
- *       name:
- *         type: string
- *         example: 私有群
- *       owner:
- *         allOf:
- *         - $ref: '#/definitions/User'
- *         - type: object
- *       ctime:
- *         type: number
- *         example: 1515996040812
- *       mtime:
- *         type: number
- *         example: 1515996040812
- *       status:
- *         type: number
- *         enum: 
- *         - 0
- *         - 1
- *         default: 0
- */
 
 /**
  * @swagger
@@ -77,7 +47,7 @@ router.get('/', async (req, res) => {
 
 /**
  * @swagger
- * /c/v1/boxes/{id}:
+ * /c/v1/boxes/{boxId}:
  *   get:
  *     summary: return box
  *     tags:
@@ -94,25 +64,30 @@ router.get('/', async (req, res) => {
  *         schema:
  *           $ref: '#/definitions/Box'
  */
-router.get('/:id', joiValidator({
+router.get('/:boxId', joiValidator({
   params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
 }), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.find(id)
-  return res.success(data)
+  try {
+    let boxId = req.params.boxId
+    let data = await boxService.find(boxId)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
 })
 
 /**
  * @swagger
- * /c/v1/boxes/{id}/users:
+ * /c/v1/boxes/{boxId}/users:
  *   get:
  *     summary: return users of box
  *     tags:
  *     - /c/boxes
  *     parameters:
- *     - name: id
+ *     - name: boxId
  *       in: query
  *       required: true
  *       description: uuid
@@ -125,7 +100,7 @@ router.get('/:id', joiValidator({
  *           items:
  *             $ref: '#/definitions/User'
  */
-router.get('/:id/users', joiValidator({
+router.get('/:boxId/users', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
@@ -137,13 +112,13 @@ router.get('/:id/users', joiValidator({
 
 /**
  * @swagger
- * /c/v1/boxes/{id}/users/{userId}:
+ * /c/v1/boxes/{boxId}/users/{userId}:
  *   get:
  *     summary: return user of box
  *     tags:
  *     - /c/boxes
  *     parameters:
- *     - name: id
+ *     - name: boxId
  *       in: query
  *       required: true
  *       description: uuid
@@ -154,7 +129,7 @@ router.get('/:id/users', joiValidator({
  *         schema:
  *           $ref: '#/definitions/User'
  */
-router.get('/:id/users/userId', joiValidator({
+router.get('/:boxId/users/userId', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required(),
     userId: Joi.string().guid({ version: ['uuidv4'] }).required()
