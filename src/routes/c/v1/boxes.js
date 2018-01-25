@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/24 16:06:17 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/25 16:24:08 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
  *     tags:
  *     - /c/boxes
  *     parameters:
- *     - name: id
+ *     - name: boxId
  *       in: query
  *       required: true
  *       description: uuid

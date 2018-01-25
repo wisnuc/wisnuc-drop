@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/24 16:17:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/25 16:27:07 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ const { Box } = require('../schema')
  */
 class BoxService {
 	/**
-	 * create new box
+	 * create box
 	 * @param {object} options 
 	 * @returns 
 	 * @memberof BoxService
@@ -28,17 +28,18 @@ class BoxService {
   create(options) {
     let box = new Box(options)
     box.save()
+    // TODO: send message to client
     return box
   }
 	/**
-	 * get box
-	 * @param {any} boxId 
+	 * return box
+	 * @param {string} boxId 
 	 * @returns 
 	 * @memberof BoxService
 	 */
   async find(boxId) {
     
-    let box = await Box.findOne({ uuid: boxId }).exec()
+    let box = await Box.findOne({ uuid: boxId }).lean().exec()
     if (!box) throw new E.BoxNotExist()
     
     let user = await User.find({
@@ -49,7 +50,8 @@ class BoxService {
       raw: true
     })
     if (!user) throw new E.UserNotExist()
-    
+    debug(typeof box)
+    debug(`box: ${box}`)
     box.owner = user
     return box
   }

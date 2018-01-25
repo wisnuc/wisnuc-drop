@@ -10,7 +10,7 @@
 // /*                                                                            */
 // /* ************************************************************************** */
 
-const debug = require('debug')('mqtt')
+const debug = require('debug')('app:mqtt')
 const config = require('getconfig')
 
 const ip = require('../utils/ip')
@@ -56,6 +56,17 @@ class MqttService {
     debug('pipe:', message)
     let data = JSON.stringify(message)
     client.publish(`station/${stationId}/pipe`, data, { qos: 1 })
+  }
+  /**
+   * send message to client
+   * @param {any} userId 
+   * @memberof MqttService
+   */
+  notice(userId) {
+    let data = {
+      userId: 123123
+    }
+    client.publish(`user/${userId}/notice`, data, { qos: 1 })
   }
 }
 

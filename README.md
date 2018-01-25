@@ -171,3 +171,14 @@ error code - such as: 60001，固定长度为5位整数！
 60511 | user of box already exist
 60600 | tweet not exist
 60601 | tweet already exist
+
+
+## Mqtt Topic
+
+mqtt topic 使用说明
+
+### For Station
+主题(topic) | 数据(json) | 说明(description)
+----------------- | ------------------ | ------------------
+station/${stationId}/pipe | {} | json、fetch、 store
+

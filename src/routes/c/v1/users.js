@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 14:04:50 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/25 15:45:14 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,8 @@ router.get('/:id/stations', joiValidator({
   }
 })
 
-// get friends
-router.get('/:id/friends', joiValidator({
+// return interesting person
+router.get('/:id/interesting', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
