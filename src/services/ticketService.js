@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/23 16:48:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/26 14:49:43 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,7 +255,7 @@ class TicketService {
       if (!ticket) throw new E.TicketNotExist()
       let box = await Box.findOne({ uuid: boxId }).exec()
       if (!box) throw new E.BoxNotExist()
-      // FIXME:
+      // FIXME: seed message to user client through mqtt's service
       return box
     })
   }

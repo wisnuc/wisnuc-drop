@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/25 11:42:50 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/26 16:04:30 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@ const BoxSchema = mongoose.Schema({
   users: Array,
   ctime: Number,
   mtime: Number,
-  status: Number,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  status: Number
+}, {
+  timestamps: true
 })
 
-BoxSchema.index({createdAt: -1}) // 降序索引
+BoxSchema.index({ createdAt: -1 }) // 降序索引
 
 module.exports = mongoose.model('Box', BoxSchema)

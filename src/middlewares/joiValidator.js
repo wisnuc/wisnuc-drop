@@ -6,10 +6,11 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 15:18:36 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:46:08 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/26 11:43:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const debug = require('debug')('app:joi')
 const Joi = require('joi')
 
 module.exports = (schema, options) => {
@@ -37,6 +38,7 @@ module.exports = (schema, options) => {
         for (let detail of details) {
           failures.push(detail.message)
         }
+        debug(`failures: ${failures}`)
         return res.error(failures, 400)
       }
       return next()

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 16:05:03 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/24 10:45:02 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/26 16:05:42 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ const TweetSchema = mongoose.Schema({
   comment: String,
   id: String,
   index: { type: Number, index: true },
-  deleted: Boolean,
-  createdAt: Date,
-  updateAt: Date
+  deleted: Boolean
+}, {
+  timestamps: true
 })
 
 TweetSchema.index({ index: -1 })

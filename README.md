@@ -95,14 +95,12 @@ npm run cloud-station
 
 ## TODO List
 
+- 项目自动部署
 - before/after
 - database tables constructure document
-- [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
-- [qcloud databases backup](https://www.qcloud.com)
-- 
-- 项目自动部署
-- api兼容问题
-- 数据迁移
+- 数据库迁移 [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
+- 数据库容灾备份 [qcloud databases backup](https://www.qcloud.com)
+- swagger mock
 
 ## Error Code
 
