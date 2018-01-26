@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/25 15:45:14 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/26 18:22:45 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,10 @@ const userService = require('../../../services/userService')
  *       avatarUrl:
  *         type: string
  *         example: https://wx.qlogo.cn
+ *         enum: 
+ *         - 0
+ *         - 1
+ *         default: 0
  */
 
 
@@ -126,15 +130,56 @@ router.get('/:id/stations', joiValidator({
   }
 })
 
-// return interesting person
-router.get('/:id/interesting', joiValidator({
+/**
+ * @swagger
+ * /c/v1/users/{userId}/interesting:
+ *   get:
+ *     summary: return interesting person
+ *     tags:
+ *     - /c/users
+ *     parameters:
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: code
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           type: array
+ *           items:
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: f0066784-7985-4dc4-9b20-4ea5a14434e8
+ *               source:
+ *                 type: object
+ *                 properties:
+ *                   name: 
+ *                     type: string
+ *                     example: wisnuc群
+ *                   type:
+ *                     type: string
+ *                     example: box
+ *                     enum: 
+ *                     - box
+ *                     - station
+ *               nickName:
+ *                 type: string
+ *                 example: mosaic
+ *               avatarUrl:
+ *                 type: string
+ *                 example: https://wx.qlogo.cn
+ */
+router.get('/:userId/interesting', joiValidator({
   params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
+    userId: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
 }), async (req, res) => {
   try {
-    let id = req.params.id
-    let data = await userService.findFriends(id)
+    let userId = req.params.userId
+    let data = await userService.findInterestingPerson(userId)
     return res.success(data)
   }
   catch (err) {
