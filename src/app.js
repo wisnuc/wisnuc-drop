@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 require('./utils/global')
-require('../src/utils/init').register()
+// require('../src/utils/init').register()
 require('../src/schema')
 
 const express = require('express')
@@ -25,7 +25,7 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerJSDoc = require('swagger-jsdoc')
 
 const routes = require('./routes/index')
-const logger = Logger('app')
+const logger = Logger('app:server')
 
 const app = express()
 

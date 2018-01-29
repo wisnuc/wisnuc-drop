@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/26 16:04:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/29 17:31:59 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ const BoxSchema = mongoose.Schema({
   uuid: String,
   name: String,
   owner: { type: String, required: true },
+  stationId: { type: String, required: true },
   users: Array,
   ctime: Number,
   mtime: Number,

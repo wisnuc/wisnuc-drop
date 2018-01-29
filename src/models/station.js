@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:19:45 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/29 18:27:49 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ module.exports = function (sequelize, DataTypes) {
     classMethods: {
       associate: function (models) {
         Station.hasMany(models.UserStation, { foreignKey: 'stationId' })
+        Station.hasMany(models.StationUser, { foreignKey: 'stationId' })
       }
     },
     defaultScope: {

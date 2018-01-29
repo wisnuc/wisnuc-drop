@@ -6,14 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/26 11:42:51 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/29 17:46:30 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const debug = require('debug')('app:res')
 const { getconfig } = require('getconfig')
 const fundebug = require('../utils/fundebug')
-const logger = Logger('system:error')
+const logger = Logger('app:error')
 
 const DEFAULT_SUCCESS_STATUS = 200
 const DEFAULT_ERROR_STATUS = 403

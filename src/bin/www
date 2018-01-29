@@ -12,7 +12,7 @@
 
 /* eslint-disable */
 var app = require('../app');
-var debug = require('debug')('wisnuc-drop:server');
+var debug = require('debug')('app:server');
 var http = require('http');
 
 var logger = Logger(__filename)

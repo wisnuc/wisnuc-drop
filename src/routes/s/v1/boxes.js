@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/24 16:06:04 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/29 17:36:35 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@ const tweetService = require('../../../services/tweetService')
  *         allOf:
  *         - $ref: '#/definitions/User'
  *         - type: object
+ *       stationId:
+ *         type: string
+ *         example: 8c015542-b7fb-4c21-ad23-e0c31ad015da
  *       users:
  *         type: array
  *         items: 
@@ -99,6 +102,7 @@ router.post('/', joiValidator({
     name: Joi.string().required(),
     uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
     owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    stationId: Joi.string().guid({ version: ['uuidv4'] }).required(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     ctime: Joi.number().required(),
     mtime: Joi.number().required()
