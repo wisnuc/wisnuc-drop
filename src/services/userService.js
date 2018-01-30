@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/29 18:41:44 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:06:45 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,9 +158,28 @@ class UserService {
    * @memberof UserService
    */
   async findInteresting(userId) {
-    const sqlQuery = `select u.userId from user_station as u, 
-      (select stationId from user_station where userId = '${userId}') as us 
-      where u.stationId = us.stationId`
+    // need to check double arrow
+    const sqlQuery = 
+      `SELECT 
+        su.userId, su.stationId
+      FROM
+        station_user AS su,
+        (SELECT 
+          u.userId, u.stationId
+        FROM
+          user_station AS u, (SELECT 
+          stationId
+        FROM
+          user_station
+        WHERE
+          userId = '${userId}') AS us
+        WHERE
+          u.stationId = us.stationId) AS res
+      WHERE
+        su.stationId = res.stationId
+          AND su.userId = res.userId`
+    // const sqlQuery = `select u.userId from user_station as u, 
+    //   (select stationId from user_station where userId = '${userId}') as us 
     let data = await Promise.props({
       // boxes I own and boxes including me
       boxes: Box.find({ $or: [{ owner: userId }, { users: userId }] }, { owner: 1, users: 1 }).exec(),
@@ -212,12 +231,19 @@ class UserService {
           attributes: []
         }
       ],
-      attributes: ['id', 'name', 'LANIP']
+      attributes: ['id', 'name', 'LANIP'],
+      raw: true
     })
 
     let stationIds = _.map(stations, 'id')
-    let boxes = await Box.find({ stationId: { $in: stationIds } }, { name: 1, stationId: 1 }).exec()
-    return boxes
+    let boxes = await Box.find({ stationId: { $in: stationIds } }, { name: 1, stationId: 1, uuid: 1 }).exec()
+    for (let station of stations) {
+      station.boxes = []
+      for (let box of boxes) {
+        if (station.id === box.stationId) station.boxes.push(box)
+      }
+    }
+    return stations
   }
   
 }

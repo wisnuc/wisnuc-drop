@@ -6,11 +6,11 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/12 14:59:01 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:12:28 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const debug = require('debug')('dicer')
+const debug = require('debug')('app:store')
 const uuid = require('uuid')
 const Dicer = require('dicer')
 const EventEmitter = require('events').EventEmitter

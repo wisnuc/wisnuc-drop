@@ -39,6 +39,11 @@ client.on('message', (topic, message, packet) => {
   }
 })
 
+
+/**
+ * This is mqtt service.
+ * @class MqttService
+ */
 class MqttService {
   /**
    * send message to station

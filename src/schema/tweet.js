@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 16:05:03 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/26 16:05:42 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:46:25 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ const TweetSchema = mongoose.Schema({
   tweeter: [],
   ctime: Number,
   comment: String,
-  id: String,
+  parent: Number,
   index: { type: Number, index: true },
   deleted: Boolean
 }, {

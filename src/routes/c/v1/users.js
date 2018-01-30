@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/29 18:28:39 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:21:56 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ const userService = require('../../../services/userService')
  *     - name: id
  *       in: query
  *       required: true
- *       description: code
+ *       description: user guid
  *       type: string
  *     responses:
  *       200:
@@ -141,7 +141,7 @@ router.get('/:id/stations', joiValidator({
  *     - name: id
  *       in: query
  *       required: true
- *       description: code
+ *       description: user guid
  *       type: string
  *     responses:
  *       200:
@@ -153,18 +153,6 @@ router.get('/:id/stations', joiValidator({
  *               id:
  *                 type: string
  *                 example: f0066784-7985-4dc4-9b20-4ea5a14434e8
- *               source:
- *                 type: object
- *                 properties:
- *                   name: 
- *                     type: string
- *                     example: wisnuc群
- *                   type:
- *                     type: string
- *                     example: box
- *                     enum: 
- *                     - box
- *                     - station
  *               nickName:
  *                 type: string
  *                 example: mosaic
@@ -195,10 +183,10 @@ router.get('/:userId/interesting', joiValidator({
  *     tags:
  *     - /c/users
  *     parameters:
- *     - name: id
+ *     - name: userId
  *       in: query
  *       required: true
- *       description: code
+ *       description: user guid
  *       type: string
  *     responses:
  *       200:
@@ -210,24 +198,16 @@ router.get('/:userId/interesting', joiValidator({
  *               id:
  *                 type: string
  *                 example: f0066784-7985-4dc4-9b20-4ea5a14434e8
- *               source:
- *                 type: object
- *                 properties:
- *                   name: 
- *                     type: string
- *                     example: wisnuc群
- *                   type:
- *                     type: string
- *                     example: box
- *                     enum: 
- *                     - box
- *                     - station
- *               nickName:
+ *               name:
  *                 type: string
- *                 example: mosaic
- *               avatarUrl:
+ *                 example: HomeStation
+ *               LANIP:
  *                 type: string
- *                 example: https://wx.qlogo.cn
+ *                 example: 10.10.9.128
+ *               boxes:
+ *                 type: array
+ *                 items:
+ *                   $ref: '#/definitions/Box'
  */
 router.get('/:userId/interesting/sources', joiValidator({
   params: {

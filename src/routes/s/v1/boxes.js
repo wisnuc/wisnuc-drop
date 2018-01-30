@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/29 17:36:35 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:11:14 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,14 +102,13 @@ router.post('/', joiValidator({
     name: Joi.string().required(),
     uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
     owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
-    stationId: Joi.string().guid({ version: ['uuidv4'] }).required(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     ctime: Joi.number().required(),
     mtime: Joi.number().required()
   }
 }), async (req, res) => {
   try {
-    let options = Object.assign({}, req.body)
+    let options = Object.assign({}, req.body, { stationId: req.auth.station.id})
     let data = await boxService.create(options)
     return res.success(data)
   }

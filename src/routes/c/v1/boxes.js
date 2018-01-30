@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/25 16:24:08 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:22:49 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,44 +107,6 @@ router.get('/:boxId/users', joiValidator({
 }), async (req, res) => {
   let id = req.params.id
   let data = await boxService.findUser(id)
-  return res.success(data)
-})
-
-/**
- * @swagger
- * /c/v1/boxes/{boxId}/users/{userId}:
- *   get:
- *     summary: return user of box
- *     tags:
- *     - /c/boxes
- *     parameters:
- *     - name: boxId
- *       in: query
- *       required: true
- *       description: uuid
- *       type: string
- *     responses:
- *       200:
- *         description: success
- *         schema:
- *           $ref: '#/definitions/User'
- */
-router.get('/:boxId/users/userId', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required(),
-    userId: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  let id = req.params.id
-  let userId = req.params.userId
-  let user = req.auth.user
-  let data
-  if (userId === user.Id) {
-    data = await boxService.findOwner(id, user.id)
-  }
-  else {
-    data = await boxService.findUser(id, userId)
-  }
   return res.success(data)
 })
 

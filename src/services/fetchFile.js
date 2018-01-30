@@ -6,11 +6,11 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:37:12 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/30 11:12:14 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const debug = require('debug')('pipe')
+const debug = require('debug')('app:fetch')
 const uuid = require('uuid')
 const EventEmiiter = require('events').EventEmitter
 
