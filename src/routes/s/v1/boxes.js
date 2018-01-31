@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:11:14 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/31 13:49:21 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ router.post('/', joiValidator({
  *       type: array
  *     - name: mtime
  *       in: body
- *       required: false
+ *       required: true
  *       description: box update timestamp
  *       type: uuid
  *     responses:
@@ -156,7 +156,7 @@ router.patch('/:boxId', joiValidator({
   body: {
     name: Joi.string(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
-    mtime: Joi.number()
+    mtime: Joi.number().required()
   }
 }), async (req, res) => {
   try {

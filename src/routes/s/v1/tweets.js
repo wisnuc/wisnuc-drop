@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 14:38:01 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/31 11:42:56 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ const tweetService = require('../../../services/tweetService')
  *       type:
  *         type: string
  *         example: blob
- *         num:
+ *         enum:
  *         - blob
  *         - list
  *         - commit

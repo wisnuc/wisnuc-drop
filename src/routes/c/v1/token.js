@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 11:39:13 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 14:04:35 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/31 11:29:08 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,9 @@ const tokenService = require('../../../services/tokenService')
  *   CToken:
  *     type: object
  *     properties:
+ *       token:
+ *         type: string
+ *         example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
  *       user:
  *         type: object
  *         properties:
@@ -35,9 +38,6 @@ const tokenService = require('../../../services/tokenService')
  *           avatarUrl:
  *             type: string
  *             example: https://wx.qlogo.cn
- *       token:
- *         type: string
- *         example: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
  */
 
 
