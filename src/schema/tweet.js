@@ -6,22 +6,24 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 16:05:03 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:46:25 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/01 15:16:01 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-const TweetSchema = mongoose.Schema({
+const TweetSchema = Schema({
   uuid: String,
   type: String,
-  tweeter: [],
+  tweeter: { type: String, required: true },
   ctime: Number,
   comment: String,
+  commitId: String,
   parent: Number,
   index: { type: Number, index: true },
-  deleted: Boolean
+  box: { type: Schema.Types.ObjectId, ref: 'Box' }
 }, {
   timestamps: true
 })

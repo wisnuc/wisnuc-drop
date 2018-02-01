@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/31 13:49:21 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/01 15:55:53 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ const router = express.Router()
 const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 const boxService = require('../../../services/boxService')
-const tweetService = require('../../../services/tweetService')
 
 /**
  * @swagger
@@ -40,20 +39,13 @@ const tweetService = require('../../../services/tweetService')
  *       users:
  *         type: array
  *         items: 
- *           type: string
- *           example: f7b71a94-6827-4532-a8f2-5a9ee454355b
+ *           $ref: '#/definitions/User'
  *       ctime:
  *         type: number
  *         example: 1515996040812
  *       mtime:
  *         type: number
  *         example: 1515996040812
- *       status:
- *         type: number
- *         enum: 
- *         - 0
- *         - 1
- *         default: 0
  */
 
 /**
@@ -126,7 +118,7 @@ router.post('/', joiValidator({
  *     - /s/boxes
  *     parameters:
  *     - name: boxId
- *       in: params
+ *       in: path
  *       required: true
  *       description: box uuid
  *       type: string
@@ -145,6 +137,11 @@ router.post('/', joiValidator({
  *       required: true
  *       description: box update timestamp
  *       type: uuid
+ *     - name: tweet
+ *       in: body
+ *       required: false
+ *       type: string
+ *       description: last tweet
  *     responses:
  *       200:
  *         description: success
@@ -156,12 +153,14 @@ router.patch('/:boxId', joiValidator({
   body: {
     name: Joi.string(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
-    mtime: Joi.number().required()
+    mtime: Joi.number().required(),
+    tweet: Joi.string()
   }
 }), async (req, res) => {
   try {
     let options = Object.assign({}, { uuid: req.params.boxId }, req.body)
-    let data = await boxService.update(options)
+    let tweet = JSON.parse(req.body.tweet)
+    let data = await boxService.update(options, tweet)
     return res.success(data)
   }
   catch(err) {
@@ -178,7 +177,7 @@ router.patch('/:boxId', joiValidator({
  *     - /s/boxes
  *     parameters:
  *     - name: boxId
- *       in: query
+ *       in: path
  *       required: true
  *       description: uuid
  *       type: string

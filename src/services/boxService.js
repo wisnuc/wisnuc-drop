@@ -6,13 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/25 16:27:07 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/01 16:59:49 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const _ = require('lodash')
 const debug = require('debug')('app:box')
-const { User} = require('../models')
-const { Box } = require('../schema')
+const { User } = require('../models')
+const { Box, Tweet } = require('../schema')
 
 /**
  * This is box service.
@@ -38,10 +39,8 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   async find(boxId) {
-    
     let box = await Box.findOne({ uuid: boxId }).lean().exec()
     if (!box) throw new E.BoxNotExist()
-    
     let user = await User.find({
       where: {
         id: box.owner
@@ -58,11 +57,26 @@ class BoxService {
 	/**
 	 * update box
 	 * @param {object} box 
+   * @param {object} tweet
 	 * @returns
 	 * @memberof BoxService
 	 */
-  update(options) {
-    return Box.findOneAndUpdate({ uuid: options.uuid }, options).exec()
+  update(options, tweet) {
+    if (tweet) {
+      let tweetObj = {
+        type: tweet.type,
+        comment: tweet.comment,
+        ctime: tweet.ctime,
+        parent: tweet.parent,
+        index: tweet.index,
+        uuid: tweet.uuid,
+        box: options.uuid
+      }
+      new Tweet(tweetObj).save()
+    }
+    // TODO: send message to client
+    Box.findOneAndUpdate({ uuid: options.uuid }, options).exec()
+    return null
   }
 	/**
 	 * delete box
@@ -79,8 +93,35 @@ class BoxService {
 	 * @returns 
 	 * @memberof BoxService
 	 */
-  findAll(userId) {
-    return Box.find().exec()
+  async findAll(userId) {
+    let boxes = await Box.find({ users: userId }).lean().exec()
+    let boxIds = _.map(boxes, '_id')
+    debug(boxIds)
+    let tweets = await tweets.findOne({ box: { $in: boxIds } }).exec()
+    let userIds = []
+    for (let box of boxes) {
+      userIds = userIds.concat(box.users)   
+    }
+    let users = await User.findAll({
+      where: {
+        id: userIds
+      },
+      attributes: ['id', 'nickName', 'avatarUrl', 'status'],
+      raw: true
+    })
+    for (let box of boxes) {
+      let boxUsers = []
+      for (let boxUserId of box.users) {
+        for (let user of users) {
+          if (boxUserId === user.id) {
+            boxUsers.push(user)
+            break
+          }
+        }  
+      }
+      box.users = boxUsers
+    }
+    return boxes
   }
 	/**
 	 * create boxes
@@ -117,42 +158,7 @@ class BoxService {
       }
     })
   }
-	/**
-	 * get owner
-	 * @param {any} id 
-	 * @param {any} onwerId 
-	 * @memberof BoxService
-	 */
-  findOwner(id, onwerId) {
-    return User.find({
-      include: {
-        model: Box,
-        where: {
-          id: id,
-          onwerId: onwerId
-        },
-        attributes: []
-      }
-    })
-  }
-	/**
-	 * get user
-	 * @param {any} id 
-	 * @param {any} userId 
-	 * @memberof BoxService
-	 */
-  findUser(id, userId) {
-    return User.find({
-      include: {
-        model: BoxUser,
-        where: {
-          boxId: id,
-          userId: userId
-        },
-        attributes: []
-      }
-    })
-  }
+	
 }
 
 module.exports = new BoxService()

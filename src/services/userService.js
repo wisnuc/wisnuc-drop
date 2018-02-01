@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:06:45 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/01 18:55:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,15 +182,17 @@ class UserService {
     //   (select stationId from user_station where userId = '${userId}') as us 
     let data = await Promise.props({
       // boxes I own and boxes including me
-      boxes: Box.find({ $or: [{ owner: userId }, { users: userId }] }, { owner: 1, users: 1 }).exec(),
+      boxes: Box.find({ users: userId }, { users: 1 }).exec(),
       // stations I own and stations station me
-      stationUsers: WisnucDB.query(sqlQuery, { raw: true, type: WisnucDB.QueryTypes.SELECT })
+      stationUsers: WisnucDB.query(sqlQuery, { 
+        // raw: true, 
+        // type: WisnucDB.QueryTypes.SELECT,
+        nest: true // deduplication
+      })
     })
     let { boxes, stationUsers } = data
-
     let userIds = []
     if (Array.isArray(boxes) && boxes.length > 0) {
-      userIds = _.map(boxes, 'owner')
       for (let box of boxes) {
         userIds = userIds.concat(box.users)
       }

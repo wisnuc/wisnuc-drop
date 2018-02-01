@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:43:47 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/01/31 16:42:50 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,7 +130,7 @@ router.get('/:id/users/:userId', joiValidator({
   }
 })
 
-// update user - station admin confirm
+// update user - station admin confirm FIXME: issues#6
 router.patch('/:id/users/:userId', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required(),
