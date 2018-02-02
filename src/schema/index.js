@@ -6,10 +6,12 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/29 17:47:13 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/02 11:47:13 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const fs = require('fs')
+const path = require('path')
 const debug = require('debug')('app:mongo')
 const mongoose = require('mongoose')
 const config = require('getconfig')
@@ -29,10 +31,32 @@ const options = {
 }
 mongoose.connect(DATABASE_URL, options)
 
-const db = mongoose.connection
+const mongodb = mongoose.connection
 
-db.on('error', err => debug(`connection error:${err}`))
-db.once('open', () => debug('mongodb connect successfully'))
+mongodb.on('error', err => debug(`connection error:${err}`))
+mongodb.once('open', () => debug('mongodb connect successfully'))
+
+
+// let db = {}
+
+// fs
+//   .readdirSync(__dirname)
+//   .filter(function (file) {
+//     return (file.indexOf('.') !== 0) && (file !== 'index.js')
+//   })
+//   .forEach(function (file) {
+//     // let model = sequelize.import(path.join(__dirname, file))
+//     // db[model.name] = model
+//     debug(file)
+//   })
+
+// Object.keys(db).forEach(function (modelName) {
+//   if ('associate' in db[modelName]) {
+//     db[modelName].associate(db)
+//   }
+// })
+
+// debug(db)
 
 // TODO: exports schema file
 module.exports = {

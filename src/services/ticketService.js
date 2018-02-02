@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/26 14:49:43 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/02 15:51:42 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -510,7 +510,7 @@ class TicketService {
             },
             transaction: t
           })
-        }
+        } 
 
       case 'invite':
         if (Date.now() > ticket.expiredDate)

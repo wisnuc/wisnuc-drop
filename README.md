@@ -64,6 +64,14 @@ pm2 start process.json
 
 ## API
 
+batch operations extend to restful api. 
+```json
+body: {
+  "create":  "[array of models to create]",
+  "update":  "[array of models to update]",
+  "destroy": "[array of model ids to destroy]"
+}
+```
 - [old documentation](https://github.com/wisnuc/documentation) *deprecated*
 - [new documentation](http://test.siyouqun.com/api-docs)
 

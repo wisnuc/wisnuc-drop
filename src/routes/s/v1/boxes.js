@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/01 15:55:53 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/02 17:08:28 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,12 @@ const boxService = require('../../../services/boxService')
  *     - name: uuid
  *       in: body
  *       required: true
- *       type: uuid
+ *       type: string
  *     - name: owner
  *       in: body
  *       required: true
  *       description: box owner
- *       type: uuid
+ *       type: string
  *     - name: users
  *       in: body
  *       required: false
@@ -79,12 +79,17 @@ const boxService = require('../../../services/boxService')
  *       in: body
  *       required: true
  *       description: box create timestamp
- *       type: uuid
+ *       type: number
  *     - name: mtime
  *       in: body
  *       required: true
  *       description: box update timestamp
- *       type: uuid
+ *       type: number
+ *     - name: tweet
+ *       in: body
+ *       required: false
+ *       description: last tweet
+ *       type: object
  *     responses:
  *       200:
  *         description: success
@@ -96,17 +101,54 @@ router.post('/', joiValidator({
     owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     ctime: Joi.number().required(),
-    mtime: Joi.number().required()
+    mtime: Joi.number().required(),
+    tweet: Joi.object()
   }
 }), async (req, res) => {
   try {
-    let options = Object.assign({}, req.body, { stationId: req.auth.station.id})
-    let data = await boxService.create(options)
+    let station = req.auth.station
+    let options = Object.assign({}, req.body, { stationId: station.id})
+    let data = await boxService.create(options, req.body.tweet)
     return res.success(data)
   }
   catch(err) {
     return res.error(err)
   }
+})
+
+
+/**
+ * batch operations
+  {
+    "create":  [array of models to create]
+    "update":  [array of models to update]
+    "destroy": [array of model ids to destroy]
+  }
+ */
+router.post('/batch', joiValidator({
+  body: {
+    create: Joi.array().items(Joi.object({
+      name: Joi.string().required(),
+      uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
+      owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
+      users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
+      ctime: Joi.number().required(),
+      mtime: Joi.number().required(),
+      tweet: Joi.object()
+    }))
+  }
+}), async (req, res) => {
+  try {
+    let station = req.auth.station
+    let { create } = req.body
+    let data = await boxService.bulkCreate(station.id, create)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
+  
+  
 })
 
 /**
@@ -140,7 +182,7 @@ router.post('/', joiValidator({
  *     - name: tweet
  *       in: body
  *       required: false
- *       type: string
+ *       type: object
  *       description: last tweet
  *     responses:
  *       200:
@@ -154,13 +196,12 @@ router.patch('/:boxId', joiValidator({
     name: Joi.string(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     mtime: Joi.number().required(),
-    tweet: Joi.string()
+    tweet: Joi.object()
   }
 }), async (req, res) => {
   try {
     let options = Object.assign({}, { uuid: req.params.boxId }, req.body)
-    let tweet = JSON.parse(req.body.tweet)
-    let data = await boxService.update(options, tweet)
+    let data = await boxService.update(options, req.body.tweet)
     return res.success(data)
   }
   catch(err) {

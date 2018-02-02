@@ -6,12 +6,13 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/01 16:59:49 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/02 18:14:15 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const _ = require('lodash')
+
 const debug = require('debug')('app:box')
+const _ = require('lodash')
 const { User } = require('../models')
 const { Box, Tweet } = require('../schema')
 
@@ -22,13 +23,18 @@ const { Box, Tweet } = require('../schema')
 class BoxService {
 	/**
 	 * create box
-	 * @param {object} options 
+	 * @param {object} options
+   * @param {object} tweet
 	 * @returns 
 	 * @memberof BoxService
 	 */
-  create(options) {
+  create(options, tweet) {
     let box = new Box(options)
     box.save()
+    if (tweet) {
+      let tweetObj = new Tweet(tweet)
+      tweetObj.save()
+    }
     // TODO: send message to client
     return box
   }
@@ -125,12 +131,25 @@ class BoxService {
   }
 	/**
 	 * create boxes
+   * @param {string} stationId
 	 * @param {array} boxes 
 	 * @returns 
 	 * @memberof BoxService
 	 */
-  bulkCreate(boxes) {
-    return Box.bulkCreate(boxes)
+  async bulkCreate(stationId, boxes) {
+    let tweets = _.map(boxes, 'tweet')
+    for (let box of boxes) {
+      box.stationId = stationId
+    }
+    let data = await Box.insertMany(boxes)
+    // debug(boxes)
+    debug(data)
+    return data
+    // return Promise.props({
+    //   bulkCreateBox: Box.insertMany(boxes).exec(),
+    //   bulkCreateTweet: Tweet.insertMany(tweets).exec()
+    // })
+    // TODO: send message to client
   }
 	/**
 	 * update boxes

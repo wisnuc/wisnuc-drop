@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/31 11:42:56 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/02 16:22:36 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,37 +117,5 @@ router.get('/:id', joiValidator({
     res.status(500).json({ error: e.message })
   }
 })
-
-/**
- * batch operations
-  {
-    "create":  [array of models to create]
-    "update":  [array of models to update]
-    "destroy": [array of model ids to destroy]
-  }
- */
-// router.post('/batch', joiValidator({
-//   body: {
-//     create: Joi.array(),
-//     update: Joi.array(),
-//     destroy: Joi.array()
-//   }
-// }), async (req, res) => {
-//   let { create, update, destroy } = req.body
-//   let data
-//   // create tweets
-//   if (create) {
-//     data = await tweetService.bulkCreate(create)
-//   }
-//   // update tweets
-//   if (update) {
-//     data = await tweetService.bulkUpdate(update)
-//   }
-//   // destroy tweets
-//   if (destroy) {
-//     data = await tweetService.bulkDestroy(destroy)
-//   }
-//   return res.success(data)
-// })
 
 module.exports = router
