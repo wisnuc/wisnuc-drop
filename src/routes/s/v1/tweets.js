@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/02 16:22:36 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/05 18:55:22 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,10 +55,46 @@ const tweetService = require('../../../services/tweetService')
 /**
  * @swagger
  * /s/v1/tweets:
- *   get:
+ *   post:
  *     summary: return tweets
  *     tags:
  *     - /s/tweets
+ *     parameters:
+ *     - name: uuid
+ *       in: body
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     - name: type
+ *       in: body
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     - name: index
+ *       in: body
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     - name: boxId
+ *       in: body
+ *       required: true
+ *       description: box uuid
+ *       type: string
+ *     - name: ctime
+ *       in: body
+ *       required: true
+ *       description: create time
+ *       type: number
+ *     - name: parent
+ *       in: body
+ *       required: false
+ *       description: parent uuid
+ *       type: number
+ *     - name: tweeter
+ *       in: body
+ *       required: true
+ *       description: user uuid
+ *       type: string
  *     responses:
  *       200:
  *         description: success
@@ -72,49 +108,22 @@ router.post('/', joiValidator({
     uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
     type: Joi.string().required(),
     index: Joi.number().required(),
-    parent: Joi.number().required(),
-    tweeter: Joi.string(),
-    ctime: Joi.number().required()
+    boxId: Joi.string().required(),
+    tweeter: Joi.string().required(),
+    ctime: Joi.number().required(),
+    parent: Joi.number(),
+    list: Joi.array(),
+    comment: Joi.string()
   }
 }), async (req, res) => {
   try {
-    let options = Object.assign({}, req.body, { stationId: req.auth.station.id})
+    let station = req.auth.station
+    let options = Object.assign({}, req.body, { stationId: station.id})
     let data = await tweetService.create(options)
     return res.success(data)
   }
   catch(err) {
     return res.error(err)
-  }
-})
-/**
- * @swagger
- * /s/v1/tweets/{id}:
- *   get:
- *     summary: return tweet
- *     tags:
- *     - /s/tweets
- *     parameters:
- *     - name: id
- *       in: query
- *       required: true
- *       description: uuid
- *       type: string
- *     responses:
- *       200:
- *         description: success
- *         schema:
- *           $ref: '#/definitions/Tweet'
- */
-router.get('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  try {
-    let data = await tweetService.find(req.params.id, req.query)
-    res.json(data)
-  } catch (e) {
-    res.status(500).json({ error: e.message })
   }
 })
 

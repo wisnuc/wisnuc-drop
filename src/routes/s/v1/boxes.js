@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/02 17:08:28 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/05 18:57:16 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,6 @@ const boxService = require('../../../services/boxService')
  *       required: true
  *       description: box update timestamp
  *       type: number
- *     - name: tweet
- *       in: body
- *       required: false
- *       description: last tweet
- *       type: object
  *     responses:
  *       200:
  *         description: success
@@ -101,14 +96,13 @@ router.post('/', joiValidator({
     owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     ctime: Joi.number().required(),
-    mtime: Joi.number().required(),
-    tweet: Joi.object()
+    mtime: Joi.number().required()
   }
 }), async (req, res) => {
   try {
     let station = req.auth.station
     let options = Object.assign({}, req.body, { stationId: station.id})
-    let data = await boxService.create(options, req.body.tweet)
+    let data = await boxService.create(options)
     return res.success(data)
   }
   catch(err) {
@@ -147,8 +141,6 @@ router.post('/batch', joiValidator({
   catch(err) {
     return res.error(err)
   }
-  
-  
 })
 
 /**
@@ -169,6 +161,11 @@ router.post('/batch', joiValidator({
  *       required: false
  *       description: box name
  *       type: string
+ *     - name: owner
+ *       in: body
+ *       required: false
+ *       description: owner
+ *       type: string
  *     - name: users
  *       in: body
  *       required: false
@@ -179,11 +176,6 @@ router.post('/batch', joiValidator({
  *       required: true
  *       description: box update timestamp
  *       type: uuid
- *     - name: tweet
- *       in: body
- *       required: false
- *       type: object
- *       description: last tweet
  *     responses:
  *       200:
  *         description: success
@@ -194,14 +186,14 @@ router.patch('/:boxId', joiValidator({
   },
   body: {
     name: Joi.string(),
+    owner: Joi.string().guid({ version: ['uuidv4'] }),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
-    mtime: Joi.number().required(),
-    tweet: Joi.object()
+    mtime: Joi.number().required()
   }
 }), async (req, res) => {
   try {
     let options = Object.assign({}, { uuid: req.params.boxId }, req.body)
-    let data = await boxService.update(options, req.body.tweet)
+    let data = await boxService.update(options)
     return res.success(data)
   }
   catch(err) {

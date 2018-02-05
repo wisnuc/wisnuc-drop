@@ -6,14 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/02 18:14:15 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/05 17:41:50 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 const debug = require('debug')('app:box')
 const _ = require('lodash')
-const { User } = require('../models')
+const { User, Ticket } = require('../models')
 const { Box, Tweet } = require('../schema')
 
 /**
@@ -24,19 +24,12 @@ class BoxService {
 	/**
 	 * create box
 	 * @param {object} options
-   * @param {object} tweet
 	 * @returns 
 	 * @memberof BoxService
 	 */
-  create(options, tweet) {
-    let box = new Box(options)
-    box.save()
-    if (tweet) {
-      let tweetObj = new Tweet(tweet)
-      tweetObj.save()
-    }
-    // TODO: send message to client
-    return box
+  create(options) {
+    return Box.findOneAndUpdate({ uuid: options.uuid }, options, { upsert: true })
+    // FIXME: ssage to client
   }
 	/**
 	 * return box
@@ -63,26 +56,12 @@ class BoxService {
 	/**
 	 * update box
 	 * @param {object} box 
-   * @param {object} tweet
 	 * @returns
 	 * @memberof BoxService
 	 */
-  update(options, tweet) {
-    if (tweet) {
-      let tweetObj = {
-        type: tweet.type,
-        comment: tweet.comment,
-        ctime: tweet.ctime,
-        parent: tweet.parent,
-        index: tweet.index,
-        uuid: tweet.uuid,
-        box: options.uuid
-      }
-      new Tweet(tweetObj).save()
-    }
+  update(options) {
+    return Box.findOneAndUpdate({ uuid: options.uuid }, options)
     // TODO: send message to client
-    Box.findOneAndUpdate({ uuid: options.uuid }, options).exec()
-    return null
   }
 	/**
 	 * delete box
@@ -131,24 +110,59 @@ class BoxService {
   }
 	/**
 	 * create boxes
+   * 1. if boxes exist, create tweets.
+   * 2. if boxes don't exist, create boxes && tweets && ticket
    * @param {string} stationId
 	 * @param {array} boxes 
 	 * @returns 
 	 * @memberof BoxService
 	 */
   async bulkCreate(stationId, boxes) {
-    let tweets = _.map(boxes, 'tweet')
+    // insert box
+    await Promise.map(boxes, async (item, index) => {
+      let box = await Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
+      if (!box) {
+        // create box's ticket
+        let ticket = {
+          creator: box.owner,
+          type: 'share',
+          stationId: stationId,
+          data: JSON.stringify({
+            boxId: box.uuid,
+            isAudited: false
+          })
+        }
+        await Ticket.findOrCreate({
+          where: {
+            creator: ticket.creator,
+            stationId: ticket.stationId,
+            type: ticket.type
+          },
+          defaults: ticket
+        })
+      }
+    })
+    let boxIds = _.map(boxes, 'uuid')
+    let results = await Box.find({ uuid: { $in: boxIds } })
+    
+    let tweets = []
+    // generate tweet data
     for (let box of boxes) {
-      box.stationId = stationId
+      if (box.tweet) {
+        for (let result of results) {
+          if (box.uuid === result.uuid) {
+            let tweet = Object.assign({}, box.tweet, { box: result.id })
+            tweets.push(tweet)
+            break
+          }
+        }
+      }
     }
-    let data = await Box.insertMany(boxes)
-    // debug(boxes)
-    debug(data)
-    return data
-    // return Promise.props({
-    //   bulkCreateBox: Box.insertMany(boxes).exec(),
-    //   bulkCreateTweet: Tweet.insertMany(tweets).exec()
-    // })
+    // insert tweet
+    await Promise.map(tweets, async (item, index) => {
+      await Tweet.findOneAndUpdate({ index: item.index, box: item.box }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
+    })
+    return 
     // TODO: send message to client
   }
 	/**

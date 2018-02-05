@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/29 17:46:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/05 18:37:39 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,6 @@ module.exports = (req, res, next) => {
       response.stack = stack
       fundebug.notifyError(err)
     }
-    debug(`response: ${response}`)
     return res.status(status).json(response)
   }
   next()
