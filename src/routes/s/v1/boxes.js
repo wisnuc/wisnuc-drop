@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/05 18:57:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 14:30:09 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,19 @@ const boxService = require('../../../services/boxService')
  * definitions:
  *   Box:
  *     type: object
+ *     required: 
+ *     - id
+ *     - uuid 
+ *     - name
+ *     - owner
+ *     - users 
+ *     - stationId
+ *     - ctime
+ *     - mtime
  *     properties:
+ *       id:
+ *         type: string
+ *         example: 5a77fd3b35dfc7f1061bc976
  *       uuid:
  *         type: string
  *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
@@ -33,13 +45,13 @@ const boxService = require('../../../services/boxService')
  *         allOf:
  *         - $ref: '#/definitions/User'
  *         - type: object
- *       stationId:
- *         type: string
- *         example: 8c015542-b7fb-4c21-ad23-e0c31ad015da
  *       users:
  *         type: array
  *         items: 
  *           $ref: '#/definitions/User'
+ *       stationId:
+ *         type: string
+ *         example: 8c015542-b7fb-4c21-ad23-e0c31ad015da
  *       ctime:
  *         type: number
  *         example: 1515996040812

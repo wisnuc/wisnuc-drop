@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/19 11:39:13 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/31 11:29:08 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 14:28:14 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ const tokenService = require('../../../services/tokenService')
  * definitions:
  *   CToken:
  *     type: object
+ *     required: 
+ *     - token
+ *     - user
  *     properties:
  *       token:
  *         type: string

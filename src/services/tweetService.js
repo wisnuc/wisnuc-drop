@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 11:12:53 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/05 17:41:12 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:32:26 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ class TweetService {
   /**
    * 
    * @param {any} options 
-   * @returns 
    * @memberof TweetService
    */
   async create(options) {

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:12:14 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:41:37 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ const threadify = require('../lib/threadify')
 const mqttService = require('./mqttService')
 
 /**
- * fetch file.
+ * Fetch file.
  * 在 client 从 station 下载文件中起到桥接作用
  * Notifications:
  * 未开始下载：
@@ -33,11 +33,6 @@ const mqttService = require('./mqttService')
  *   1. client res.end().
  *   2. station res.end().
  *   3. delete worker in map.
- * @module FetchFile 
- */
-
-/**
- * Fetch file.
  * @class Server
  * @extends {threadify(EventEmiiter)}
  */

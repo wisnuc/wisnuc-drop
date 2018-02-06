@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:21:56 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 14:25:44 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,11 @@ const userService = require('../../../services/userService')
  * definitions:
  *   User:
  *     type: object
+ *     required: 
+ *     - id
+ *     - status 
+ *     - nickName
+ *     - avatarUrl
  *     properties:
  *       id:
  *         type: string

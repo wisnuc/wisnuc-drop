@@ -6,12 +6,15 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/29 18:27:49 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:39:55 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const moment = require('moment')
-
+/**
+ * This is station model.
+ * @module Station
+ */
 module.exports = function (sequelize, DataTypes) {
   let Station = sequelize.define('Station', {
     id: {

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/05 17:41:50 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:31:15 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ class BoxService {
 	/**
 	 * create box
 	 * @param {object} options
-	 * @returns 
 	 * @memberof BoxService
 	 */
   create(options) {
@@ -34,7 +33,6 @@ class BoxService {
 	/**
 	 * return box
 	 * @param {string} boxId 
-	 * @returns 
 	 * @memberof BoxService
 	 */
   async find(boxId) {
@@ -56,7 +54,6 @@ class BoxService {
 	/**
 	 * update box
 	 * @param {object} box 
-	 * @returns
 	 * @memberof BoxService
 	 */
   update(options) {
@@ -66,7 +63,6 @@ class BoxService {
 	/**
 	 * delete box
 	 * @param {any} boxId 
-	 * @returns 
 	 * @memberof BoxService
 	 */
   delete(boxId) {
@@ -75,7 +71,6 @@ class BoxService {
 	/**
 	 * get boxes
 	 * @param {any} userId 
-	 * @returns 
 	 * @memberof BoxService
 	 */
   async findAll(userId) {
@@ -114,7 +109,6 @@ class BoxService {
    * 2. if boxes don't exist, create boxes && tweets && ticket
    * @param {string} stationId
 	 * @param {array} boxes 
-	 * @returns 
 	 * @memberof BoxService
 	 */
   async bulkCreate(stationId, boxes) {

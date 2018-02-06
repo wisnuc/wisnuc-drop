@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/02 15:51:42 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:32:07 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,6 @@ class TicketService {
 	 * 3. 判断 user 是否已经有 fill 过属于 station 的 ticket 
 	 * 4. create left arrow
 	 * @param {object} args 
-	 * @returns 
 	 * @memberof TicketService
 	 */
   inviteUser(args) {

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/01 18:55:04 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:32:57 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class UserService {
 	/**
 	 * create new user
 	 * @param {object} user 
-	 * @returns 
 	 * @memberof UserService
 	 */
   create(user) {

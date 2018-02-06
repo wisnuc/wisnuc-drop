@@ -6,21 +6,20 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 15:15:06 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:46:33 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:44:21 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const Promise = require('bluebird')
 const stream = require('stream')
-const debug = require('debug')('threadify')
+const debug = require('debug')('app:threadify')
 
 const EABORT = Object.assign(new Error('aborted'), { code: 'EABORT' })
 
 /**
  * observable class
- * @module threadify
+ * @class Threadify
  */
-
 module.exports = base => class extends base {
 
   constructor(...args) {

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:39:40 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:31:56 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ class StationService {
 	/**
 	 * create new station
 	 * @param {object} station 
-	 * @returns 
 	 * @memberof StationService
 	 */
   create(station) {
@@ -64,7 +63,6 @@ class StationService {
 	/**
 	 * get station
 	 * @param {string} id 
-	 * @returns 
 	 * @memberof StationService
 	 */
   find(id) {
@@ -79,7 +77,7 @@ class StationService {
 	 * update station
 	 * @param {object} obj 
 	 * @param {string} id
-	 * @returns {boolean} true 
+   * @memberof StationService
 	 */
   update(station) {
     return Station.update(station, {
@@ -117,7 +115,6 @@ class StationService {
 	/**
 	 * delete station
 	 * @param {string} id 
-	 * @returns 
 	 * @memberof StationService
 	 */
   delete(id) {
@@ -148,6 +145,7 @@ class StationService {
 	 * update station online
 	 * @param {*} stationId
 	 * @param {boolean} flag
+   * @memberof StationService
 	 */
   updateOnline(stationId, flag) {
     let isOnline = flag ? 1 : 0
@@ -159,7 +157,8 @@ class StationService {
   }
 	/**
 	 * get station token
-	 * @param {*} stationId 
+	 * @param {*} stationId
+   * @memberof StationService
 	 */
   async getToken(stationId) {
 

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/05 11:55:29 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 14:21:42 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,95 +157,6 @@ router.post('/:id/invite', joiValidator({
   }
 })
 
-/**
- * @swagger
- * /c/v1/tickets/{ticketId}/boxes/{boxId}/share:
- *   get:
- *     summary: return sharing box ticket
- *     tags:
- *     - /c/tickets
- *     parameters:
- *     - name: ticketId
- *       in: path
- *       required: true
- *       description: uuid
- *       type: string
- *     - name: boxId
- *       in: path
- *       required: true
- *       description: uuid
- *       type: string
- *     responses:
- *       200:
- *         description: success
- *         schema:
- *           type: object
- *           properties:
- *             id:
- *               type: string
- *               example: 00000071-e843-4cdb-a279-c7ce802558ec
- *             creator:
- *               type: string
- *               example: f7b71a94-6827-4532-a8f2-5a9ee454355b
- *             type:
- *               type: string
- *               example: bind
- *             stationId:
- *               type: string
- *               example: 4ea6038b-1003-4cc6-ac34-51d83e3f24da
- *             expiredDate:
- *               type: string
- *               format: dateTime
- *               example: null
- *             status:
- *               type: number
- *               example: 0
- *             creatorInfo:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                   example: c4d249dd-ed57-4655-9497-2a93ae3af1d0
- *                 nickName:
- *                   type: string
- *                   example: jingker
- *                 avatarUrl:
- *                   type: string
- *                   example: http://wx.qlogo.cn
- *             station:
- *               type: object
- *               properties:
- *                 id:
- *                   type: string
- *                   example: 8c015542-b7fb-4c21-ad23-e0c31ad015da
- *                 name:
- *                   type: string
- *                   example: HomeStation
- *             user:
- *               type: string
- *               example: null
- */
-router.post('/:ticketId/boxes/:boxId/share', joiValidator({
-  params: {
-    ticketId: Joi.string().guid({ version: ['uuidv4'] }).required(),
-    boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  try {
-    let user = req.auth.user
-    let args = {
-      ticketId: req.params.ticketId,
-      boxId: req.params.boxId,
-      userId: user.id
-    }
-    let data = await ticketService.shareBox(args)
-    return res.success(data)
-  }
-  catch (err) {
-    return res.error(err)
-  }
-})
-
 // get all tickets
 router.get('/', joiValidator({
   query: {
@@ -344,6 +255,96 @@ router.get('/:id/users', joiValidator({
   try {
     let id = req.params.id
     let data = await ticketService.findAllUser(id)
+    return res.success(data)
+  }
+  catch (err) {
+    return res.error(err)
+  }
+})
+
+
+/**
+ * @swagger
+ * /c/v1/tickets/{ticketId}/boxes/{boxId}/share:
+ *   get:
+ *     summary: return sharing box ticket
+ *     tags:
+ *     - /c/tickets
+ *     parameters:
+ *     - name: ticketId
+ *       in: path
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     - name: boxId
+ *       in: path
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *               example: 00000071-e843-4cdb-a279-c7ce802558ec
+ *             creator:
+ *               type: string
+ *               example: f7b71a94-6827-4532-a8f2-5a9ee454355b
+ *             type:
+ *               type: string
+ *               example: bind
+ *             stationId:
+ *               type: string
+ *               example: 4ea6038b-1003-4cc6-ac34-51d83e3f24da
+ *             expiredDate:
+ *               type: string
+ *               format: dateTime
+ *               example: null
+ *             status:
+ *               type: number
+ *               example: 0
+ *             creatorInfo:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: c4d249dd-ed57-4655-9497-2a93ae3af1d0
+ *                 nickName:
+ *                   type: string
+ *                   example: jingker
+ *                 avatarUrl:
+ *                   type: string
+ *                   example: http://wx.qlogo.cn
+ *             station:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: 8c015542-b7fb-4c21-ad23-e0c31ad015da
+ *                 name:
+ *                   type: string
+ *                   example: HomeStation
+ *             user:
+ *               type: string
+ *               example: null
+ */
+router.post('/:ticketId/boxes/:boxId/share', joiValidator({
+  params: {
+    ticketId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  try {
+    let user = req.auth.user
+    let args = {
+      ticketId: req.params.ticketId,
+      boxId: req.params.boxId,
+      userId: user.id
+    }
+    let data = await ticketService.shareBox(args)
     return res.success(data)
   }
   catch (err) {

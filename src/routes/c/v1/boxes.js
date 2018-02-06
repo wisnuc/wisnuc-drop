@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:22:49 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 14:09:30 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,6 @@ router.get('/:boxId/users', joiValidator({
   let data = await boxService.findUser(id)
   return res.success(data)
 })
+
 
 module.exports = router

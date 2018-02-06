@@ -6,14 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/07 17:10:30 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:18:47 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:40:00 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const moment = require('moment')
 const { UserStation } = require('./index')
 /**
- * This is User model.
+ * This is user model.
  * @module User
  */
 module.exports = function (sequelize, DataTypes) {

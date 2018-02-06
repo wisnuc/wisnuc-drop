@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/05 18:55:22 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 14:32:44 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,17 @@ const tweetService = require('../../../services/tweetService')
  * definitions:
  *   Tweet:
  *     type: object
+ *     required: 
+ *     - id
+ *     - uuid 
+ *     - type
+ *     - index
+ *     - tweeter 
+ *     - ctime
  *     properties:
+ *       id:
+ *         type: string
+ *         example: 5a77fd3b35dfc7f1061bc976
  *       uuid:
  *         type: string
  *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
@@ -38,6 +48,9 @@ const tweetService = require('../../../services/tweetService')
  *       comment:
  *         type: string
  *         example: hello
+ *       commitId:
+ *         type: string
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
  *       index:
  *         type: number
  *         example: 1
@@ -46,10 +59,13 @@ const tweetService = require('../../../services/tweetService')
  *         example: 0
  *       tweeter:
  *         type: string
- *         example: 0
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
  *       ctime:
  *         type: number
  *         example: 1515996040812
+ *       list:
+ *         type: array
+ *         example: []
  */
 
 /**

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/20 16:52:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:39:11 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 15:36:37 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ const publicIp = require('public-ip')
 module.exports = {
 	/**
 	 * get local ip
-	 * @returns 
+	 * @returns {string} LANIP
 	 */
   LANIP() {
     let interfaces = os.networkInterfaces()
@@ -32,7 +32,8 @@ module.exports = {
   },
 	/**
 	 * get wan ip
-	 * @returns 
+   * FIXME: socket handle up
+	 * @returns {string} WANIP
 	 */
   WANIP() {
     return publicIp.v4()
