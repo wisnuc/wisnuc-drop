@@ -177,4 +177,6 @@ mqtt topic 使用说明
 station/${stationId}/pipe | {} | json、fetch、 store
 
 ## Doc
-
+```bash
+npm run doc && open ./out/index.html with browser
+```

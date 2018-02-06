@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 require('./utils/global')
-// require('../src/utils/init').register()
+require('../src/utils/init').register()
 require('../src/schema')
 
 const express = require('express')
@@ -26,7 +26,7 @@ const swaggerJSDoc = require('swagger-jsdoc')
 
 const routes = require('./routes/index')
 const logger = Logger('app:server')
-
+logger.info(1231231,global.server)
 const app = express()
 
 const session = Session({

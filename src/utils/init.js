@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 10:23:17 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:26:47 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 17:49:07 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
  * According to different server, init data:
  * 1. if no server information, create server info.
  */
-
+const debug = require('debug')('app:init')
 const ip = require('./ip')
 const { Server } = require('../models')
 
@@ -28,7 +28,9 @@ let register = () => {
     try {
       let LANIP = ip.LANIP()
       let WANIP = await ip.WANIP()
-
+      // add to global
+      global.server = { LANIP, WANIP: LANIP }
+      
       return Server.findOrCreate({
         where: {
           $or: [

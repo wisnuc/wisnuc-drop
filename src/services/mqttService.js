@@ -51,7 +51,20 @@ class MqttService {
    * @param {object} manifest
    */
   async pipe(stationId, manifest) {
-    let WANIP = await ip.WANIP()
+    // { 
+    //   method: 'GET',
+    //   resource: 'L3VzZXJz',
+    //   body: {},
+    //   sessionId: '62bacb4d-d746-4859-86ba-1a80508fd61d',
+    //   user: { 
+    //     id: 'b20ea9c9-c9a6-4a4f-adde-c8f7c1c11884',
+    //     nickName: 'L',
+    //     unionId: undefined 
+    //   },
+    //   type: 'pipe',
+    //   serverAddr: '10.10.9.87:4000'
+    // }
+    let WANIP = global.server.WANIP
     let message = Object.assign({}, manifest,
       {
         type: 'pipe',

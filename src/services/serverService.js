@@ -6,10 +6,13 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/02 14:50:33 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/12 10:52:26 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 17:46:31 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/**
+ * TODO: deprecated
+ */
 const { Server } = require('../models')
 
 const ip = require('../utils/ip')

@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:31:15 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/06 18:41:27 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,14 +74,15 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   async findAll(userId) {
+   
     let boxes = await Box.find({ users: userId }).lean().exec()
     let boxIds = _.map(boxes, '_id')
-    debug(boxIds)
-    let tweets = await tweets.findOne({ box: { $in: boxIds } }).exec()
     let userIds = []
     for (let box of boxes) {
       userIds = userIds.concat(box.users)   
     }
+    let tweets = await Tweet.find({ box: { $in: boxIds } })
+      .lean().exec()
     let users = await User.findAll({
       where: {
         id: userIds
@@ -89,6 +90,19 @@ class BoxService {
       attributes: ['id', 'nickName', 'avatarUrl', 'status'],
       raw: true
     })
+    for (let box of boxes) {
+      debug(11)
+      for (let tweet of tweets) {
+        debug(333, typeof tweet.box, typeof box._id)
+        if (tweet.box.equals(box._id)) {
+          debug(22)
+          box.tweet = tweet
+          break
+        }
+      }
+    }
+    debug(tweets)
+  
     for (let box of boxes) {
       let boxUsers = []
       for (let boxUserId of box.users) {
@@ -112,6 +126,7 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   async bulkCreate(stationId, boxes) {
+    debug(111,global.server)
     // insert box
     await Promise.map(boxes, async (item, index) => {
       let box = await Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
