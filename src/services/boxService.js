@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 18:41:27 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 18:53:50 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class BoxService {
 	 */
   create(options) {
     return Box.findOneAndUpdate({ uuid: options.uuid }, options, { upsert: true })
-    // FIXME: ssage to client
+    // TODO: ssage to client
   }
 	/**
 	 * return box
@@ -79,10 +79,10 @@ class BoxService {
     let boxIds = _.map(boxes, '_id')
     let userIds = []
     for (let box of boxes) {
-      userIds = userIds.concat(box.users)   
+      userIds = userIds.concat(box.users)
     }
-    let tweets = await Tweet.find({ box: { $in: boxIds } })
-      .lean().exec()
+    // last tweet
+    let tweets = await Tweet.find({ box: { $in: boxIds } }).sort('field -index').lean().exec()
     let users = await User.findAll({
       where: {
         id: userIds
@@ -122,45 +122,44 @@ class BoxService {
    * 1. if boxes exist, create tweets.
    * 2. if boxes don't exist, create boxes && tweets && ticket
    * @param {string} stationId
-	 * @param {array} boxes 
+	 * @param {array} boxes
 	 * @memberof BoxService
 	 */
   async bulkCreate(stationId, boxes) {
-    debug(111,global.server)
     // insert box
     await Promise.map(boxes, async (item, index) => {
+      item = Object.assign({}, item, { stationId: stationId } )
       let box = await Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
+      debug(box)
+      // if the box is newly created, create box's ticket
       if (!box) {
-        // create box's ticket
         let ticket = {
-          creator: box.owner,
+          creator: item.owner,
           type: 'share',
           stationId: stationId,
-          data: JSON.stringify({
-            boxId: box.uuid,
-            isAudited: false
-          })
+          boxId: item.uuid,
+          isAudited: 0 // don't audit
         }
         await Ticket.findOrCreate({
           where: {
+            type: ticket.type,
             creator: ticket.creator,
-            stationId: ticket.stationId,
-            type: ticket.type
+            stationId: ticket.stationId
           },
           defaults: ticket
         })
       }
     })
     let boxIds = _.map(boxes, 'uuid')
-    let results = await Box.find({ uuid: { $in: boxIds } })
+    let results = await Box.find({ uuid: { $in: boxIds } }).lean().exec()
     
     let tweets = []
-    // generate tweet data
+    // add box ObejectId to tweet data
     for (let box of boxes) {
       if (box.tweet) {
         for (let result of results) {
           if (box.uuid === result.uuid) {
-            let tweet = Object.assign({}, box.tweet, { box: result.id })
+            let tweet = Object.assign({}, box.tweet, { box: result._id })
             tweets.push(tweet)
             break
           }

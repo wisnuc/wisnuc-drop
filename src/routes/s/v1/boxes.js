@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 14:30:09 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 18:49:04 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ const boxService = require('../../../services/boxService')
  *     required: 
  *     - id
  *     - uuid 
- *     - name
  *     - owner
  *     - users 
  *     - stationId
@@ -70,7 +69,7 @@ const boxService = require('../../../services/boxService')
  *     parameters:
  *     - name: name
  *       in: body
- *       required: true
+ *       required: false
  *       description: box name
  *       type: string
  *     - name: uuid
@@ -103,7 +102,7 @@ const boxService = require('../../../services/boxService')
  */
 router.post('/', joiValidator({
   body: {
-    name: Joi.string().required(),
+    name: Joi.string().empty(''),
     uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
     owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
@@ -122,7 +121,6 @@ router.post('/', joiValidator({
   }
 })
 
-
 /**
  * batch operations
   {
@@ -134,7 +132,7 @@ router.post('/', joiValidator({
 router.post('/batch', joiValidator({
   body: {
     create: Joi.array().items(Joi.object({
-      name: Joi.string().required(),
+      name: Joi.string().empty(''),
       uuid: Joi.string().guid({ version: ['uuidv4'] }).required(),
       owner: Joi.string().guid({ version: ['uuidv4'] }).required(),
       users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
@@ -197,7 +195,7 @@ router.patch('/:boxId', joiValidator({
     boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
   },
   body: {
-    name: Joi.string(),
+    name: Joi.string().empty(''),
     owner: Joi.string().guid({ version: ['uuidv4'] }),
     users: Joi.array().items(Joi.string().guid({ version: ['uuidv4'] }).required()),
     mtime: Joi.number().required()

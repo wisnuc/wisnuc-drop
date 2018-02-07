@@ -1,0 +1,4 @@
+
+ALTER TABLE `tickets` ADD COLUMN `boxId` CHAR(36) NULL AFTER `stationId`;
+
+ALTER TABLE `tickets` ADD COLUMN `isAudited` TINYINT(1) NULL DEFAULT NULL AFTER `boxId`;

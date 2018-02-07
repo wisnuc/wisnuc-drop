@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 14:32:44 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 14:34:24 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ router.post('/', joiValidator({
     ctime: Joi.number().required(),
     parent: Joi.number(),
     list: Joi.array(),
-    comment: Joi.string()
+    comment: Joi.string().empty('')
   }
 }), async (req, res) => {
   try {

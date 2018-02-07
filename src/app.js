@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   app.js                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>           +#+  +:+       +#+        */
+/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:35:39 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/08/09 17:02:01 by JianJin Wu         ###   ########.fr       */
+/*   Updated: 2018/02/07 14:23:27 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ const swaggerJSDoc = require('swagger-jsdoc')
 
 const routes = require('./routes/index')
 const logger = Logger('app:server')
-logger.info(1231231,global.server)
+
 const app = express()
 
 const session = Session({

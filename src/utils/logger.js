@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/01 14:09:03 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:26:54 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 14:24:10 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,4 @@ let Logger = name => {
   return logger
 }
 
-module.exports = {
-  log4js: log4js,
-  Logger: Logger
-}
+module.exports = { log4js, Logger }

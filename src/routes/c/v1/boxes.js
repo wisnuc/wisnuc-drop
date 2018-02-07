@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 14:09:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 17:44:56 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,38 @@ const boxService = require('../../../services/boxService')
  *         schema:
  *           type: array
  *           items:
- *             $ref: '#/definitions/Box'
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: 5a77fd3b35dfc7f1061bc976
+ *               uuid:
+ *                 type: string
+ *                 example: f0066784-7985-4dc4-9b20-4ea5a14434e8
+ *               name:
+ *                 type: string
+ *                 example: 私有群
+ *               owner:
+ *                 allOf:
+ *                 - $ref: '#/definitions/User'
+ *                 - type: object
+ *               users:
+ *                 type: array
+ *                 items: 
+ *                   $ref: '#/definitions/User'
+ *               stationId:
+ *                 allOf:
+ *                 - $ref: '#/definitions/Station'
+ *                 - type: object
+ *               ctime:
+ *                 type: number
+ *                 example: 1515996040812
+ *               mtime:
+ *                 type: number
+ *                 example: 1515996040812
+ *               tweet:
+ *                 allOf:
+ *                 - $ref: '#/definitions/Tweet'
+ *                 - type: object
  */
 router.get('/', async (req, res) => {
   try {

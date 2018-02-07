@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:44:32 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 17:49:35 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,35 @@ const stationService = require('../../../services/stationService')
 const fetchFile = require('../../../services/fetchFile')
 const storeFile = require('../../../services/storeFile')
 const transformJson = require('../../../services/transformJson')
+
+/**
+ * @swagger
+ * definitions:
+ *   Station:
+ *     type: object
+ *     required: 
+ *     - id
+ *     - name
+ *     - LANIP
+ *     - isOnline
+ *     - status
+ *     properties:
+ *       id:
+ *         type: string
+ *         example: 6e6c0c4a-967a-489a-82a2-c6eb6fe9d991
+ *       name:
+ *         type: string
+ *         example: WISNUC_1513060364831
+ *       LANIP:
+ *         type: string
+ *         example: 192.168.8.128
+ *       isOnline:
+ *         type: number
+ *         example: 1
+ *       status:
+ *         type: number
+ *         example: 1
+ */
 
 // check double arrow
 function checkDoubleArrow() {

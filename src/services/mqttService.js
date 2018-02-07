@@ -13,7 +13,6 @@
 const debug = require('debug')('app:mqtt')
 const config = require('getconfig')
 
-const ip = require('../utils/ip')
 const client = require('../lib/mqtt')
 const stationService = require('./stationService')
 
@@ -38,7 +37,6 @@ client.on('message', (topic, message, packet) => {
     throw err
   }
 })
-
 
 /**
  * This is mqtt service.

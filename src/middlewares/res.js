@@ -6,14 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/05 18:37:39 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 14:36:46 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const debug = require('debug')('app:res')
 const { getconfig } = require('getconfig')
 const fundebug = require('../utils/fundebug')
-const logger = Logger('app:error')
+const logger = Logger('app:res')
 
 const DEFAULT_SUCCESS_STATUS = 200
 const DEFAULT_ERROR_STATUS = 403
@@ -30,7 +30,7 @@ const httpCode = {
 
 module.exports = (req, res, next) => {
   /**
-  * asuccess response
+  * success response
   * @param {any} data 
   * @param {number} status - default 500
   */
@@ -45,8 +45,7 @@ module.exports = (req, res, next) => {
     })
   }
   /**
-	* error response、
-	* 区分 status 类型
+	* error response
   * @param {any} data 
   * @param {number} status - default 403
   */
@@ -68,8 +67,8 @@ module.exports = (req, res, next) => {
         message = httpCode[status]
         data = err
       }
-      // make a record in error.log when httpcode = 403
-      if (status === 403) {
+      // make a record in error.log when httpcode != 200
+      if (status != 200) {
         logger.error({
           method: req.method,
           url: req.originalUrl,

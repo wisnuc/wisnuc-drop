@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:21:00 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 17:28:37 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,11 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.UUID,
       required: true
     },
-    expiredDate: {
-      type: DataTypes.DATE
-    },
+    // only exist when type === share
+    boxId: DataTypes.UUID,
+    isAudited: DataTypes.BOOLEAN,
+    
+    expiredDate: DataTypes.DATE,
     data: DataTypes.TEXT,
     // 0 未消费 1 已使用
     status: {
@@ -57,9 +59,24 @@ module.exports = function (sequelize, DataTypes) {
     tableName: 'tickets',
     indexes: [
       {
+        name: 'type',
+        method: 'BTREE',
+        fields: ['type']
+      },
+      {
         name: 'creator',
         method: 'BTREE',
         fields: ['creator']
+      },
+      {
+        name: 'stationId',
+        method: 'BTREE',
+        fields: ['stationId']
+      },
+      {
+        name: 'boxId',
+        method: 'BTREE',
+        fields: ['boxId']
       }
     ],
     classMethods: {

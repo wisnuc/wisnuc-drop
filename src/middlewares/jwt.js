@@ -6,11 +6,11 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/18 16:01:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:31:59 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 15:44:34 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
+const debug = require('debug')('app:jwt')
 const jwt = require('../lib/jwt')
 const { User, Station } = require('../models')
 

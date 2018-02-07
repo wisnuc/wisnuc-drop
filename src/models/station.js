@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:39:55 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/07 17:26:48 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ module.exports = function (sequelize, DataTypes) {
     },
     name: {
       type: DataTypes.STRING,
-      defaultValue: 'station_' + Date.now()
+      defaultValue: 'WISNUC_' + Date.now()
     },
     publicKey: {
       type: DataTypes.TEXT
