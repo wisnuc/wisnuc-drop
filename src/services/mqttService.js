@@ -79,10 +79,11 @@ class MqttService {
    * @memberof MqttService
    */
   notice(userId) {
+    
     let data = {
       userId: 123123
     }
-    client.publish(`user/${userId}/notice`, data, { qos: 1 })
+    client.publish(`client/users/${userId}/boxes`, data, { qos: 1 })
   }
 }
 

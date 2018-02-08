@@ -6,14 +6,14 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 18:53:50 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/08 18:39:55 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 const debug = require('debug')('app:box')
 const _ = require('lodash')
-const { User, Ticket } = require('../models')
+const { User, Station, Ticket } = require('../models')
 const { Box, Tweet } = require('../schema')
 
 /**
@@ -77,33 +77,41 @@ class BoxService {
    
     let boxes = await Box.find({ users: userId }).lean().exec()
     let boxIds = _.map(boxes, '_id')
-    let userIds = []
-    for (let box of boxes) {
-      userIds = userIds.concat(box.users)
-    }
-    // last tweet
-    let tweets = await Tweet.find({ box: { $in: boxIds } }).sort('field -index').lean().exec()
-    let users = await User.findAll({
-      where: {
-        id: userIds
-      },
-      attributes: ['id', 'nickName', 'avatarUrl', 'status'],
-      raw: true
+    let stationIds = _.map(boxes, 'stationId')
+    let userIds = _.uniq(_.flatMapDeep(_.map(boxes, 'users')))
+    let data = await Promise.props({
+      stations: Station.findAll({
+        where: {
+          id: stationIds
+        },
+        attributes: ['id', 'status', 'name', 'isOnline', 'LANIP'],
+        raw: true
+      }),
+      users: User.findAll({
+        where: {
+          id: userIds
+        },
+        attributes: ['id', 'nickName', 'avatarUrl', 'status'],
+        raw: true
+      }),
+      // last tweet
+      tweets: Tweet.find({ box: { $in: boxIds } }).sort({ index: -1 }).lean().exec()
     })
+    let { users, stations, tweets } = data
+    // assembly data
     for (let box of boxes) {
-      debug(11)
+      for (let station of stations) {
+        if (box.stationId === station.id) {
+          box.station = station
+          break
+        }
+      }
       for (let tweet of tweets) {
-        debug(333, typeof tweet.box, typeof box._id)
         if (tweet.box.equals(box._id)) {
-          debug(22)
           box.tweet = tweet
           break
         }
       }
-    }
-    debug(tweets)
-  
-    for (let box of boxes) {
       let boxUsers = []
       for (let boxUserId of box.users) {
         for (let user of users) {
@@ -197,6 +205,22 @@ class BoxService {
       where: {
         id: ids
       }
+    })
+  }
+  /**
+   * return share ticket info
+   * @param {string} boxId 
+   * @memberof BoxService
+   */
+  findShareTicket(boxId) {
+    return Ticket.find({
+      where: {
+        boxId: boxId,
+        type: 'share'
+      },
+      sort: [['createdAt', 'DESC']],
+      attributes: ['id', 'boxId', 'isAudited'],
+      raw: true
     })
   }
 	

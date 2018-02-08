@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 17:14:26 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/08 14:29:16 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,15 @@ const ticketService = require('../../../services/ticketService')
  *       stationId:
  *         type: string
  *         example: 4ea6038b-1003-4cc6-ac34-51d83e3f24da
+ *       boxId:
+ *         type: string
+ *         example: 4ea6038b-1003-4cc6-ac34-51d83e3f24da
+ *       isAudited:
+ *         type: number
+ *         example: 1
+ *         enum: 
+ *         - 0
+ *         - 1
  *       expiredDate:
  *         type: string
  *         format: dateTime
@@ -163,7 +172,7 @@ router.post('/:id/invite', joiValidator({
 /**
  * @swagger
  * /c/v1/tickets/{ticketId}/boxes/{boxId}/share:
- *   get:
+ *   post:
  *     summary: return sharing box ticket
  *     tags:
  *     - /c/tickets

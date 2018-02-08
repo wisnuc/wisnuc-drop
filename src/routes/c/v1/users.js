@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 14:25:44 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/08 15:55:19 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ router.get('/:id/stations', joiValidator({
 
 /**
  * @swagger
- * /c/v1/users/{userId}/interesting:
+ * /c/v1/users/{userId}/interestingPerson:
  *   get:
  *     summary: return interesting person
  *     tags:
@@ -165,7 +165,7 @@ router.get('/:id/stations', joiValidator({
  *                 type: string
  *                 example: https://wx.qlogo.cn
  */
-router.get('/:userId/interesting', joiValidator({
+router.get('/:userId/interestingPerson', joiValidator({
   params: {
     userId: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
@@ -182,7 +182,7 @@ router.get('/:userId/interesting', joiValidator({
 
 /**
  * @swagger
- * /c/v1/users/{userId}/interesting/sources:
+ * /c/v1/users/{userId}/interestingPerson/personId:
  *   get:
  *     summary: return interesting person data sources
  *     tags:
@@ -214,14 +214,15 @@ router.get('/:userId/interesting', joiValidator({
  *                 items:
  *                   $ref: '#/definitions/Box'
  */
-router.get('/:userId/interesting/sources', joiValidator({
+router.get('/:userId/interesting/personId', joiValidator({
   params: {
-    userId: Joi.string().guid({ version: ['uuidv4'] }).required()
+    userId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    personId: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
 }), async (req, res) => {
   try {
-    let userId = req.params.userId
-    let data = await userService.findInterestingSources(userId)
+    let personId = req.params.personId
+    let data = await userService.findInterestingSources(personId)
     return res.success(data)
   }
   catch (err) {

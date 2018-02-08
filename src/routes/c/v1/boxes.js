@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 17:44:56 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/08 14:18:46 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,10 +136,52 @@ router.get('/:boxId/users', joiValidator({
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
   }
 }), async (req, res) => {
-  let id = req.params.id
-  let data = await boxService.findUser(id)
-  return res.success(data)
+  try {
+    let id = req.params.id
+    let data = await boxService.findUser(id)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
+  
 })
 
+/**
+ * @swagger
+ * /c/v1/boxes/{boxId}/ticket:
+ *   get:
+ *     summary: return share ticket
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: boxId
+ *       in: path
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/Ticket'
+ */
+router.get('/:boxId/ticket', joiValidator({
+  params: {
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  try {
+    let boxId = req.params.boxId
+    let data = await boxService.findShareTicket(boxId)
+    return res.success(data)
+  }
+  catch(err) {
+    return res.error(err)
+  }
+  
+})
 
 module.exports = router

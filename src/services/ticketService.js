@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:32:07 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/08 13:48:05 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,7 @@ class TicketService {
     })
   }
   /**
-   * invite user to come in box
+   * invite user to box
    * 1. 判断 ticket 是否存在、过期
    * 2. 判断 box 是否存在
    * 3. 判断 user 是否存在
@@ -241,22 +241,32 @@ class TicketService {
    * @param {object} args 
    * @memberof TicketService
    */
-  shareBox(args) {
+  async shareBox(args) {
     let { ticketId, boxId, userId } = args
-    return WisnucDB.transaction(async t => {
-      let ticket = await Ticket.find({
-        where: {
-          id: ticketId
-        },
-        transaction: t,
-        raw: true
-      })
-      if (!ticket) throw new E.TicketNotExist()
-      let box = await Box.findOne({ uuid: boxId }).exec()
-      if (!box) throw new E.BoxNotExist()
-      // FIXME: seed message to user client through mqtt's service
-      return box
+    let ticket = await Ticket.find({
+      where: {
+        id: ticketId,
+        boxId: boxId,
+        type: 'share'
+      },
+      attributes: ['isAudited'],
+      raw: true
     })
+    if (!ticket) throw new E.TicketNotExist()
+    await TicketUser.findOrCreate({
+      where: {
+        ticketId: ticketId,
+        userId: userId
+      },
+      defaults: {
+        ticketId: ticketId,
+        userId: userId,
+        type: ticket.isAudited ? 'pending' : 'resolved'
+      },
+      attributes: ['userId', 'type'],
+      raw: true
+    })
+    return true
   }
 	/**
 	 * 以 user 查询 ticket
