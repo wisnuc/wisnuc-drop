@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 16:53:59 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/09 18:48:17 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ describe(path.basename(__filename), () => {
     it('update user', done => {
       request(app)
         .patch(`/c/v1/users/${user.id}`)
-        .send({ nickName: 'test', avatarUrl: 'http://www.wisnuc.com' })
+        .send({ nickName: 'test', avatarUrl: 'http://test.siyouqun.com' })
         .set('Authorization', cToken)
         .expect(200)
         .end(done)

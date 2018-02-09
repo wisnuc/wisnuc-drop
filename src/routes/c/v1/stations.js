@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 17:49:35 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/09 18:43:08 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ const transformJson = require('../../../services/transformJson')
  *         example: 1
  */
 
-// check double arrow
+// station auth: check double arrow
+// FIXME: box auth: only user have wechat account
 function checkDoubleArrow() {
   return function (req, res, next) {
     let userId = req.auth.user.id

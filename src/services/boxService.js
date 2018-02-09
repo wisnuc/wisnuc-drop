@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/08 18:39:55 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/09 17:23:31 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,8 @@ class BoxService {
 	/**
 	 * create boxes
    * 1. if boxes exist, create tweets.
-   * 2. if boxes don't exist, create boxes && tweets && ticket
+   * 2. if boxes don't exist, create boxes && tweets && ticket.
+   * TODO: 考虑到离线删除后， 上线更新状态
    * @param {string} stationId
 	 * @param {array} boxes
 	 * @memberof BoxService
@@ -179,7 +180,6 @@ class BoxService {
       await Tweet.findOneAndUpdate({ index: item.index, box: item.box }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
     })
     return 
-    // TODO: send message to client
   }
 	/**
 	 * update boxes

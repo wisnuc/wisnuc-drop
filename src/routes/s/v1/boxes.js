@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 18:49:04 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/09 13:35:20 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,8 @@ const boxService = require('../../../services/boxService')
  *         type: string
  *         example: 私有群
  *       owner:
- *         allOf:
- *         - $ref: '#/definitions/User'
- *         - type: object
+ *         type: string
+ *         example: f0066784-7985-4dc4-9b20-4ea5a14434e8
  *       users:
  *         type: array
  *         items: 

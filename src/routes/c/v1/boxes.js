@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/08 14:18:46 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/09 17:29:53 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,8 @@ const boxService = require('../../../services/boxService')
  *                 type: string
  *                 example: 私有群
  *               owner:
- *                 allOf:
- *                 - $ref: '#/definitions/User'
- *                 - type: object
+ *                 type: string
+ *                 example: f0066784-7985-4dc4-9b20-4ea5a14434e8
  *               users:
  *                 type: array
  *                 items: 
@@ -181,7 +180,6 @@ router.get('/:boxId/ticket', joiValidator({
   catch(err) {
     return res.error(err)
   }
-  
 })
 
 module.exports = router

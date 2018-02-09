@@ -75,15 +75,19 @@ class MqttService {
   }
   /**
    * send message to client
-   * @param {any} userId 
+   * @param {array} userIds
+   * @param {array} data
    * @memberof MqttService
    */
-  notice(userId) {
-    
-    let data = {
-      userId: 123123
+  notice(userIds, data) {
+    userIds = Array.isArray(userIds) ? userIds : [userIds]
+    data = Array.isArray(data) ? data : [data]
+    let message = JSON.stringify(data)
+    for (let userId of userIds) {
+      debug(userId, message)
+      // seed message to client
+      client.publish(`client/user/${userId}/box`, message, { qos: 1 })
     }
-    client.publish(`client/users/${userId}/boxes`, data, { qos: 1 })
   }
 }
 
