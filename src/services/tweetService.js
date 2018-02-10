@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 11:12:53 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/09 18:57:30 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/10 14:38:34 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,17 @@ class TweetService {
    * @memberof TweetService
    */
   async create(options) {
-    let box = await Box.find({ uuid: options.box }).lean().exec() 
+    debug(`options: `, options)
+    let box = await Box.findOne({ uuid: options.boxId }).lean()
     if (!box) throw new E.BoxNotExist()
-    debug(options)
+    debug(`box: `, box)
     let result = await Tweet.findOneAndUpdate({ index: options.index, box: box._id }, options, { upsert: true, setDefaultsOnInsert: true }).exec()
     // need to seed last tweet to client
     if (!result) {
+      
       let userIds = box.users
       let data = await Promise.props({
-        station: Station.findAll({
+        station: Station.find({
           where: {
             id: box.stationId
           },
@@ -48,15 +50,15 @@ class TweetService {
           raw: true
         }),
         // last tweet
-        tweet: Tweet.find({ box: box._id }).sort({ index: -1 }).lean().exec()
+        tweet: Tweet.findOne({ box: box._id }).sort({ index: -1 }).lean()
       })
       let { users, station, tweet } = data
       // assembly data
       box.station = station
       box.tweet = tweet
       box.users = users
+      debug(1123123123, box)
       // seed message to client
-      debug(box, userIds, box)
       mqttService.notice(userIds, box)
       return
     }

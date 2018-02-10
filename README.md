@@ -100,6 +100,10 @@ npm run cloud-station
 - swagger mock
 - mysql => mongodb 
 - mongoDB transaction
+- mini program => hpps pictures
+- [management system](https://github.com/wisnuc/wisnuc-management)
+- upload file with udp
+- system monitor
 
 ## Error Code
 错误代码：

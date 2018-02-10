@@ -6,7 +6,7 @@
 /*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/09 17:23:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/10 10:39:31 by JianJin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ class BoxService {
 	 */
   create(options) {
     return Box.findOneAndUpdate({ uuid: options.uuid }, options, { upsert: true })
-    // TODO: ssage to client
   }
 	/**
 	 * return box
@@ -38,17 +37,16 @@ class BoxService {
   async find(boxId) {
     let box = await Box.findOne({ uuid: boxId }).lean().exec()
     if (!box) throw new E.BoxNotExist()
-    let user = await User.find({
+    let users = await User.findAll({
       where: {
-        id: box.owner
+        id: box.users
       },
       attributes: ['nickName', 'avatarUrl', 'id', 'status'],
       raw: true
     })
-    if (!user) throw new E.UserNotExist()
-    debug(typeof box)
+    if (!users) throw new E.UserNotExist()
     debug(`box: ${box}`)
-    box.owner = user
+    box.users = users
     return box
   }
 	/**
@@ -58,7 +56,6 @@ class BoxService {
 	 */
   update(options) {
     return Box.findOneAndUpdate({ uuid: options.uuid }, options)
-    // TODO: send message to client
   }
 	/**
 	 * delete box
