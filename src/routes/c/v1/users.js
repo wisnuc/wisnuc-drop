@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   users.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/08 15:55:19 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 15:04:03 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ const userService = require('../../../services/userService')
 
 /**
  * @swagger
- * /c/v1/users:
+ * /c/v1/users/{id}:
  *   get:
- *     summary: return users
+ *     summary: return user
  *     tags:
  *     - /c/users
  *     parameters:
  *     - name: id
- *       in: query
+ *       in: path
  *       required: true
  *       description: user guid
  *       type: string
@@ -83,43 +83,25 @@ router.get('/:id', joiValidator({
   }
 })
 
-// update user
-router.patch('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  },
-  body: {
-    nickName: Joi.string(),
-    avatarUrl: Joi.string()
-  }
-}), async (req, res) => {
-  try {
-    let user = Object.assign({}, req.params, req.body)
-    let data = await userService.update(user)
-    return res.success(data)
-  }
-  catch (err) {
-    return res.error(err)
-  }
-})
-
-// delete user
-router.delete('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  }
-}), async (req, res) => {
-  try {
-    let id = req.body.id
-    let data = await userService.delete(id)
-    return res.success(data)
-  }
-  catch (err) {
-    return res.error(err)
-  }
-})
-
-// get stations
+/**
+ * @swagger
+ * /c/v1/users/{id}/stations:
+ *   get:
+ *     summary: return all stations of this user
+ *     tags:
+ *     - /c/users
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: user guid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/User'
+ */
 router.get('/:id/stations', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -143,8 +125,8 @@ router.get('/:id/stations', joiValidator({
  *     tags:
  *     - /c/users
  *     parameters:
- *     - name: id
- *       in: query
+ *     - name: userId
+ *       in: path
  *       required: true
  *       description: user guid
  *       type: string
@@ -182,14 +164,19 @@ router.get('/:userId/interestingPerson', joiValidator({
 
 /**
  * @swagger
- * /c/v1/users/{userId}/interestingPerson/personId:
+ * /c/v1/users/{userId}/interestingPerson/{personId}:
  *   get:
  *     summary: return interesting person data sources
  *     tags:
  *     - /c/users
  *     parameters:
  *     - name: userId
- *       in: query
+ *       in: path
+ *       required: true
+ *       description: user guid
+ *       type: string
+ *     - name: personId
+ *       in: path
  *       required: true
  *       description: user guid
  *       type: string

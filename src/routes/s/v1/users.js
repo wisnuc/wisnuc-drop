@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   users.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:43:43 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 16:00:44 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,25 @@ const joiValidator = require('../../../middlewares/joiValidator')
 const userService = require('../../../services/userService')
 
 
-// get user
+/**
+ * @swagger
+ * /c/v1/users/{id}:
+ *   get:
+ *     summary: return user
+ *     tags:
+ *     - /s/users
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: user guid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/User'
+ */
 router.get('/:id', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -34,27 +52,5 @@ router.get('/:id', joiValidator({
     return res.error(err)
   }
 })
-
-// update user
-router.patch('/:id', joiValidator({
-  params: {
-    id: Joi.string().guid({ version: ['uuidv4'] }).required()
-  },
-  body: {
-    nickName: Joi.string(),
-    avatarUrl: Joi.string()
-  }
-}), async (req, res) => {
-  try {
-    let user = Object.assign({}, req.params, req.body)
-    let data = await userService.update(user)
-    return res.success(data)
-  }
-  catch (err) {
-    return res.error(err)
-  }
-})
-
-
 
 module.exports = router

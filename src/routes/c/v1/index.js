@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   index.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 16:21:10 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/09 17:33:10 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 14:03:40 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@ const router = express.Router()
 
 const jwt = require('../../../middlewares/jwt')
 
-router.use('/account', require('./account'))
 router.use('/token', require('./token'))
 
 router.use('*', jwt.cAuth)	

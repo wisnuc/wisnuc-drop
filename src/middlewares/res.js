@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   res.js                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 14:36:46 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 14:02:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const debug = require('debug')('app:res')
 const { getconfig } = require('getconfig')
 const fundebug = require('../utils/fundebug')
 const logger = Logger('app:res')
@@ -67,15 +66,13 @@ module.exports = (req, res, next) => {
         message = httpCode[status]
         data = err
       }
-      // make a record in error.log when httpcode != 200
-      if (status != 200) {
-        logger.error({
-          method: req.method,
-          url: req.originalUrl,
-          message: message,
-          stack: stack
-        })
-      }
+      // error log
+      logger.error({
+        method: req.method,
+        url: req.originalUrl,
+        message: message,
+        stack: stack
+      })
     }
     let response = {
       url: req.originalUrl,

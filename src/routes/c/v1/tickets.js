@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tickets.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/08 14:29:16 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 17:33:57 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ const ticketService = require('../../../services/ticketService')
  *     - /c/tickets
  *     parameters:
  *     - name: id
- *       in: query
+ *       in: path
  *       required: true
  *       description: uuid
  *       type: string
@@ -147,6 +147,61 @@ router.get('/:id', joiValidator({
 })
 
 // invite user for mini program
+
+/**
+ * @swagger
+ * /c/v1/tickets/{id}/invite:
+ *   post:
+ *     summary: return ticket
+ *     tags:
+ *     - /c/tickets
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *               example: 00000071-e843-4cdb-a279-c7ce802558ec
+ *             creator:
+ *               type: string
+ *               example: f7b71a94-6827-4532-a8f2-5a9ee454355b
+ *             type:
+ *               type: string
+ *               example: bind
+ *             stationId:
+ *               type: string
+ *               example: 4ea6038b-1003-4cc6-ac34-51d83e3f24da
+ *             expiredDate:
+ *               type: string
+ *               format: dateTime
+ *               example: null
+ *             status:
+ *               type: number
+ *               example: 0
+ *             user:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: c4d249dd-ed57-4655-9497-2a93ae3af1d0
+ *                 type:
+ *                   type: string
+ *                   example: pending
+ *                 ticketId:
+ *                   type: string
+ *                   example: 00000071-e843-4cdb-a279-c7ce802558ec
+ *                 userId:
+ *                   type: string
+ *                   example: f7b71a94-6827-4532-a8f2-5a9ee454355b
+ */
 router.post('/:id/invite', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -165,10 +220,6 @@ router.post('/:id/invite', joiValidator({
     return res.error(err)
   }
 })
-
-// share box for user 
-
-
 /**
  * @swagger
  * /c/v1/tickets/{ticketId}/boxes/{boxId}/share:
@@ -313,7 +364,7 @@ router.post('/:id/users', joiValidator({
  *     - /c/tickets
  *     parameters:
  *     - name: id
- *       in: query
+ *       in: path
  *       required: true
  *       description: uuid
  *       type: string

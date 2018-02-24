@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ticketService.js                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/08 13:48:05 by JianJin Wu       ###   ########.fr       */
+/*   ticketService.js                                   ::      ::    ::   */
+/*                                                    : :         :     */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         #  :       #        */
+/*                                                #####   #           */
+/*   Created: 2017/11/10 11:34:45 by JianJin Wu        ##    ##             */
+/*   Updated: 2018/02/24 16:54:49 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,8 +203,9 @@ class TicketService {
         order: 'createdAt DESC',
         raw: true
       })
-      if (ticketUser) return 'this user already filled ticket of station'
-      return Promise.props({
+      if (ticketUser) throw new E.TicketUserAlreadyExist()
+      // create ticket_user adn user_station(left arrow)
+      let result = await Promise.props({
         // create left user_station arrow
         createLeftArrow: UserStation.findOrCreate({
           where: {
@@ -228,8 +229,11 @@ class TicketService {
           transaction: t,
           attributes: ['userId', 'type'],
           raw: true
-        })
+        }).spread(newObj => newObj)
       })
+      // add user property
+      ticket.user = result.createTicketUser
+      return ticket
     })
   }
   /**

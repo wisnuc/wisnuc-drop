@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   userService.js                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:32:57 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 14:12:22 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,30 +59,6 @@ class UserService {
     })
     if (!user) throw new E.EUSERNOTEXIST()
     return user
-  }
-	/**
-	 * update user
-	 * @param {any} user 
-	 * @memberof UserService
-	 */
-  update(user) {
-    return User.update(user, {
-      where: {
-        id: user.id
-      }
-    })
-  }
-	/**
-	 * delete user
-	 * @param {any} userId 
-	 * @memberof UserService
-	 */
-  delete(userId) {
-    return User.update({ status: -1 }, {
-      where: {
-        id: userId
-      }
-    })
   }
 	/**
 	 * get stations

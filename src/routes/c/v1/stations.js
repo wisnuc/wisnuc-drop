@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   stations.js                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/09 18:43:08 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 15:53:03 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,25 @@ function checkDoubleArrow() {
       })
   }
 }
-
-// get station
+/**
+ * @swagger
+ * /c/v1/stations/{id}:
+ *   get:
+ *     summary: return station
+ *     tags:
+ *     - /c/stations
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           $ref: '#/definitions/Station'
+ */
 router.get('/:id', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -84,8 +101,27 @@ router.get('/:id', joiValidator({
     return res.error(err)
   }
 })
-
-// get users
+/**
+ * @swagger
+ * /c/v1/stations/{id}/users:
+ *   get:
+ *     summary: return users of this station
+ *     tags:
+ *     - /c/stations
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           type: array
+ *           items:
+ *             $ref: '#/definitions/User'
+ */
 router.get('/:id/users', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -100,8 +136,23 @@ router.get('/:id/users', joiValidator({
     return res.error(err)
   }
 })
-
-// store file
+/**
+ * @swagger
+ * /c/v1/stations/{id}/pipe:
+ *   post:
+ *     summary: store file
+ *     tags:
+ *     - /c/stations
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
 router.post('/:id/pipe', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -115,8 +166,23 @@ router.post('/:id/pipe', joiValidator({
     return res.error(err)
   }
 })
-
-// fetch file
+/**
+ * @swagger
+ * /c/v1/stations/{id}/pipe:
+ *   get:
+ *     summary: fetch file
+ *     tags:
+ *     - /c/stations
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
 router.get('/:id/pipe', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -130,8 +196,23 @@ router.get('/:id/pipe', joiValidator({
     return res.error(err)
   }
 })
-
-// GET json transform
+/**
+ * @swagger
+ * /c/v1/stations/{id}/json:
+ *   get:
+ *     summary: GET json transform
+ *     tags:
+ *     - /c/stations
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
 router.get('/:id/json', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -146,8 +227,23 @@ router.get('/:id/json', joiValidator({
     return res.error(err)
   }
 })
-
-// POST json transform
+/**
+ * @swagger
+ * /c/v1/stations/{id}/json:
+ *   post:
+ *     summary: POST json transform
+ *     tags:
+ *     - /c/stations
+ *     parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
 router.post('/:id/json', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
