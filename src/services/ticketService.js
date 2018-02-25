@@ -320,7 +320,7 @@ class TicketService {
         attributes: ['userId', 'type'],
         include: {
           model: User,
-          attributes: ['nickName', 'avatarUrl', 'unionId']
+          attributes: ['nickName', 'avatarUrl']
         }
       }
     })
@@ -330,7 +330,6 @@ class TicketService {
         let user = u.User.dataValues
         u.dataValues.nickName = user.nickName
         u.dataValues.avatarUrl = user.avatarUrl
-        u.dataValues.unionId = user.unionId
         delete u.User.dataValues
       })
     })
@@ -413,21 +412,6 @@ class TicketService {
       switch (ticket.type) {
       // need to create userStation
       case 'invite':
-        // return Promise.props({
-        // 	updateTicket: Ticket.update({ status: 1 }, {
-        // 		where: {
-        // 			id: id,
-        // 			stationId: stationId
-        // 		},
-        // 		transaction: t
-        // 	}),
-        // 	updateUser: TicketUser.update({ type: type }, {
-        // 		where: {
-        // 			stationId: stationId
-        // 		},
-        // 		transaction: t
-        // 	})
-        // })
         return Ticket.update({ status: status }, {
           where: {
             id: id,

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 13:25:27 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/24 17:33:57 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/25 11:31:15 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ const ticketService = require('../../../services/ticketService')
  *                   example: c4d249dd-ed57-4655-9497-2a93ae3af1d0
  *                 nickName:
  *                   type: string
- *                   example: jingker
+ *                   example: Jianjin Wu
  *                 avatarUrl:
  *                   type: string
  *                   example: http://wx.qlogo.cn
@@ -152,7 +152,7 @@ router.get('/:id', joiValidator({
  * @swagger
  * /c/v1/tickets/{id}/invite:
  *   post:
- *     summary: return ticket
+ *     summary: return invite ticket
  *     tags:
  *     - /c/tickets
  *     parameters:
@@ -271,7 +271,7 @@ router.post('/:id/invite', joiValidator({
  *                   example: c4d249dd-ed57-4655-9497-2a93ae3af1d0
  *                 nickName:
  *                   type: string
- *                   example: jingker
+ *                   example: Jianjin Wu
  *                 avatarUrl:
  *                   type: string
  *                   example: http://wx.qlogo.cn
@@ -308,8 +308,72 @@ router.post('/:ticketId/boxes/:boxId/share', joiValidator({
     return res.error(err)
   }
 })
-
-// get all tickets
+/**
+ * @swagger
+ * /c/v1/tickets:
+ *   get:
+ *     summary: return tickets
+ *     tags:
+ *     - /c/tickets
+ *     parameters:
+ *     - name: creator
+ *       in: query
+ *       required: false
+ *       description: ticket uuid
+ *       type: string
+ *     - name: stationId
+ *       in: query
+ *       required: false
+ *       description: station uuid
+ *       type: string
+ *     - name: status
+ *       in: query
+ *       required: false
+ *       description: ticket status
+ *       type: number
+ *     responses:
+ *       200:
+ *         description: success
+ *         schema:
+ *           type: array
+ *           items: 
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: 00000071-e843-4cdb-a279-c7ce802558ec
+ *               creator:
+ *                 type: string
+ *                 example: f7b71a94-6827-4532-a8f2-5a9ee454355b
+ *               type:
+ *                 type: string
+ *                 example: bind
+ *               stationId:
+ *                 type: string
+ *                 example: 4ea6038b-1003-4cc6-ac34-51d83e3f24da
+ *               expiredDate:
+ *                 type: string
+ *                 format: dateTime
+ *                 example: null
+ *               status:
+ *                 type: number
+ *                 example: 0
+ *               users:
+ *                 type: array
+ *                 items:
+ *                   properties:
+ *                     userId:
+ *                       type: string
+ *                       example: c4d249dd-ed57-4655-9497-2a93ae3af1d0
+ *                     type:
+ *                       type: string
+ *                       example: pending
+ *                     nickName:
+ *                       type: string
+ *                       example: Jianjin Wu
+ *                     avatarUrl:
+ *                       type: string
+ *                       example: http://wx.qlogo.cn
+ */
 router.get('/', joiValidator({
   query: {
     creator: Joi.string().guid({ version: ['uuidv4'] }),
@@ -334,8 +398,23 @@ router.get('/', joiValidator({
     return res.error(err)
   }
 })
-
-// fill ticket (except invite)
+/**
+ * @swagger
+ * /c/v1/tickets/{id}/users:
+ *   post:
+ *     summary: fill ticket (except invite)
+ *     tags:
+ *     - /c/tickets
+ *     parameters:
+ *     - name: id
+ *       in: query
+ *       required: true
+ *       description: ticket uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
 router.post('/:id/users', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required()
@@ -354,7 +433,6 @@ router.post('/:id/users', joiValidator({
     return res.error(err)
   }
 })
-
 /**
  * @swagger
  * /c/v1/tickets/{id}/users/{userId}:
