@@ -93,7 +93,7 @@ npm run cloud-station
 
 ## TODO List
 - *project deploy automatically(doing)
-- *doc(doing)
+- *project doc(doing)
 - *project test
 - *upload file with udp
 - *system monitor

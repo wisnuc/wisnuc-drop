@@ -7,19 +7,13 @@ module.exports = {
     // First application
     {
       name      : 'wisnuc-drop',
-      script    : 'app.js',
+      script    : './src/bin/www',
       env: {
         COMMON_VARIABLE: 'true'
       },
       env_production : {
         NODE_ENV: 'production'
       }
-    },
-
-    // Second application
-    {
-      name      : 'WEB',
-      script    : 'web.js'
     }
   ],
 
@@ -29,33 +23,17 @@ module.exports = {
    */
   deploy : {
     production : {
-      user : 'node',
-      host : '212.83.163.1',
-      ref  : 'origin/master',
-      repo : 'git@github.com:repo.git',
-      path : '/var/www/production',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
-    },
-    dev : {
-      user : 'node',
-      host : '212.83.163.1',
-      ref  : 'origin/master',
-      repo : 'git@github.com:repo.git',
-      path : '/var/www/development',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env dev',
-      env  : {
-        NODE_ENV: 'dev'
-      }
-    },
-    test : {
       user : 'ubuntu',
-      host : ['122.152.206.50'],
-      ref  : 'origin/test',
-      repo : 'git@github.com:wisnuc/wisnuc-drop.git',
-      path : '/data/wisnuc-drop',
-      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env dev',
-      env  : {
-        NODE_ENV: 'test'
+      host : '118.89.152.59',
+      ref  : 'origin/master',
+      repo : 'git@github.com:mosaic101/wisnuc-drop.git',
+      path : '/home/ubuntu/data',
+      'ssh_options': ['StrictHostKeyChecking=no', 'PasswordAuthentication=no'],
+      'pre-setup' : 'apt-get install git',
+      'post-setup': `echo 'commands or a script path to be run on the host after cloning the repo'`,
+      'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env production',
+      env: {
+        NODE_ENV: 'production'
       }
     }
   }
