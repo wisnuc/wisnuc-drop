@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ticketService.js                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/10 11:34:45 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/08 13:48:05 by JianJin Wu       ###   ########.fr       */
+/*   ticketService.js                                   ::      ::    ::   */
+/*                                                    : :         :     */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         #  :       #        */
+/*                                                #####   #           */
+/*   Created: 2017/11/10 11:34:45 by JianJin Wu        ##    ##             */
+/*   Updated: 2018/02/24 16:54:49 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,8 +203,9 @@ class TicketService {
         order: 'createdAt DESC',
         raw: true
       })
-      if (ticketUser) return 'this user already filled ticket of station'
-      return Promise.props({
+      if (ticketUser) throw new E.TicketUserAlreadyExist()
+      // create ticket_user adn user_station(left arrow)
+      let result = await Promise.props({
         // create left user_station arrow
         createLeftArrow: UserStation.findOrCreate({
           where: {
@@ -228,8 +229,11 @@ class TicketService {
           transaction: t,
           attributes: ['userId', 'type'],
           raw: true
-        })
+        }).spread(newObj => newObj)
       })
+      // add user property
+      ticket.user = result.createTicketUser
+      return ticket
     })
   }
   /**
@@ -316,7 +320,7 @@ class TicketService {
         attributes: ['userId', 'type'],
         include: {
           model: User,
-          attributes: ['nickName', 'avatarUrl', 'unionId']
+          attributes: ['nickName', 'avatarUrl']
         }
       }
     })
@@ -326,7 +330,6 @@ class TicketService {
         let user = u.User.dataValues
         u.dataValues.nickName = user.nickName
         u.dataValues.avatarUrl = user.avatarUrl
-        u.dataValues.unionId = user.unionId
         delete u.User.dataValues
       })
     })
@@ -409,21 +412,6 @@ class TicketService {
       switch (ticket.type) {
       // need to create userStation
       case 'invite':
-        // return Promise.props({
-        // 	updateTicket: Ticket.update({ status: 1 }, {
-        // 		where: {
-        // 			id: id,
-        // 			stationId: stationId
-        // 		},
-        // 		transaction: t
-        // 	}),
-        // 	updateUser: TicketUser.update({ type: type }, {
-        // 		where: {
-        // 			stationId: stationId
-        // 		},
-        // 		transaction: t
-        // 	})
-        // })
         return Ticket.update({ status: status }, {
           where: {
             id: id,

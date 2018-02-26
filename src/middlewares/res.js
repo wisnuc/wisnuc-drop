@@ -3,12 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   res.js                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 14:36:46 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/25 15:43:48 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 const debug = require('debug')('app:res')
 const { getconfig } = require('getconfig')
@@ -32,62 +33,56 @@ module.exports = (req, res, next) => {
   /**
   * success response
   * @param {any} data 
-  * @param {number} status - default 500
+  * @param {number} status - default 200
   */
   res.success = (data, status) => {
-    data = data || null
     status = status || DEFAULT_SUCCESS_STATUS
     return res.status(status).json({
       url: req.originalUrl,
       code: 1,
       message: 'ok',
-      data: data
+      data: data || null
     })
   }
   /**
 	* error response
-  * @param {any} data 
+  * @param {any} error 
   * @param {number} status - default 403
   */
-  res.error = (err, status) => {
-    let code = 'no code'
-    let message = 'no message'
-    let data = null
-    let stack = null
+  res.error = (error, status) => {
+    let code, message
     status = status || DEFAULT_ERROR_STATUS
-    if (err) {
-      if (err instanceof Error) {
-        code = err.code || status
-        message = err.message
-        stack = err.stack
+    if (error) {
+      if (error instanceof Error) {
+        code = error.code || status
+        message = error.message
       }
       // 400
-      if (err instanceof Array) {
+      else if (error instanceof Array) {
         code = 400
         message = httpCode[status]
-        data = err
       }
-      // make a record in error.log when httpcode != 200
-      if (status != 200) {
-        logger.error({
-          method: req.method,
-          url: req.originalUrl,
-          message: message,
-          stack: stack
-        })
+      // others
+      else {
+        code = error.code || status || 403
+        message = error.message || httpCode[status] || 'forbidden'
       }
+      // error log
+      logger.error({
+        method: req.method,
+        url: req.originalUrl,
+        message: message,
+        stack: error.stack
+      })
     }
     let response = {
       url: req.originalUrl,
       code: code,
-      message: message,
-      data: data
+      message: message
     }
+    debug(`error: ${error}`)
     // show stack in production environment
-    if (getconfig['env'] === 'production') {
-      response.stack = stack
-      fundebug.notifyError(err)
-    }
+    if (getconfig['env'] === 'production') fundebug.notifyError(error)
     return res.status(status).json(response)
   }
   next()

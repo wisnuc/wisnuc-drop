@@ -4,10 +4,9 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps : [
-
     // First application
     {
-      name      : 'API',
+      name      : 'wisnuc-drop',
       script    : 'app.js',
       env: {
         COMMON_VARIABLE: 'true'

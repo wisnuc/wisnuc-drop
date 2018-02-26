@@ -1,4 +1,4 @@
 {
   "verbose": true,
-  "ignore": ["sessions/*"]
+  "ignore": ["sessions/*", "demo/*"]
 }

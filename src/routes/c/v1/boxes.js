@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   boxes.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/09 17:29:53 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/24 15:03:28 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ router.get('/', async (req, res) => {
  *     - /c/boxes
  *     parameters:
  *     - name: boxId
- *       in: query
+ *       in: path
  *       required: true
  *       description: uuid
  *       type: string
@@ -113,12 +113,12 @@ router.get('/:boxId', joiValidator({
  * @swagger
  * /c/v1/boxes/{boxId}/users:
  *   get:
- *     summary: return users of box
+ *     summary: return all users of this box
  *     tags:
  *     - /c/boxes
  *     parameters:
  *     - name: boxId
- *       in: query
+ *       in: path
  *       required: true
  *       description: uuid
  *       type: string

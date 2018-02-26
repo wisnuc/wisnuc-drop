@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   app.js                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:35:39 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 14:23:27 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/25 15:37:25 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ const options = {
   swaggerDefinition: {
     info: {
       title: 'Wisnuc Cloud APIs', // Title (required)
-      description: 'This document is the restful api of wisnuc cloud for client and station.',
+      description: 'This api document follow the RESTful API is about Client and Station.',
       version: '1.0.0', // Version (required)
     },
     host: 'http://test.siyouqun.com'
@@ -80,7 +80,7 @@ app.use('/', routes)
 app.use((req, res, next) => {
   let err = new Error('Not Found')
   err.status = 404
-  res.status(err.status).json(err.message)
+  res.error(err, 404)
   next()
 })
 

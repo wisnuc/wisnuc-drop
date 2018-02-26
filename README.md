@@ -92,8 +92,12 @@ npm run cloud-station
 - node version - 8.5.0
 
 ## TODO List
-- project deploy automatic
-- project test
+- *project deploy automatically(doing)
+- *doc(doing)
+- *project test
+- *upload file with udp
+- *system monitor
+- *config reload(reference to zookeeper)
 - database tables constructure document
 - [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
 - [qcloud databases backup](https://www.qcloud.com)
@@ -102,8 +106,7 @@ npm run cloud-station
 - mongoDB transaction
 - mini program => hpps pictures
 - [management system](https://github.com/wisnuc/wisnuc-management)
-- upload file with udp
-- system monitor
+
 
 ## Error Code
 错误代码：
