@@ -7,12 +7,12 @@ module.exports = {
     // First application
     {
       name      : 'wisnuc-drop',
-      script    : './src/bin/www',
+      script    : 'src/bin/www',
       env: {
         COMMON_VARIABLE: 'true'
       },
-      env_production : {
-        NODE_ENV: 'production'
+      env_test : {
+        NODE_ENV: 'test'
       }
     }
   ],
@@ -22,19 +22,15 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/deployment/
    */
   deploy : {
-    production : {
+    test : {
       user : 'ubuntu',
       host : '118.89.152.59',
       ref  : 'origin/master',
-      repo : 'git@github.com:mosaic101/wisnuc-drop.git',
+      repo : 'https://www.github.com/mosaic101/wisnuc-drop.git',
       path : '/home/ubuntu/data',
-      'ssh_options': ['StrictHostKeyChecking=no', 'PasswordAuthentication=no'],
-      'pre-setup' : 'apt-get install git',
+      'pre-setup' : `echo 'commands or local script path to be run on the host before the setup process starts'`,
       'post-setup': `echo 'commands or a script path to be run on the host after cloning the repo'`,
-      'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env production',
-      env: {
-        NODE_ENV: 'production'
-      }
+      'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env test'
     }
   }
 }
