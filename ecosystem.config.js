@@ -10,9 +10,6 @@ module.exports = {
       script    : 'src/bin/www',
       env: {
         COMMON_VARIABLE: 'true'
-      },
-      env_test : {
-        NODE_ENV: 'test'
       }
     }
   ],
@@ -28,9 +25,15 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'https://www.github.com/mosaic101/wisnuc-drop.git',
       path : '/home/ubuntu/data',
-      'pre-setup' : `echo 'commands or local script path to be run on the host before the setup process starts'`,
-      'post-setup': `echo 'commands or a script path to be run on the host after cloning the repo'`,
       'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env test'
+    },
+    production : {
+      user : 'ubuntu',
+      host : ['122.152.208.97', '211.159.219.224'],
+      ref  : 'origin/master',
+      repo : 'https://www.github.com/wisnuc/wisnuc-drop.git',
+      path : '/home/ubuntu/data',
+      'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env production'
     }
   }
 }
