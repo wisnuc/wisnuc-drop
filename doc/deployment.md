@@ -6,10 +6,11 @@ Deploy the project using pm2 automatically.
 - git 
 - pm2 
 
-## ssh passwordLess Login Using SSH Keygen
+## SSH passwordLess login using SSH keygen
+[SSH passwordLess login using SSH keygen](https://www.tecmint.com/ssh-passwordless-login-using-ssh-keygen-in-5-easy-steps)
 
-
-- 服务器获取本地 publicKey
+## Pm2 
+ecosystem.json
 
 ## Troubleshooting
 - ssh passwordLess Login Using SSH Keygen

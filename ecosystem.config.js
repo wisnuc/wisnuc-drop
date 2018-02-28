@@ -10,6 +10,12 @@ module.exports = {
       script    : 'src/bin/www',
       env: {
         COMMON_VARIABLE: 'true'
+      },
+      env_test : {
+        NODE_ENV: 'test'
+      },
+      env_production : {
+        NODE_ENV: 'production'
       }
     }
   ],
