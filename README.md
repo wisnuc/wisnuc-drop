@@ -4,9 +4,9 @@ Bridge Client and Nas.
 - [介绍](doc/introduction.md)
 - [安装](doc/installation.md)
 - [部署](doc/deployment.md)
-- [API DOC](doc/api_doc.md)
+- [API Doc](doc/api_doc.md)
 - [test](doc/test.md)
-- [TODO list](doc/todo_list.md)
+- [TODO List](doc/todo_list.md)
 
 ## Mqtt Topic
 mqtt topic 使用说明
