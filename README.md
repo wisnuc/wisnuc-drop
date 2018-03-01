@@ -6,15 +6,24 @@ Bridge Client and Nas.
 - [部署](doc/deployment.md)
 - [API Doc](doc/api_doc.md)
 - [test](doc/test.md)
-- [TODO List](doc/todo_list.md)
+- [Mqtt](doc/mqtt.md)
 
-## Mqtt Topic
-mqtt topic 使用说明
+# TODO List
 
-### For Station
-主题(topic) | 数据(json) | 说明(description)
------------------ | ------------------ | ------------------
-station/${stationId}/pipe | {} | json、fetch、 store
+- *deploy automatically(doing)
+- *complete doc(doing)
+- *project test
+- *upload file with udp
+- *system monitor
+- *config reload(reference to zookeeper)
+- database tables constructure document
+- [sequelize migrations](https://sequelize.readthedocs.io/en/v3/docs/migrations)
+- [qcloud databases backup](https://www.qcloud.com)
+- swagger mock
+- mysql => mongodb 
+- mongoDB transaction
+- mini program => hpps pictures
+- [management system](https://github.com/wisnuc/wisnuc-management)
 
 ## JsDoc
 ```bash

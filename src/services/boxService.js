@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   boxService.js                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/10 10:39:31 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/02/28 18:26:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class BoxService {
 	 */
   async findAll(userId) {
    
-    let boxes = await Box.find({ users: userId }).lean().exec()
+    let boxes = await Box.find({ users: userId }).lean()
     let boxIds = _.map(boxes, '_id')
     let stationIds = _.map(boxes, 'stationId')
     let userIds = _.uniq(_.flatMapDeep(_.map(boxes, 'users')))
@@ -92,7 +92,7 @@ class BoxService {
         raw: true
       }),
       // last tweet
-      tweets: Tweet.find({ box: { $in: boxIds } }).sort({ index: -1 }).lean().exec()
+      tweets: Tweet.find({ box: { $in: boxIds } }).sort({ index: -1 }).lean()
     })
     let { users, stations, tweets } = data
     // assembly data
@@ -126,7 +126,6 @@ class BoxService {
 	 * create boxes
    * 1. if boxes exist, create tweets.
    * 2. if boxes don't exist, create boxes && tweets && ticket.
-   * TODO: 考虑到离线删除后， 上线更新状态
    * @param {string} stationId
 	 * @param {array} boxes
 	 * @memberof BoxService
