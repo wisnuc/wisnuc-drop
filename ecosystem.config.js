@@ -12,7 +12,7 @@ module.exports = {
       exec_mode : 'cluster',
       // start you app without no --env option, then the key named "env" will be used. 
       env: {
-        NODE_ENV: 'test' 
+        NODE_ENV: 'test'
       },
       env_test : {
         NODE_ENV: 'test'
