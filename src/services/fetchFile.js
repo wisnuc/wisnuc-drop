@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   fetchFile.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:41:37 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 17:47:02 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class Server extends threadify(EventEmiiter) {
   }
 
   async run() {
-    let stationId = this.req.params.id
+    let stationId = this.req.params.id || this.req.params.stationId
     let user = this.req.auth.user
 
     let method, resource, body
@@ -194,7 +194,7 @@ class FetchFile extends threadify(EventEmiiter) {
 
     let { message, code } = req.body
     server.error(message, code)
-    res.success()
+    res.end()
     // end
     this.close(jobId)
   }

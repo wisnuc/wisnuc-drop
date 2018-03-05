@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/24 15:03:28 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 14:29:06 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@ const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 const boxService = require('../../../services/boxService')
 
-// TODO: boxes authorization
+const fetchFile = require('../../../services/fetchFile')
+const storeFile = require('../../../services/storeFile')
+const transformJson = require('../../../services/transformJson')
 
 /**
  * @swagger
@@ -178,6 +180,151 @@ router.get('/:boxId/ticket', joiValidator({
     return res.success(data)
   }
   catch(err) {
+    return res.error(err)
+  }
+})
+/**
+ * @swagger
+ * /c/v1/boxes/{boxId}/stations/{stationId}/pipe:
+ *   post:
+ *     summary: store file
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: boxId
+ *       in: path
+ *       required: true
+ *       description: box uuid
+ *       type: string
+ *     - name: stationId
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
+router.post('/:boxId/stations/:stationId/pipe', joiValidator({
+  params: {
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    stationId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  try {
+    let server = storeFile.createServer(req, res)
+    server.run()
+  }
+  catch (err) {
+    return res.error(err)
+  }
+})
+/**
+ * @swagger
+ * /c/v1/boxes/{boxId}/stations/{stationId}/pipe:
+ *   get:
+ *     summary: fetch file
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: boxId
+ *       in: path
+ *       required: true
+ *       description: box uuid
+ *       type: string
+*     - name: stationId
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
+router.get('/:boxId/stations/:stationId/pipe', joiValidator({
+  params: {
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    stationId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  try {
+    let server = fetchFile.createServer(req, res)
+    server.run()
+  }
+  catch (err) {
+    return res.error(err)
+  }
+})
+/**
+ * @swagger
+ * /c/v1/boxes/{boxId}/stations/{stationId}/json:
+ *   get:
+ *     summary: GET json transform
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: boxId
+ *       in: path
+ *       required: true
+ *       description: box uuid
+ *       type: string
+ *     - name: stationId
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
+router.get('/:boxId/stations/:stationId/json', joiValidator({
+  params: {
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    stationId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  let server
+  try {
+    server = transformJson.createServer(req, res)
+    await server.run()
+  }
+  catch (err) {
+    return res.error(err)
+  }
+})
+/**
+ * @swagger
+ * /c/v1/boxes/{boxId}/stations/{stationId}/json:
+ *   post:
+ *     summary: POST json transform
+ *     tags:
+ *     - /c/boxes
+ *     parameters:
+ *     - name: boxId
+ *       in: path
+ *       required: true
+ *       description: box uuid
+ *       type: string
+ *     - name: stationId
+ *       in: path
+ *       required: true
+ *       description: station uuid
+ *       type: string
+ *     responses:
+ *       200:
+ *         description: success
+ */
+router.post('/:boxId/stations/:stationId/json', joiValidator({
+  params: {
+    boxId: Joi.string().guid({ version: ['uuidv4'] }).required(),
+    stationId: Joi.string().guid({ version: ['uuidv4'] }).required()
+  }
+}), async (req, res) => {
+  try {
+    let server = transformJson.createServer(req, res)
+    await server.run()
+  }
+  catch (err) {
     return res.error(err)
   }
 })

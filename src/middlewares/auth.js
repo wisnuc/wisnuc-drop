@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/10 16:36:10 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/25 16:34:23 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 14:02:30 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,49 +24,13 @@ const { User, Station } = require('../models')
 const stationService = require('../services/stationService')
 
 module.exports = {
-	/**
+  /**
 	 * global user authorization
 	 * @param {any} req 
 	 * @param {any} res 
 	 * @param {any} next 
 	 */
-  async checkGlobalUser(req, res, next) {
-    const token = req.headers.authorization
-    // decode
-    try {
-      const decoded = jwt.decode(token)
-      if (!decoded)
-        return res.error(new Error('decode failed'), 401)
-
-      // expire
-      // if (!decoded.exp || decoded.exp <= Date.now())
-      //   return res.error(new Error('token overdue, login again please！'), 401)
-
-      if (!decoded.user)
-        return res.error(new Error('authentication failed'), 401)
-
-      let user = await User.find({
-        where: {
-          id: decoded.user.id
-        },
-        raw: true
-      })
-      if (!user) return res.error(new E.UserNotExist(), 401)
-
-      req.auth = decoded
-      next()
-
-    } catch (error) {
-      return res.error(new Error('authentication failed'), 401)
-    }
-  },
-  /**
-	 * cloud user authorization
-	 * @param {any} req 
-	 * @param {any} res 
-	 * @param {any} next 
-	 */
-  async checkCloudUser(req, res, next) {
+  async checkUser(req, res, next) {
     const token = req.headers.authorization
     // decode
     try {
@@ -135,7 +99,7 @@ module.exports = {
 	 * @param {any} res 
 	 * @param {any} next 
 	 */
-  async checkDoubleArrow (req, res, next) {
+  async checkDoubleArrow(req, res, next) {
     let userId = req.auth.user.id
     let stationId = req.params.id
     try {

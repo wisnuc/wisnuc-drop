@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/25 15:43:48 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 17:50:52 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,11 @@ module.exports = (req, res, next) => {
       else if (error instanceof Array) {
         code = 400
         message = httpCode[status]
+      }
+      // string
+      else if (typeof error === 'string') {
+        code = status || 403
+        message = error
       }
       // others
       else {
