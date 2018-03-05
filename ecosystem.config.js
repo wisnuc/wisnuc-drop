@@ -8,8 +8,6 @@ module.exports = {
     {
       name      : 'wisnuc-drop',
       script    : 'src/bin/www',
-      instances : 'max',
-      exec_mode : 'cluster',
       // start you app without no --env option, then the key named "env" will be used. 
       env: {
         NODE_ENV: 'test'
