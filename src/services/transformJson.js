@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   transformJson.js                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/30 11:12:45 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 14:30:53 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Server extends threadify(EventEmitter) {
   }
 
   async run() {
-    let stationId = this.req.params.id
+    let stationId = this.req.params.id || this.req.params.stationId
     let user = this.req.auth.user
 
     let method, resource, body

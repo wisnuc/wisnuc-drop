@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   storeFile.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:41:49 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 14:30:46 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,25 +58,21 @@ class Server extends threadify(EventEmitter) {
 
   // dicer
   async run() {
-
-    let stationId = this.req.params.id
+    let stationId = this.req.params.id || this.req.params.stationId    
     let user = this.req.auth.user
     
     const m = RE_BOUNDARY.exec(this.req.headers['content-type'])
     let dicer = new Dicer({ boundary: m[1] || m[2] })
     
     let filePart
-
     // until ws come in, emit different action
     this.defineSetOnce('ws', () => {
       debug('ws defineSetOnce')
       return filePart && onFile(filePart)
     })
-    
     // two part
     const dicerOnPart = part => {
       debug('New Part')
-      
       // hanlder error
       part.on('error', err => {
         debug(`part err${err}`)
@@ -84,7 +80,6 @@ class Server extends threadify(EventEmitter) {
         part.on('error', () => {})
         errorHandler()
       })
-      
       // Request header
       part.on('header', function (header) {
         // { 'content-disposition': [ 'form-data; name="manifest"' ] }
