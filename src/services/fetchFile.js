@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/05 14:31:14 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/05 17:47:02 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ class FetchFile extends threadify(EventEmiiter) {
 
     let { message, code } = req.body
     server.error(message, code)
-    res.success()
+    res.end()
     // end
     this.close(jobId)
   }
