@@ -69,9 +69,12 @@ class MqttService {
         serverAddr: WANIP + ':' + config.port
       }
     )
-    debug('pipe:', message)
+    debug('pipe:', stationId, message)
+    
     let data = JSON.stringify(message)
-    client.publish(`station/${stationId}/pipe`, data, { qos: 1 })
+    client.publish(`station/${stationId}/pipe`, data, { qos: 1 }, err => {
+      debug(`publish_err: ${err}`)
+    })
   }
   /**
    * send message to client
