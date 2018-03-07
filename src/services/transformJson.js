@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/05 14:30:53 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 14:46:56 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,29 +135,30 @@ class TransformJson extends threadify(EventEmitter) {
   request(req, res) {
     let jobId = req.params.jobId
     let server = this.map.get(jobId)
-    if (!server) return res.error(new E.TransformJsonQueueNoServer())
+    if (!server) return res.error(new E.TransformJsonQueueNoServer(), 403, false)
     // timeout
     if (server.isTimeOut()) {
       let e = new E.PipeResponseTimeout()
-      res.error(e)
+      this.close(jobId)
+      return res.error(e)
     }
     else if (server.finished()) {
       let e = new E.PipeResponseHaveFinished()
-      res.error(e)
+      this.close(jobId)
+      return res.error(e)
+    }
+    
+    // client response 
+    let responseError = req.body.error
+    if (responseError) {
+      server.error(responseError.message, responseError.code)
     }
     else {
-      // client response 
-      let responseError = req.body.error
-      if (responseError) {
-        server.error(responseError.message, responseError.code)
-      }
-      else {
-        server.success(req.body)
-      }
-      res.end()
+      // backwards compatible
+      server.success(req.body || req.body.data)
     }
-    // end
-    this.close(jobId)
+    res.end()
+    
   }
 
   createServer(req, res) {

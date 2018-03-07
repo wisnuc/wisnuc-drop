@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/05 17:47:02 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 14:22:55 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ class FetchFile extends threadify(EventEmiiter) {
   request(req, res) {
     let jobId = req.params.jobId
     let server = this.map.get(jobId)
-    if (!server) return res.error(new E.FetchFileQueueNoServer())
+    if (!server) return res.error(new E.FetchFileQueueNoServer(), 403, false)
     // timeout
     if (server.isTimeOut()) {
       let e = new E.PipeResponseTimeout()
@@ -188,11 +188,13 @@ class FetchFile extends threadify(EventEmiiter) {
   response(req, res) {
     let jobId = req.params.jobId
     let server = this.map.get(jobId)
-    if (!server) return res.error(new E.FetchFileQueueNoServer())
+    if (!server) return res.error(new E.FetchFileQueueNoServer(), 403, false)
     // finished
     if (server.finished()) return res.end()
-
-    let { message, code } = req.body
+    
+    // backwards compatible
+    let responseError = req.body.error || req.body
+    let { message, code } = responseError
     server.error(message, code)
     res.end()
     // end
