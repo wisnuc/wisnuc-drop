@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/07 14:46:56 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 17:45:22 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,10 +155,10 @@ class TransformJson extends threadify(EventEmitter) {
     }
     else {
       // backwards compatible
-      server.success(req.body || req.body.data)
+      let data = (Object.keys(req.body).length === 1 && req.body.data) ? req.body.data : req.body
+      server.success(data)
     }
     res.end()
-    
   }
 
   createServer(req, res) {
