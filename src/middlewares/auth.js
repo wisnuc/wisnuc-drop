@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/10 16:36:10 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/05 14:02:30 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 13:58:00 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ module.exports = {
     try {
       const decoded = jwt.decode(token)
       if (!decoded)
-        return res.error(new Error('decode failed'), 401)
+        return res.error(new Error('decode failed'), 401, false)
 
       // expire
       if (!decoded.exp || decoded.exp <= Date.now())
-        return res.error(new Error('token overdue, login again please！'), 401)
+        return res.error(new Error('token overdue, login again please！'), 401, false)
 
       if (!decoded.user)
-        return res.error(new Error('authentication failed'), 401)
+        return res.error(new Error('authentication failed'), 401, false)
 
       let user = await User.find({
         where: {
@@ -51,13 +51,13 @@ module.exports = {
         },
         raw: true
       })
-      if (!user) return res.error(new E.UserNotExist(), 401)
+      if (!user) return res.error(new E.UserNotExist(), 401, false)
 
       req.auth = decoded
       next()
 
     } catch (error) {
-      return res.error(new Error('authentication failed'), 401)
+      return res.error(new Error('authentication failed'), 401, false)
     }
   },
 	/**
@@ -72,11 +72,11 @@ module.exports = {
     try {
       const decoded = jwt.decode(token)
       if (!decoded)
-        return res.error(new Error('decode failed'), 401)
+        return res.error(new Error('decode failed'), 401, false)
 
       // no expire
       if (!decoded.station)
-        return res.error(new Error('authentication failed'), 401)
+        return res.error(new Error('authentication failed'), 401, false)
 
       let station = await Station.find({
         where: {
@@ -84,13 +84,13 @@ module.exports = {
         },
         raw: true
       })
-      if (!station) return res.error(new E.StationNotExist(), 401)
+      if (!station) return res.error(new E.StationNotExist(), 401, false)
 
       req.auth = decoded
       next()
 
     } catch (error) {
-      return res.error(new Error('authentication failed'), 401)
+      return res.error(new Error('authentication failed'), 401, false)
     }
   },
   /**
@@ -104,11 +104,11 @@ module.exports = {
     let stationId = req.params.id
     try {
       let flag = await stationService.clientCheckStation(userId, stationId)
-      if (!flag) res.error(new Error('check double arrow failed'), 401)
+      if (!flag) res.error(new Error('check double arrow failed'), 401, false)
       next()
     }
     catch(err) {
-      return res.error(err, 401)
+      return res.error(err, 401, false)
     }
   }
 }

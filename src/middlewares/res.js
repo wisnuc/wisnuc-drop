@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/05 17:50:52 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 13:37:28 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,12 @@ module.exports = (req, res, next) => {
 	* error response
   * @param {any} error 
   * @param {number} status - default 403
+  * @param {boolean} loggerFlag - default true
   */
-  res.error = (error, status) => {
+  res.error = (error, status, loggerFlag) => {
     let code, message
     status = status || DEFAULT_ERROR_STATUS
+    loggerFlag = !!loggerFlag
     if (error) {
       if (error instanceof Error) {
         code = error.code || status
@@ -73,21 +75,23 @@ module.exports = (req, res, next) => {
         message = error.message || httpCode[status] || 'forbidden'
       }
       // error log
-      logger.error({
-        method: req.method,
-        url: req.originalUrl,
-        message: message,
-        stack: error.stack
-      })
+      if (loggerFlag) {
+        logger.error({
+          method: req.method,
+          url: req.originalUrl,
+          message: message,
+          stack: error.stack
+        })
+      }
     }
     let response = {
       url: req.originalUrl,
       code: code,
       message: message
     }
-    debug(`error: ${error}`)
     // show stack in production environment
-    if (getconfig['env'] === 'production') fundebug.notifyError(error)
+    if (getconfig['env'] === 'production' && loggerFlag) fundebug.notifyError(error)
+    debug(`error: ${error}`)
     return res.status(status).json(response)
   }
   next()

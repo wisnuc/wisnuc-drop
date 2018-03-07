@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/05 14:30:46 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 13:55:04 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,7 @@ class StoreFile {
   request(req, res) {
     let jobId = req.params.jobId
     let server = this.map.get(jobId)
-    if (!server) return res.error(new E.StoreFileQueueNoServer())
+    if (!server) return res.error(new E.StoreFileQueueNoServer(), 403, false)
     // timeout
     if (server.isTimeOut()) {
       let e = new E.PipeResponseTimeout()
@@ -306,7 +306,7 @@ class StoreFile {
   response(req, res) {
     let jobId = req.params.jobId
     let server = this.map.get(jobId)
-    if (!server) return res.error(new E.StoreFileQueueNoServer())
+    if (!server) return res.error(new E.StoreFileQueueNoServer(), 403, false)
     // finished
     if (server.finished()) return res.end()
 

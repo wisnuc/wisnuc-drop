@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/24 15:53:03 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/07 14:01:56 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,12 +59,12 @@ function checkDoubleArrow() {
     return stationService.clientCheckStation(userId, stationId)
       .then(flag => {
         if (!flag) {
-          return res.error(new Error('check double arrow failed'), 401)
+          return res.error(new Error('check double arrow failed'), 401, false)
         }
         next()
       })
       .catch(err => {
-        return res.error(err, 401)
+        return res.error(err, 401, false)
       })
   }
 }
