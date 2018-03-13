@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/13 15:45:25 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/13 17:10:40 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ class Server extends threadify(EventEmitter) {
         debug('End of part')
         try {
           debug('field data start')
-          let body = JSON.parse(dataBuffers.join(''))
+          let body = JSON.parse(Buffer.concat(dataBuffers))
           let method, resource
           method = body.method
           resource = body.resource
