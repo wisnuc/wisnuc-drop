@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/07 13:55:04 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/13 15:45:25 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,9 +100,8 @@ class Server extends threadify(EventEmitter) {
         
       })
     }
-    
     const errorHandler = () => {
-      debug('errror')
+      debug('dicer errror')
       if(dicer) {
         dicer.removeAllListeners()
         dicer.on('error', () => {})
@@ -111,7 +110,6 @@ class Server extends threadify(EventEmitter) {
         dicer = null
       }
     }
-    
     const parseHeader = header => {
       let x = Buffer.from(header['content-disposition'][0], 'binary').toString('utf8').replace(/%22/g, '"').split('; ')
       //fix %22
@@ -120,23 +118,18 @@ class Server extends threadify(EventEmitter) {
       let name = x[1].slice(6, -1)
       return name
     }
-    
-    // const schedule = () => filePart && this.ws 
-    
-    const onFile = part => {
-      debug('file data start')
-      // part.on('data', data => {
-      //   let chunk = Buffer.from(data)
-      //   this.ws.write(chunk)
-      // })
-      part.pipe(this.ws)
-    }
-    
+    // file pipe
+    const onFile = part => part.pipe(this.ws)
+    // field
     const onField = part => {
-      part.on('data', async data => {
+      // multiple events could be triggered
+      let dataBuffers = []
+      part.on('data', data => dataBuffers.push(data))
+      part.on('end', async () => {
+        debug('End of part')
         try {
           debug('field data start')
-          let body = JSON.parse(data)
+          let body = JSON.parse(dataBuffers.join(''))
           let method, resource
           method = body.method
           resource = body.resource
@@ -155,34 +148,29 @@ class Server extends threadify(EventEmitter) {
               }
             }
           )
-          // this.replay(tmpWriteStream)
+          // notice station to response
           await this.notice(stationId, manifest)
-          // schedule()
         }
         catch (err) {
           this.error(err)
         }
       })
-      
-      part.on('end', () => debug('End of part\n'))
       part.on('err', err => debug(`error: ${err}`))
     }
-
+    // dicer part
     dicer.on('part', dicerOnPart)
-
     dicer.on('finish', () => {
       dicer = null
       if (this.ws) this.ws.end()
       debug('End of parts')
     })
-    
     dicer.on('error', err => {
       this.req.unpipe(dicer)
       dicer.end()
       dicer = null
       this.res.error(err)
     })
-
+    // pipe dicer
     this.req.pipe(dicer)
   }
 	/**
@@ -205,9 +193,6 @@ class Server extends threadify(EventEmitter) {
     debug(`this ws start`)
     // this.ws 是个转折点
     this.ws = writeStream
-    // const fs = require('fs')
-    // const FILE_PATH = process.cwd() + '/tmp/xxxxx'
-    // let ws = fs.createWriteStream(FILE_PATH)
   }
 
   isTimeOut() {
