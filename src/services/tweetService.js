@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tweetService.js                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 11:12:53 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/10 14:38:34 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/12 13:36:51 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ class TweetService {
       box.station = station
       box.tweet = tweet
       box.users = users
-      debug(1123123123, box)
       // seed message to client
       mqttService.notice(userIds, box)
       return
