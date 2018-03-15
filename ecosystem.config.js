@@ -32,7 +32,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'https://www.github.com/mosaic101/wisnuc-drop.git',
       path : '/home/ubuntu/data',
-      'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env test'
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env test'
     },
     production : {
       user : 'ubuntu',
@@ -40,7 +40,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'https://www.github.com/wisnuc/wisnuc-drop.git',
       path : '/home/ubuntu/data',
-      'post-deploy' : 'cnpm install && pm2 reload ecosystem.config.js --env production'
+      'post-deploy' : 'npm install && pm2 reload ecosystem.config.js --env production'
     }
   }
 }
