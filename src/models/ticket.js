@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   ticket.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/28 10:14:00 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 17:28:37 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:49:25 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const moment = require('moment')
+// const moment = require('moment')
 
 module.exports = function (sequelize, DataTypes) {
   let Ticket = sequelize.define('Ticket', {

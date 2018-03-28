@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wechatInfo.js                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 14:01:22 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2017/12/15 15:46:26 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:47:27 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,8 +102,7 @@ class WechatInfo {
 	 * @param {*} access_token 
 	 * @param {*} openid 
 	 */
-  checkToken(access_token, openid) { }
-
+  checkToken() { }
 
 	/**
 	 * get wechat user information

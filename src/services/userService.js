@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/24 14:12:22 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:51:57 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ class UserService {
       }
     })
     if (!user) throw new E.EUSERNOTEXIST()
+    debug(`user_info: ${user}`)
     return user
   }
 	/**

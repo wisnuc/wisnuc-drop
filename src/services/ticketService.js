@@ -22,7 +22,6 @@ const {
   WisnucDB
 } = require('../models')
 
-const { Box } = require('../schema')
 /**
  * This is ticket service.
  * @class TicketService

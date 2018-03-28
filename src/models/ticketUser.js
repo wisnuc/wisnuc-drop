@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ticketUser.js                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/13 11:02:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:18:10 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:49:47 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ module.exports = function (sequelize, DataTypes) {
       defaultValue: 1
     }
   }, {
-      freezeTableName: true,
-      tableName: 'ticket_user',
+    freezeTableName: true,
+    tableName: 'ticket_user',
     indexes: [
       {
         name: 'status',

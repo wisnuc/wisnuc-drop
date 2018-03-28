@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   init.js                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 10:23:17 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 14:22:28 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:52:07 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-const debug = require('debug')('app:init')
 const os = require('os')
 const publicIp = require('public-ip')
 const { Server } = require('../models')
