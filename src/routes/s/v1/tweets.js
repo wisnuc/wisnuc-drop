@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tweets.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:46 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 14:34:24 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/15 15:37:02 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,6 @@ const router = express.Router()
 const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 const tweetService = require('../../../services/tweetService')
-
-// TODO: tweets authorization
 
 /**
  * @swagger

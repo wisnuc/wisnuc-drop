@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/28 18:26:09 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:51:01 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   async findAll(userId) {
-   
     let boxes = await Box.find({ users: userId }).lean()
     let boxIds = _.map(boxes, '_id')
     let stationIds = _.map(boxes, 'stationId')
@@ -91,7 +90,7 @@ class BoxService {
         attributes: ['id', 'nickName', 'avatarUrl', 'status'],
         raw: true
       }),
-      // last tweet
+      // last tweet // TODO: 并发
       tweets: Tweet.find({ box: { $in: boxIds } }).sort({ index: -1 }).lean()
     })
     let { users, stations, tweets } = data
@@ -124,7 +123,7 @@ class BoxService {
   }
 	/**
 	 * create boxes
-   * 1. if boxes exist, create tweets.
+   * 1. if boxes exist, cover boxes and create tweets. // TODO:
    * 2. if boxes don't exist, create boxes && tweets && ticket.
    * @param {string} stationId
 	 * @param {array} boxes
@@ -132,7 +131,7 @@ class BoxService {
 	 */
   async bulkCreate(stationId, boxes) {
     // insert box
-    await Promise.map(boxes, async (item, index) => {
+    await Promise.map(boxes, async item => {
       item = Object.assign({}, item, { stationId: stationId } )
       let box = await Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
       debug(box)
@@ -172,7 +171,7 @@ class BoxService {
       }
     }
     // insert tweet
-    await Promise.map(tweets, async (item, index) => {
+    await Promise.map(tweets, async item => {
       await Tweet.findOneAndUpdate({ index: item.index, box: item.box }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
     })
     return 

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   station.js                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/07 17:26:48 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:49:20 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-const moment = require('moment')
+// const moment = require('moment')
 /**
  * This is station model.
  * @module Station

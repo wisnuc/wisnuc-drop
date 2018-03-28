@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/10 16:36:10 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/07 13:58:00 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:48:42 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ module.exports = {
       if (!user) return res.error(new E.UserNotExist(), 401, false)
 
       req.auth = decoded
+      debug(`checkUser: ${decoded}`)
       next()
 
     } catch (error) {

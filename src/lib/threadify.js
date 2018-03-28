@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   threadify.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 15:15:06 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/02/06 15:44:21 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:47:06 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const Promise = require('bluebird')
-const stream = require('stream')
-const debug = require('debug')('app:threadify')
+// const stream = require('stream')
+// const debug = require('debug')('app:threadify')
 
 const EABORT = Object.assign(new Error('aborted'), { code: 'EABORT' })
 

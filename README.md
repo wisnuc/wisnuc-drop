@@ -10,14 +10,12 @@ Bridge Client and Nas.
 
 # TODO List
 
-- *deploy automatically(doing)
 - *complete doc(doing)
 - *project test
-- *upload file with udp
 - *system monitor
-- *config settings(reference to zookeeper)
-- *build box authorized
+- *config settings
 - *resolve the problem that mini program connect MQTT broker
+- upload file with udp
 - database tables constructure document
 - swagger mock
 - mysql => mongodb 

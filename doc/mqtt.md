@@ -1,6 +1,9 @@
 # MQTT
 todo
 
+## Features
+packet每次最大为 64KB
+
 ## Mqtt Topic
 mqtt topic 使用说明
 

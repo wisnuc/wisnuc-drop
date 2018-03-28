@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/16 14:08:51 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:20:01 by JianJin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/28 11:49:13 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,6 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     freezeTableName: true,
     tableName: 'servers',
-    classMethods: {
-      associate: function (models) {
-
-      }
-    },
     defaultScope: {
       where: {
         status: 1
