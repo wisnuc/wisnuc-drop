@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   box.js                                             :+:      :+:    :+:   */
+/*   ticket.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/29 17:04:56 by Jianjin Wu       ###   ########.fr       */
+/*   Created: 2018/03/29 15:35:46 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/03/29 16:09:45 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,28 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
-const BoxSchema = new Schema({
+const TicketUserSchema = new Schema({
+  useruuid: String,
+  type: String, // pending, reject, resolve
+})
+
+const TicketSchema = new Schema({
   uuid: { type: String, required: true, unique: true },
-  name: String,
-  owner: { type: String, required: true },
+  status: { type: Number, default: 0 }, // 0 未消费 1 已使用
+  creator: { type: String, required: true },
+  type: { type: String, required: true }, // invite, bind, share
   stationId: { type: String, required: true },
-  users: { type: [String], index: true }, // field level
-  tweet: { type: Schema.Types.ObjectId, ref: 'Tweet' }, // last tweet
-  ctime: Number,
-  mtime: Number
+  boxId: String,
+  isAudited: Number,
+  expiredDate: Date,
+  data: String,
+  users: [TicketUserSchema]
 }, {
   timestamps: true
 })
 
-BoxSchema.index({ name: 1 })
-BoxSchema.index({ owner: 1 })
-BoxSchema.index({ stationId: 1 })
-BoxSchema.index({ updatedAt: -1 })
+TicketSchema.index({ creator: 1 })
+TicketSchema.index({ stationId: 1 })
+TicketSchema.index({ boxId: 1 })
 
-module.exports = mongoose.model('Box', BoxSchema)
+module.exports = mongoose.model('Ticket', TicketSchema)
