@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/28 15:32:44 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/29 10:38:06 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,21 @@ const { username, password, host, port, database } = config.mongodb
 
 const DATABASE_URL = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`
 
-mongoose.Promise = global.Promise
 const options = {
-  useMongoClient: true,
   autoIndex: true, // Don't build indexes
   reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
   reconnectInterval: 500, // Reconnect every 500ms
   poolSize: 10, // Maintain up to 10 socket connections
   // If not connected, return errors immediately rather than waiting for reconnect
-  bufferMaxEntries: 0
+  bufferMaxEntries: 0,
+  promiseLibrary: global.Promise
 }
+mongoose.connect(DATABASE_URL, options)
 
-mongoose.connect(DATABASE_URL, options, () => {
-  debug('mongodb connect successfully')
-})
+const mongodb = mongoose.connection
+
+mongodb.on('error', err => debug(`connection error:${err}`))
+mongodb.once('open', () => debug('mongodb connect successfully'))
 
 
 // let db = {}
