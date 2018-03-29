@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/07 13:37:28 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/29 17:00:08 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ module.exports = (req, res, next) => {
   res.error = (error, status, loggerFlag) => {
     let code, message
     status = status || DEFAULT_ERROR_STATUS
-    loggerFlag = !!loggerFlag
+    loggerFlag = loggerFlag === undefined ? true : !!loggerFlag
     if (error) {
       if (error instanceof Error) {
         code = error.code || status
