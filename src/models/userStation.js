@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   userStation.js                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/07 17:10:35 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/22 15:18:29 by JianJin Wu       ###   ########.fr       */
+/*   Created: 2017/06/07 17:10:35 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

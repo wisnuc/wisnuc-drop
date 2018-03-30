@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/12 14:09:14 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/03/28 11:51:01 by Jianjin Wu       ###   ########.fr       */
+/*   Created: 2017/06/12 14:09:14 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/03/30 14:56:13 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,13 +123,16 @@ class BoxService {
   }
 	/**
 	 * create boxes
-   * 1. if boxes exist, cover boxes and create tweets. // TODO:
+   * 1. if boxes exist, cover original boxes and create tweets. // TODO:
    * 2. if boxes don't exist, create boxes && tweets && ticket.
    * @param {string} stationId
 	 * @param {array} boxes
 	 * @memberof BoxService
 	 */
   async bulkCreate(stationId, boxes) {
+    // find all boxes of this station
+    let originalBoxes = await Box.find({ stationId: stationId }).exec()
+    debug(originalBoxes)
     // insert box
     await Promise.map(boxes, async item => {
       item = Object.assign({}, item, { stationId: stationId } )

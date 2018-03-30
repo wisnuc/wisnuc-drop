@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   joiValidator.js                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/12 15:18:36 by JianJin Wu        #+#    #+#             */
-/*   Updated: 2018/01/26 11:43:04 by JianJin Wu       ###   ########.fr       */
+/*   Created: 2017/06/12 15:18:36 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

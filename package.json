@@ -17,7 +17,7 @@
   },
   "main": "index.js",
   "repository": "https://github.com/wisnuc/wisnuc-drop.git",
-  "author": "JianJin Wu <mosaic101@foxmail.com>",
+  "author": "Jianjin Wu <mosaic101@foxmail.com>",
   "license": "MIT",
   "merge_logs": true,
   "dependencies": {

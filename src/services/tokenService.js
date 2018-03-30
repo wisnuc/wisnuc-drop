@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenService.js                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: JianJin Wu <mosaic101@foxmail.com>           +#+  +:+       +#+        */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/09 18:10:53 by JianJin Wu          #+#    #+#             */
-/*   Updated: 2017/08/09 18:11:04 by JianJin Wu         ###   ########.fr       */
+/*   Created: 2017/08/09 18:10:53 by Jianjin Wu          #+#    #+#             */
+/*   Updated: 2017/08/09 18:11:04 by Jianjin Wu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
