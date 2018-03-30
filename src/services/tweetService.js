@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/30 11:12:53 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/30 16:21:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class TweetService {
     let box = await Box.findOne({ uuid: options.boxId }).lean()
     if (!box) throw new E.BoxNotExist()
     debug(`box: `, box)
-    let result = await Tweet.findOneAndUpdate({ index: options.index, box: box._id }, options, { upsert: true, setDefaultsOnInsert: true }).exec()
+    let result = await Tweet.findOneAndUpdate({ index: options.index, box: box._id }, options, { upsert: true, setDefaultsOnInsert: true })
     // need to seed last tweet to client
     if (!result) {
       

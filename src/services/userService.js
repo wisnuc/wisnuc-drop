@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/30 16:21:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ class UserService {
     //   (select stationId from user_station where userId = '${userId}') as us 
     let data = await Promise.props({
       // boxes I own and boxes including me
-      boxes: Box.find({ users: userId }, { users: 1 }).exec(),
+      boxes: Box.find({ users: userId }, { users: 1 }),
       // stations I own and stations station me
       stationUsers: WisnucDB.query(sqlQuery, { 
         // raw: true, 
@@ -214,7 +214,7 @@ class UserService {
     })
 
     let stationIds = _.map(stations, 'id')
-    let boxes = await Box.find({ stationId: { $in: stationIds } }, { name: 1, stationId: 1, uuid: 1 }).exec()
+    let boxes = await Box.find({ stationId: { $in: stationIds } }, { name: 1, stationId: 1, uuid: 1 })
     for (let station of stations) {
       station.boxes = []
       for (let box of boxes) {

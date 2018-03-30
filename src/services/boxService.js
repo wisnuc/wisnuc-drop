@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:09:14 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:56:13 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/03/30 16:26:52 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   async find(boxId) {
-    let box = await Box.findOne({ uuid: boxId }).lean().exec()
+    let box = await Box.findOne({ uuid: boxId }).lean()
     if (!box) throw new E.BoxNotExist()
     let users = await User.findAll({
       where: {
@@ -71,6 +71,7 @@ class BoxService {
 	 * @memberof BoxService
 	 */
   async findAll(userId) {
+    
     let boxes = await Box.find({ users: userId }).lean()
     let boxIds = _.map(boxes, '_id')
     let stationIds = _.map(boxes, 'stationId')
@@ -90,7 +91,7 @@ class BoxService {
         attributes: ['id', 'nickName', 'avatarUrl', 'status'],
         raw: true
       }),
-      // last tweet // TODO: 并发
+      // last tweet // FIXME: bug
       tweets: Tweet.find({ box: { $in: boxIds } }).sort({ index: -1 }).lean()
     })
     let { users, stations, tweets } = data
@@ -123,7 +124,7 @@ class BoxService {
   }
 	/**
 	 * create boxes
-   * 1. if boxes exist, cover original boxes and create tweets. // TODO:
+   * 1. if boxes exist, delete deprecated boxes and create tweets.
    * 2. if boxes don't exist, create boxes && tweets && ticket.
    * @param {string} stationId
 	 * @param {array} boxes
@@ -131,12 +132,15 @@ class BoxService {
 	 */
   async bulkCreate(stationId, boxes) {
     // find all boxes of this station
-    let originalBoxes = await Box.find({ stationId: stationId }).exec()
-    debug(originalBoxes)
+    let originalBoxes = await Box.find({ stationId: stationId }, { uuid: 1 })
+    // get deprecated boxIds
+    let diffBoxIds = _.difference(_.map(boxes, 'uuid'), _.map(originalBoxes, 'uuid'))
+    // delete deprecated boxes
+    await Box.deleteMany({ uuid: { $in: diffBoxIds }})
     // insert box
     await Promise.map(boxes, async item => {
       item = Object.assign({}, item, { stationId: stationId } )
-      let box = await Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
+      let box = await Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true })
       debug(box)
       // if the box is newly created, create box's ticket
       if (!box) {
@@ -158,7 +162,7 @@ class BoxService {
       }
     })
     let boxIds = _.map(boxes, 'uuid')
-    let results = await Box.find({ uuid: { $in: boxIds } }).lean().exec()
+    let results = await Box.find({ uuid: { $in: boxIds } }).lean()
     
     let tweets = []
     // add box ObejectId to tweet data
@@ -175,7 +179,7 @@ class BoxService {
     }
     // insert tweet
     await Promise.map(tweets, async item => {
-      await Tweet.findOneAndUpdate({ index: item.index, box: item.box }, item, { upsert: true, setDefaultsOnInsert: true }).exec()
+      await Tweet.findOneAndUpdate({ index: item.index, box: item.box }, item, { upsert: true, setDefaultsOnInsert: true })
     })
     return 
   }
