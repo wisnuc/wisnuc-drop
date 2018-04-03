@@ -116,7 +116,7 @@ class TokenService {
       let user
       user = await User.find({
         where: {
-          unionId: userInfo.unionId
+          unionId: 'oOMKGwgcl2HoJgiGZ-BxDFW3GW1E' || userInfo.unionId // FIXME:
         },
         raw: true,
         transaction: t
