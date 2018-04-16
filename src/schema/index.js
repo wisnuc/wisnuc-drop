@@ -6,12 +6,12 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/03 13:43:15 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/16 13:58:48 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// const fs = require('fs')
-// const path = require('path')
+const fs = require('fs')
+const path = require('path')
 const debug = require('debug')('app:mongo')
 const mongoose = require('mongoose')
 const config = require('getconfig')
@@ -37,31 +37,17 @@ const mongodb = mongoose.connection
 mongodb.on('error', err => debug(`connection error:${err}`))
 mongodb.once('open', () => debug('mongodb connect successfully'))
 
-// let db = {}
+let db = {}
 
-// fs
-//   .readdirSync(__dirname)
-//   .filter(function (file) {
-//     return (file.indexOf('.') !== 0) && (file !== 'index.js')
-//   })
-//   .forEach(function (file) {
-//     // let model = sequelize.import(path.join(__dirname, file))
-//     // db[model.name] = model
-//     debug(file)
-//   })
+fs
+  .readdirSync(__dirname)
+  .filter(function (file) {
+    return (file.indexOf('.') !== 0) && (file !== 'index.js')
+  })
+  .forEach(function (file) {
+    let model = require(path.join(__dirname, file))
+    db[model.modelName] = model
+  })
 
-// Object.keys(db).forEach(function (modelName) {
-//   if ('associate' in db[modelName]) {
-//     db[modelName].associate(db)
-//   }
-// })
 
-// debug(db)
-
-// TODO: exports schema file
-module.exports = {
-  Box: require('./box'),
-  BlackList: require('./blackList'),
-  // TweetModelCreater: require('./tweet'),
-  Tweet: require('./tweet')
-}
+module.exports = db
