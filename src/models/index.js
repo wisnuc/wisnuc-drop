@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/19 14:39:23 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/16 13:58:57 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ const Sequelize = require('sequelize')
 
 const { mysql } = require('getconfig')
 
-// FIXME: connect ETIMEOUT
 let sequelize = new Sequelize(mysql.database, mysql.username, mysql.password, mysql)
 let db = {}
 

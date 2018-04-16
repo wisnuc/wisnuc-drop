@@ -1,15 +1,19 @@
 # wisnuc-drop
 Bridge Client and Nas.
 
-- [介绍](doc/introduction.md)
-- [安装](doc/installation.md)
-- [部署](doc/deployment.md)
+- [Introduction](doc/introduction.md)
+- [Installation](doc/installation.md)
+- [Deployment](doc/deployment.md)
 - [API Doc](doc/api_doc.md)
 - [test](doc/test.md)
-- [Mqtt](doc/mqtt.md)
+- [MQTT](doc/mqtt.md)
 
 # TODO List
 
+- tweet大小限制（mqtt 只能一次性传 64k 数据）
+- mysql migrate to mongodb
+- add tweet bug （index 冲突）
+- version control (方便小程序审核发布以及app升级)
 - *complete doc(doing)
 - *project test
 - *system monitor
@@ -18,7 +22,6 @@ Bridge Client and Nas.
 - upload file with udp
 - database tables constructure document
 - swagger mock
-- mysql => mongodb 
 - mongoDB transaction
 - mini program => hpps pictures
 - [management system](https://github.com/wisnuc/wisnuc-management)
