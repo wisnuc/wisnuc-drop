@@ -1,0 +1,46 @@
+{
+  "port": 4000,
+  "mysql": {
+    "database": "drop_test",
+    "host": "59b8e25dd4d98.sh.cdb.myqcloud.com",
+    "port": 5185,
+    "username": "root",
+    "password": "nw9zuwMgN6fjs6$S",
+    "dialect": "mysql",
+    "isolationLevel": "READ COMMITTED",
+    "timezone": "+08:00",
+    "pool": {
+      "max": 60,
+      "min": 5,
+      "idle": 60000,
+      "maxConnections": 100,
+      "minConnections": 5,
+      "maxIdleTime": 60000
+    }
+  },
+  "mongodb": {
+    "database": "drop_test",
+    "host": "122.152.206.50",
+    "port": 27017,
+    "username": "mongouser",
+    "password": "nw9zuwMgN6fjs6"
+  },
+  "wechat": {
+    "web": {
+      "appid": "wxd7e08af781bea6a2",
+      "appSecret": "05ec391572c66dcf0cc0c843da5d96e3"
+    },
+    "mobile": {
+      "appid": "wx99b54eb728323fe8",
+      "appSecret": "0a997d6d0a5484f295fd590aeeba95d5"
+    },
+    "mp": {
+      "appid": "wxdbffdf5ccfd5ccaa",
+      "appSecret": "e11bbc47d2abb6d97574a0cb4cd800f3"
+    }
+  },
+  "mqtt": {
+    "host": "test.siyouqun.com",
+    "port": 1883
+  }
+}

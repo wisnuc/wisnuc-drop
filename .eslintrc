@@ -1,0 +1,22 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "mocha": true
+  },
+  "globals": {
+    "E": true,
+    "Logger": true
+  },
+  "extends": "eslint-config-egg",
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 8
+  },
+  "rules": {
+    "semi": [
+      "error",
+      "never"
+    ]
+  }
+}
