@@ -1,23 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   blackList.js                                       :+:      :+:    :+:   */
+/*   baseController.js                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/03/29 16:11:22 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/29 16:11:27 by Jianjin Wu       ###   ########.fr       */
+/*   Created: 2018/04/17 17:37:40 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/04/17 18:07:51 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const { Controller } = require('egg')
 
-// const mongoose = require('mongoose')
+class BaseController extends Controller {
+  get user() {
+    return this.ctx.session.user
+  }
 
-// const BlackListSchema = mongoose.Schema({
-//   boxid: String,
-//   data: Array
-// }, {
-//   timestamps: true
-// })
+  success(data) {
+    this.ctx.body = {
+      success: true,
+      data,
+    }
+  }
 
-// module.exports = mongoose.model('blackList', BlackListSchema)
+  notFound(msg) {
+    msg = msg || 'not found'
+    this.ctx.throw(404, msg)
+  }
+}
+module.exports = BaseController

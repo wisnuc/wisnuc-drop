@@ -24,7 +24,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-wisnuc-drop",
     "stop": "egg-scripts stop --title=egg-server-wisnuc-drop",
-    "dev": "egg-bin dev",
+    "dev": "EGG_SERVER_ENV=dev egg-bin debug --port 4000",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
