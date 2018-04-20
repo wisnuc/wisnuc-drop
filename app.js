@@ -6,10 +6,10 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/19 16:59:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/20 14:36:28 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/20 17:55:19 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 module.exports = app => {
-  if (app.config.mqtt) require('./lib/mqtt')(app)
+  if (app.config.mqtt) require('./app/lib/mqtt')(app)
 }

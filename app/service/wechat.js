@@ -1,44 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   wechatInfo.js                                      :+:      :+:    :+:   */
+/*   wechat.js                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 14:01:22 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/19 16:55:12 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/20 18:22:17 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const Service = require('egg').Service
 const request = require('request')
-const config = require('getconfig')
 
 const BASE_URL = 'https://api.weixin.qq.com'
-const WXBizDataCrypt = require('../lib/WXBizDataCrypt')
+const wxBizDataCrypt = require('../lib/wxBizDataCrypt')
 
 /**
-  错误时返回JSON数据包(示例为Code无效)
-	{
-    "errcode": 40029,
-    "errmsg": "invalid code"
-	}
-	若用户取 user info，再验证 access token 是否失效
-	失效则从新发起登录验证，否则直接返回
-	returns {"errcode": 0,"errmsg": "ok }
- * @class WechatInfo
- */
-class WechatInfo {
+* 错误时返回JSON数据包(示例为Code无效)
+{
+  "errcode": 40029,
+  "errmsg": "invalid code"
+}
+若用户取 user info，再验证 access token 是否失效
+失效则从新发起登录验证，否则直接返回
+returns {"errcode": 0,"errmsg": "ok }
+* @class WechatInfo
+*/
+class WechatService extends Service {
 
-  constructor(type) {
-    this.CONFIG = config.wechat[type]
+  constructor(ctx) {
+    super(ctx)
+    this.CONFIG = ctx.config
   }
 
   /**
-	 * get access token
-	 * @param {string} code
-	 * @param {function} callback
-	 * @return {object} accessToken
-	 */
+   * get access token
+   * @param {string} code
+   * @param {function} callback
+   * @return {object} accessToken
+   */
   accessToken(code, callback) {
     const url = BASE_URL + '/sns/oauth2/access_token?' +
       'appid=' + this.CONFIG.appid +
@@ -50,25 +51,25 @@ class WechatInfo {
       method: 'GET',
       uri: url,
     },
-    function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        const data = JSON.parse(body)
-        if (data && data.errcode) {
-          callback(data.errmsg)
+      function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+          const data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          } else {
+            callback(null, data)
+          }
         } else {
-          callback(null, data)
+          callback(error)
         }
-      } else {
-        callback(error)
-      }
-    })
+      })
   }
 
   /**
-	 * 刷新access_token有效期
-	 * @param {*} callback
-	 * @param {string} refreshToken
-	 */
+   * 刷新access_token有效期
+   * @param {*} callback
+   * @param {string} refreshToken
+   */
   refreshToken(refreshToken, callback) {
     const url = BASE_URL + '/sns/oauth2/refresh_token?' +
       'appid=' + this.CONFIG.appid +
@@ -79,33 +80,33 @@ class WechatInfo {
       method: 'GET',
       uri: url,
     },
-    function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        const data = JSON.parse(body)
-        if (data && data.errcode) {
-          callback(data.errmsg)
+      function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+          const data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          } else {
+            callback(null, data)
+          }
         } else {
-          callback(null, data)
+          callback(error)
         }
-      } else {
-        callback(error)
-      }
-    })
+      })
   }
 
   /**
-	 * 检验授权凭证（access_token）是否有效
-	 * @param {*} access_token
-	 * @param {*} openid
-	 */
+   * 检验授权凭证（access_token）是否有效
+   * @param {*} access_token
+   * @param {*} openid
+   */
   checkToken() { }
 
   /**
-	 * get wechat user information
-	 * @param {string} accessToken
-	 * @param {string} openid
-	 * @param {function} callback
-	 */
+   * get wechat user information
+   * @param {string} accessToken
+   * @param {string} openid
+   * @param {function} callback
+   */
   userInfo(accessToken, openid, callback) {
     const url = BASE_URL + '/sns/userinfo?' +
       'access_token=' + accessToken +
@@ -115,35 +116,35 @@ class WechatInfo {
       method: 'GET',
       uri: url,
     },
-    function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        const data = JSON.parse(body)
-        if (data && data.errcode) {
-          callback(data.errmsg)
+      function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+          const data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          } else {
+            callback(null, data)
+          }
         } else {
-          callback(null, data)
+          callback(error)
         }
-      } else {
-        callback(error)
-      }
-    })
+      })
   }
 
   /**
-	 * get wechat user information
-	 * @param {string} code
-	 * @param {function} callback
-	 * @return {object} userInfo
-	 */
+   * get wechat user information
+   * @param {string} code
+   * @param {function} callback
+   * @return {object} userInfo
+   */
   oauth2UserInfo(type, code, callback) {
     const _this = this
-    _this.accessToken(code, function(error, data) {
+    _this.accessToken(code, function (error, data) {
       if (error) { return callback(error) }
 
-      _this.refreshToken(data.refresh_token, function(err, refresh) {
+      _this.refreshToken(data.refresh_token, function (err, refresh) {
         if (err) { return callback(err) }
 
-        _this.userInfo(refresh.access_token, data.openid, function(er, userInfo) {
+        _this.userInfo(refresh.access_token, data.openid, function (er, userInfo) {
           if (er) { return callback(er) }
 
           callback(null, userInfo)
@@ -173,36 +174,36 @@ class WechatInfo {
       method: 'GET',
       uri: url,
     },
-    function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        const data = JSON.parse(body)
-        if (data && data.errcode) {
-          callback(data.errmsg)
+      function (error, response, body) {
+        if (!error && response.statusCode === 200) {
+          const data = JSON.parse(body)
+          if (data && data.errcode) {
+            callback(data.errmsg)
+          } else {
+            // {
+            //   "openid": "OPENID",
+            //   "session_key": "SESSIONKEY"
+            // }
+            callback(null, data)
+          }
         } else {
-          // {
-          //   "openid": "OPENID",
-          //   "session_key": "SESSIONKEY"
-          // }
-          callback(null, data)
+          callback(error)
         }
-      } else {
-        callback(error)
-      }
-    })
+      })
   }
 
   /**
-	 * 获取小程序信息
-	 * @param {*} code - code
-	 * @param {*} iv - iv
-	 * @param {*} encryptedData - encryptedData
-	 * @param {*} callback - callback
-	 * @return {object} userInfo
-	 */
+   * 获取小程序信息
+   * @param {*} code - code
+   * @param {*} iv - iv
+   * @param {*} encryptedData - encryptedData
+   * @param {*} callback - callback
+   * @return {object} userInfo
+   */
   mpUserInfo(code, iv, encryptedData, callback) {
     this.getSessionKey(code, (err, result) => {
       if (err) { return callback(err) }
-      const pc = new WXBizDataCrypt(this.CONFIG.appid, result.session_key)
+      const pc = new wxBizDataCrypt(this.CONFIG.appid, result.session_key)
       const data = pc.decryptData(encryptedData, iv)
       // userInfo: {
       //   "nickName": "Band",
@@ -227,5 +228,4 @@ class WechatInfo {
   }
 }
 
-
-module.exports = WechatInfo
+module.exports = WechatService

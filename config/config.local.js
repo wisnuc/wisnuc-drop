@@ -19,10 +19,24 @@ module.exports = () => {
       },
     },
   }
-
+  // mqtt
   config.mqtt = {
     url: 'mqtt://127.0.0.1:1883',
   }
-
+  // wechat
+  config.wechat = {
+    web: {
+      appid: 'wxd7e08af781bea6a2',
+      appSecret: '05ec391572c66dcf0cc0c843da5d96e3',
+    },
+    mobile: {
+      appid: 'wx99b54eb728323fe8',
+      appSecret: '0a997d6d0a5484f295fd590aeeba95d5',
+    },
+    mp: {
+      appid: 'wxdbffdf5ccfd5ccaa',
+      appSecret: 'e11bbc47d2abb6d97574a0cb4cd800f3',
+    },
+  }
   return config
 }
