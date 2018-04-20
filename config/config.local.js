@@ -20,5 +20,9 @@ module.exports = () => {
     },
   }
 
+  config.mqtt = {
+    url: 'mqtt://127.0.0.1:1883',
+  }
+
   return config
 }

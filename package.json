@@ -7,7 +7,8 @@
     "egg": "^2.2.1",
     "egg-mongoose": "^2.2.0",
     "egg-router-plus": "^1.2.0",
-    "egg-scripts": "^2.5.0"
+    "egg-scripts": "^2.5.0",
+    "mqtt": "^2.17.0"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -25,7 +26,7 @@
   "scripts": {
     "start": "egg-scripts start --daemon --title=egg-server-wisnuc-drop",
     "stop": "egg-scripts stop --title=egg-server-wisnuc-drop",
-    "dev": "EGG_SERVER_ENV=local egg-bin debug --port 4000",
+    "dev": "EGG_SERVER_ENV=local egg-bin dev --port 4000",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
