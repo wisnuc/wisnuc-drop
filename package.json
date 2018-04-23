@@ -8,7 +8,10 @@
     "egg-mongoose": "^2.2.0",
     "egg-router-plus": "^1.2.0",
     "egg-scripts": "^2.5.0",
-    "mqtt": "^2.17.0"
+    "jwt-simple": "^0.5.1",
+    "mqtt": "^2.17.0",
+    "request": "^2.85.0",
+    "request-promise": "^4.2.2"
   },
   "devDependencies": {
     "autod": "^3.0.1",

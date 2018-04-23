@@ -1,31 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   user.js                                            :+:      :+:    :+:   */
+/*   token.js                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/04/16 16:40:02 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/19 11:18:41 by Jianjin Wu       ###   ########.fr       */
+/*   Created: 2018/04/23 16:14:44 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/04/23 16:46:43 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 const { Controller } = require('egg')
-const debug = require('debug')('app:user')
-const Joi = require('joi')
 
 class UserController extends Controller {
-  async index() {
+
+  async oauth2() {
     const { ctx, service } = this
-    debug('User猜猜猜')
-    ctx.joiValidate({
-      params: {
-        id: Joi.number().required(),
-      },
-    })
-    debug('validate end', this.ctx)
-    const data = await service.user.index()
+    const data = await service.token.oauth2()
+    ctx.success(data)
+  }
+
+  async mpToken() {
+    const { ctx, service } = this
+    const data = await service.token.mpToken()
     ctx.success(data)
   }
 }

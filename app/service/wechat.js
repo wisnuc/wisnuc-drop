@@ -6,15 +6,16 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 14:01:22 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/20 18:22:17 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/23 11:40:49 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const Service = require('egg').Service
-const request = require('request')
+const rp = require('request-promise')
+
+const wxBizDataCrypt = require('../lib/wxBizDataCrypt')
 
 const BASE_URL = 'https://api.weixin.qq.com'
-const wxBizDataCrypt = require('../lib/wxBizDataCrypt')
 
 /**
 * 错误时返回JSON数据包(示例为Code无效)
@@ -31,200 +32,146 @@ class WechatService extends Service {
 
   constructor(ctx) {
     super(ctx)
-    this.CONFIG = ctx.config
+    this.WECHAT_CONFIG = ctx.config.wechat
   }
 
   /**
-   * get access token
-   * @param {string} code
-   * @param {function} callback
-   * @return {object} accessToken
+   * 获取 access_token
+   * @param {String} code - code
+   * @return {Promise} accessToken
+   * @memberof WechatService
    */
-  accessToken(code, callback) {
-    const url = BASE_URL + '/sns/oauth2/access_token?' +
-      'appid=' + this.CONFIG.appid +
-      '&secret=' + this.CONFIG.appSecret +
-      '&code=' + code +
-      '&grant_type=authorization_code'
-
-    request({
-      method: 'GET',
-      uri: url,
-    },
-      function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          const data = JSON.parse(body)
-          if (data && data.errcode) {
-            callback(data.errmsg)
-          } else {
-            callback(null, data)
-          }
-        } else {
-          callback(error)
-        }
-      })
+  async accessToken(code) {
+    const options = {
+      url: `${BASE_URL}/sns/oauth2/access_token`,
+      qs: {
+        appid: this.WECHAT_CONFIG.appid,
+        secret: this.WECHAT_CONFIG.appSecret,
+        code,
+        grant_type: 'authorization_code',
+      },
+    }
+    return await rp(options)
+    // function (error, response, body) {
+    //   if (!error && response.statusCode === 200) {
+    //     const data = JSON.parse(body)
+    //     if (data && data.errcode) {
+    //       callback(data.errmsg)
+    //     } else {
+    //       callback(null, data)
+    //     }
+    //   } else {
+    //     callback(error)
+    //   }
+    // })
   }
 
   /**
-   * 刷新access_token有效期
-   * @param {*} callback
-   * @param {string} refreshToken
+   * 刷新 access_token 有效期
+   * @param {String} refreshToken - refreshToken
+   * @return {Promise} refreshToken
+   * @memberof WechatService
    */
-  refreshToken(refreshToken, callback) {
-    const url = BASE_URL + '/sns/oauth2/refresh_token?' +
-      'appid=' + this.CONFIG.appid +
-      '&grant_type=refresh_token' +
-      '&refresh_token=' + refreshToken
-
-    request({
-      method: 'GET',
-      uri: url,
-    },
-      function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          const data = JSON.parse(body)
-          if (data && data.errcode) {
-            callback(data.errmsg)
-          } else {
-            callback(null, data)
-          }
-        } else {
-          callback(error)
-        }
-      })
+  async refreshToken(refreshToken) {
+    const options = {
+      url: `${BASE_URL}/sns/oauth2/refresh_token`,
+      qs: {
+        appid: this.WECHAT_CONFIG.appid,
+        refresh_token: refreshToken,
+        grant_type: 'refresh_token',
+      },
+    }
+    return await rp(options)
   }
 
   /**
    * 检验授权凭证（access_token）是否有效
-   * @param {*} access_token
-   * @param {*} openid
+   * @param {String} access_token - accessToken
    */
   checkToken() { }
 
   /**
    * get wechat user information
-   * @param {string} accessToken
-   * @param {string} openid
-   * @param {function} callback
+   * @param {String} accessToken - accessToken
+   * @param {String} openid - openid
+   * @return {Promise} userInfo
+   * @memberof WechatService
    */
-  userInfo(accessToken, openid, callback) {
-    const url = BASE_URL + '/sns/userinfo?' +
-      'access_token=' + accessToken +
-      '&openid=' + openid
-
-    request({
-      method: 'GET',
-      uri: url,
-    },
-      function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          const data = JSON.parse(body)
-          if (data && data.errcode) {
-            callback(data.errmsg)
-          } else {
-            callback(null, data)
-          }
-        } else {
-          callback(error)
-        }
-      })
+  async userInfo(accessToken, openid) {
+    const options = {
+      url: `${BASE_URL}/sns/userinfo`,
+      qs: {
+        openid,
+        access_token: accessToken,
+      },
+    }
+    return await rp(options)
   }
 
   /**
    * get wechat user information
-   * @param {string} code
-   * @param {function} callback
-   * @return {object} userInfo
+   * @param {String} type - type
+   * @param {String} code - code
+   * @return {Promise} userInfo
+   * @memberof WechatService
    */
-  oauth2UserInfo(type, code, callback) {
-    const _this = this
-    _this.accessToken(code, function (error, data) {
-      if (error) { return callback(error) }
-
-      _this.refreshToken(data.refresh_token, function (err, refresh) {
-        if (err) { return callback(err) }
-
-        _this.userInfo(refresh.access_token, data.openid, function (er, userInfo) {
-          if (er) { return callback(er) }
-
-          callback(null, userInfo)
-        })
-      })
-
-    })
-  }
-
-  async oauth2UserInfoAsync(platform, code) {
-    return Promise.promisify(this.oauth2UserInfo).bind(this)(platform, code)
+  async oauth2UserInfo(type, code) {
+    const { refresh_token, openid } = await this.accessToken(code)
+    const { access_token } = await this.refreshToken(refresh_token)
+    const userInfo = await this.userInfo(access_token, openid)
+    return userInfo
   }
 
   /**
-  * @param {string} code - code
-  * @param {function} callback -callback
-  * @return {object} data 
-  */
-  getSessionKey(code, callback) {
-    const url = BASE_URL +
-      '/sns/jscode2session?' +
-      'appid=' + this.CONFIG.appid +
-      '&secret=' + this.CONFIG.appSecret +
-      '&js_code=' + code +
-      '&grant_type=authorization_code'
-    request({
-      method: 'GET',
-      uri: url,
-    },
-      function (error, response, body) {
-        if (!error && response.statusCode === 200) {
-          const data = JSON.parse(body)
-          if (data && data.errcode) {
-            callback(data.errmsg)
-          } else {
-            // {
-            //   "openid": "OPENID",
-            //   "session_key": "SESSIONKEY"
-            // }
-            callback(null, data)
-          }
-        } else {
-          callback(error)
-        }
-      })
+   * get session key
+   * @param {String} code - code
+   * @return {Promise} SessionKey
+   * @memberof WechatService
+   */
+  async getSessionKey(code) {
+    const options = {
+      url: `${BASE_URL}/sns/jscode2session`,
+      qs: {
+        appid: this.WECHAT_CONFIG.appid,
+        secret: this.WECHAT_CONFIG.appSecret,
+        js_code: code,
+        grant_type: 'authorization_code',
+      },
+    }
+    // {
+    //   "openid": "OPENID",
+    //   "session_key": "SESSIONKEY"
+    // }
+    return await rp(options)
   }
 
   /**
-   * 获取小程序信息
-   * @param {*} code - code
-   * @param {*} iv - iv
-   * @param {*} encryptedData - encryptedData
-   * @param {*} callback - callback
-   * @return {object} userInfo
+   * 通过小程序，获取用户信息
+   * @param {String} code - code
+   * @param {String} iv - iv
+   * @param {String} encryptedData - encryptedData
+   * @return {Promise} userInfo
+   * @memberof WechatService
    */
-  mpUserInfo(code, iv, encryptedData, callback) {
-    this.getSessionKey(code, (err, result) => {
-      if (err) { return callback(err) }
-      const pc = new wxBizDataCrypt(this.CONFIG.appid, result.session_key)
-      const data = pc.decryptData(encryptedData, iv)
-      // userInfo: {
-      //   "nickName": "Band",
-      //   "gender": 1,
-      //   "language": "zh_CN",
-      //   "city": "Guangzhou",
-      //   "province": "Guangdong",
-      //   "country": "CN",
-      //   "avatarUrl": "http://wx.qlogo.cn/mmopen/vi_32/aSKcBBPpibyKNicHNTMM0qJVh8Kjgiak2AHWr8MHM4WgMEm7GFhsf8OYrySdbvAMvTsw3mo8ibKicsnfN5pRjl1p8HQ/0",
-      //   "unionId": "ocMvos6NjeKLIBqg5Mr9QjxrP1FA",
-      //   "watermark": {
-      //     "timestamp": 1477314187,
-      //     "appid": "wx4f4bc4dec97d474b"
-      //   }
-      // }
-      return callback(null, data)
-    })
-  }
-
-  async mpUserInfoAsync(code, iv, encryptedData) {
-    return Promise.promisify(this.mpUserInfo).bind(this)(code, iv, encryptedData)
+  async mpUserInfo(code, iv, encryptedData) {
+    const data = await this.getSessionKey(code)
+    const pc = new wxBizDataCrypt(this.WECHAT_CONFIG.appid, data.session_key)
+    const mpUserInfo = pc.decryptData(encryptedData, iv)
+    // mpUserInfo: {
+    //   "nickName": "Band",
+    //   "gender": 1,
+    //   "language": "zh_CN",
+    //   "city": "Guangzhou",
+    //   "province": "Guangdong",
+    //   "country": "CN",
+    //   "avatarUrl": "http://wx.qlogo.cn/mmopen/vi_32/aSKcBBPpibyKNicHNTMM0qJVh8Kjgiak2AHWr8MHM4WgMEm7GFhsf8OYrySdbvAMvTsw3mo8ibKicsnfN5pRjl1p8HQ/0",
+    //   "unionId": "ocMvos6NjeKLIBqg5Mr9QjxrP1FA",
+    //   "watermark": {
+    //     "timestamp": 1477314187,
+    //     "appid": "wx4f4bc4dec97d474b"
+    //   }
+    // }
+    return mpUserInfo
   }
 }
 
