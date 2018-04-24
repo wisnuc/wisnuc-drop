@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 17:57:58 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/23 18:16:27 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,18 @@ module.exports = app => {
   // station
   subRouter.get('/stations/:id', controller.c.station.show)
   subRouter.get('/stations/:id/users', controller.c.station.findUsers)
-  subRouter.get('/stations/:id/pipe', controller.c.ticket.storeFile)
-  subRouter.post('/stations/:id/pipe', controller.c.ticket.fetchFile)
-  subRouter.get('/stations/:id/json', controller.c.ticket.getJson)
-  subRouter.post('/stations/:id/json', controller.c.ticket.postJson)
+  subRouter.post('/stations/:id/pipe', controller.c.station.storeFile)
+  subRouter.get('/stations/:id/pipe', controller.c.station.fetchFile)
+  subRouter.get('/stations/:id/json', controller.c.station.getJson)
+  subRouter.post('/stations/:id/json', controller.c.station.postJson)
   // box
+  subRouter.get('/boxes', controller.c.box.index)
+  subRouter.get('/boxes/:boxId', controller.c.box.show)
+  subRouter.get('/boxes/:boxId/users', controller.c.box.findUser)
+  subRouter.get('/boxes/:boxId/ticket', controller.c.box.findShareTicket)
+  subRouter.post('/boxes/:boxId/stations/:stationId/pipe', controller.c.box.storeFile)
+  subRouter.get('/boxes/:boxId/stations/:stationId/pipe', controller.c.box.fetchFile)
+  subRouter.get('/boxes/:boxId/stations/:stationId/json', controller.c.box.getJson)
+  subRouter.post('/boxes/:boxId/stations/:stationId/json', controller.c.box.postJson)
   // tweet
 }

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:40:02 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 17:49:27 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/24 18:14:58 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,19 @@ class UserController extends Controller {
   async show() {
     const { ctx, service } = this
     debug('User猜猜猜')
-    ctx.joiValidate({
-      params: {
-        id: Joi.number().required(),
-      },
-    })
-    debug('validate end', this.ctx)
-    const data = await service.user.index()
-    ctx.success(data)
+    try {
+      await ctx.joiValidate({
+        params: {
+          ids: Joi.number().required(),
+        },
+      })
+      debug('validate end', ctx.params)
+      const data = await service.user.index()
+      ctx.success([])
+    } catch (err) {
+      ctx.error(err)
+    }
+    
   }
   async findStations() {
     const { ctx, service } = this

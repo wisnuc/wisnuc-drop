@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 16:35:18 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/18 17:20:28 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/24 18:23:03 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ module.exports = options => {
     options = options || {
       abortEarly: false,
     }
-    ctx.joiValidate = schema => {
+    ctx.joiValidate = async schema => {
       let toValidate = {}
       if (!schema) {
         return next()
@@ -28,7 +28,7 @@ module.exports = options => {
       [ 'params', 'body', 'query' ].forEach(key => {
         if (schema[key]) {
           toValidate[key] = ctx[key]
-          debug(ctx[key])
+          debug(ctx)
         }
       })
 
@@ -37,19 +37,21 @@ module.exports = options => {
       //   ctx.error(error, 400)
       // }
       debug(123123, schema, toValidate)
-      return Joi.validate(toValidate, schema, async err => {
+      Joi.validate(toValidate, schema, err => {
         if (err) {
           const details = err && err.details || []
           const failures = []
           for (const detail of details) {
             failures.push(detail.message)
           }
-          return ctx.error(failures, 400)
+          debug('err:', failures)
+          const error = new Error(failures)
+          error.code = 400
+          throw error
         }
-        // await next()
       })
+      // await next()
     }
     await next()
   }
-
 }

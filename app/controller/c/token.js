@@ -6,13 +6,13 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/23 16:14:44 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 16:46:43 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/04/24 10:35:45 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const { Controller } = require('egg')
 
-class UserController extends Controller {
+class TokenController extends Controller {
 
   async oauth2() {
     const { ctx, service } = this
@@ -27,4 +27,4 @@ class UserController extends Controller {
   }
 }
 
-module.exports = UserController
+module.exports = TokenController
