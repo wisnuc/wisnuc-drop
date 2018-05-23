@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 16:35:18 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/24 18:23:03 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/23 16:19:29 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ module.exports = options => {
       abortEarly: false,
     }
     ctx.joiValidate = async schema => {
-      let toValidate = {}
+      const toValidate = {}
       if (!schema) {
         return next()
       }
@@ -28,15 +28,13 @@ module.exports = options => {
       [ 'params', 'body', 'query' ].forEach(key => {
         if (schema[key]) {
           toValidate[key] = ctx[key]
-          debug(ctx)
+          // debug(ctx)
         }
       })
-
       // const { error, value } = Joi.validate(toValidate, schema, options)
       // if (error) {
       //   ctx.error(error, 400)
       // }
-      debug(123123, schema, toValidate)
       Joi.validate(toValidate, schema, err => {
         if (err) {
           const details = err && err.details || []

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:40:02 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 16:14:35 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/23 17:05:48 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,11 @@ const Joi = require('joi')
 class UserController extends Controller {
   async index() {
     const { ctx, service } = this
-    debug('User猜猜猜')
     ctx.joiValidate({
       params: {
         id: Joi.number().required(),
       },
     })
-    debug('validate end', this.ctx)
     const data = await service.user.index()
     ctx.success(data)
   }

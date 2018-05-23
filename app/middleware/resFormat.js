@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/18 11:22:28 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/24 15:07:51 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/23 16:11:40 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,13 @@ module.exports = () => {
         // TODO: error log
 
       }
-      console.log(2123123);
       ctx.status = status
       ctx.body = {
         url: ctx.request.originalUrl,
         errcode: code,
         errmsg: message,
       }
-      
+
     }
     await next()
   }
