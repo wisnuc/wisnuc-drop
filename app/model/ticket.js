@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/03/29 15:35:46 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/17 10:57:30 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/24 17:32:10 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ module.exports = app => {
   const Schema = mongoose.Schema
 
   const TicketUserSchema = new Schema({
-    useruuid: String,
+    _id: String,
+    user: { type: String, ref: 'User' },
     type: String, // pending, reject, resolve
   })
 

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 18:16:27 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/24 15:27:02 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ module.exports = app => {
   subRouter.get('/token', controller.c.token.oauth2)
   subRouter.post('/token', controller.c.token.mpToken)
   // user
+  subRouter.post('/users', controller.c.user.create) // FIXME:
   subRouter.get('/users/:id', controller.c.user.show)
   subRouter.get('/users/:id/stations', controller.c.user.findStations)
   subRouter.get('/users/:userId/interestingPerson', controller.c.user.findInteresting)

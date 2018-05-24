@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 16:05:03 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/17 10:57:09 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/24 17:31:08 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,16 @@ module.exports = app => {
   const Schema = mongoose.Schema
 
   const TweetSchema = new Schema({
-    uuid: { type: String, required: true, unique: true },
+    _id: String,
     type: { type: String, required: true },
-    tweeter: { type: String, required: true },
+    tweeter: { type: String, required: true, ref: 'User' },
     ctime: Number,
     list: [],
     comment: String,
     commitId: String,
     parent: Number,
     index: { type: Number, required: true },
-    box: { type: Schema.Types.ObjectId, required: true, ref: 'Box' },
+    box: { type: String, required: true, ref: 'Box' },
   }, {
     timestamps: true,
   })
