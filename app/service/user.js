@@ -6,11 +6,15 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/24 18:07:59 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/25 15:11:01 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const Service = require('egg').Service
+const Promise = require('bluebird')
+const _ = require('lodash')
+
+const E = require('../lib/error')
 
 /**
  * This is user service.
@@ -24,10 +28,12 @@ class UserService extends Service {
 	 */
   async show(userId) {
     const { ctx } = this
-    const data = await ctx.model.User
+    const user = await ctx.model.User
       .findOne({ _id: userId })
-      .populate({ path: 'stations', select: 'name -_id' })
-    return data
+      .select('-unionId')
+      .lean()
+    if (!user) throw new E.EUSERNOTEXIST()
+    return user
   }
   /**
 	 * create new user
@@ -36,7 +42,7 @@ class UserService extends Service {
 	 */
   async create(user) {
     const { ctx } = this
-    return await ctx.model.User.create(user)
+    return ctx.model.User.create(user)
   }
   /**
 	 * get stations
@@ -66,13 +72,37 @@ class UserService extends Service {
 	 */
   async findStations(userId) {
     const { ctx } = this
-    const data = await ctx.model.Station
+    const user = await ctx.model.User
+      .findOne({ _id: userId })
+      .select('-unionId')
+      .populate({ path: 'stations', select: '-publicKey -users' })
+      .lean()
+    const { stations } = user
+    const stationUsers = await ctx.model.Station
       .find({ users: { $in: [ userId ] } })
-      .select('-users -publicKey')
-      .populate({ path: 'stations', select: 'name' })
-    return data
+      .select('_id')
+      .lean()
+    for (const station of stations) {
+      station.isValid = false
+      for (const su of stationUsers) {
+        if (station._id === su._id) station.isValid = true
+      }
+    }
+    return stations
   }
-  async findInteresting() {}
+  /**
+   * 1. There are users of the box I own and the users in the box including me.
+   * 2. There are users of the station I own and the users in the station including me(check double arrow).
+   * @param {String} userId - user uuid
+   * @return {Array} users - interesting users
+   */
+  async findInteresting(userId) {
+
+  }
+  /**
+   * return interesting person data sources
+   * @param {String} userId -user uuid
+   */
   async findInterestingSources() {}
 }
 

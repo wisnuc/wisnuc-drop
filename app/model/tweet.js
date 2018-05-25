@@ -6,17 +6,18 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/18 16:05:03 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/24 17:31:08 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/25 16:51:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const uuid = require('uuid')
 
 module.exports = app => {
   const mongoose = app.mongoose
   const Schema = mongoose.Schema
 
   const TweetSchema = new Schema({
-    _id: String,
+    _id: { type: String, default: uuid.v4() },
     type: { type: String, required: true },
     tweeter: { type: String, required: true, ref: 'User' },
     ctime: Number,
