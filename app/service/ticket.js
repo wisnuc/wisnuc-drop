@@ -178,7 +178,7 @@ class TicketService extends Service {
   async shareBox(ticketId, boxId, userId) {
     const { ctx } = this
     const ticket = await ctx.model.Ticket
-      .findOne({ _id: ticketId, boxId: boxId, type: 'share' })
+      .findOne({ _id: ticketId, boxId, type: 'share' })
       .lean()
     if (!ticket) throw new E.TicketNotExist()
 

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 16:35:18 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/23 16:19:29 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/28 16:31:05 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ module.exports = options => {
           throw error
         }
       })
-      // await next()
     }
     await next()
   }

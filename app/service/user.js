@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/25 15:11:01 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/28 15:32:40 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,12 @@ class UserService extends Service {
 	 * @param {String} userId - user uuid
 	 * @return {Object} user - user info
 	 */
-  async show(userId) {
+  show(userId) {
     const { ctx } = this
-    const user = await ctx.model.User
+    return ctx.model.User
       .findOne({ _id: userId })
       .select('-unionId')
       .lean()
-    if (!user) throw new E.EUSERNOTEXIST()
-    return user
   }
   /**
 	 * create new user

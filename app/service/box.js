@@ -92,7 +92,7 @@ class BoxService extends Service {
     const { ctx } = this
     // find all boxes of this station
     const originalBoxes = await ctx.model.Box
-      .find({ stationId: stationId })
+      .find({ stationId })
       .select('_id')
       .lean()
     // get deprecated boxIds
@@ -101,14 +101,14 @@ class BoxService extends Service {
     await ctx.model.Box.deleteMany({ uuid: { $in: diffBoxIds } })
     // insert box
     await Promise.map(boxes, async item => {
-      item = Object.assign({}, item, { stationId: stationId } )
+      item = Object.assign({}, item, { stationId })
       const box = await ctx.model.Box.findOneAndUpdate({ uuid: item.uuid }, item, { upsert: true, setDefaultsOnInsert: true })
       // if the box is newly created, create box's ticket
       if (!box) {
         const ticket = {
           creator: item.owner,
           type: 'share',
-          stationId: stationId,
+          stationId,
           boxId: item.uuid,
           isAudited: 0, // don't audit
         }
@@ -154,7 +154,7 @@ class BoxService extends Service {
   findShareTicket(boxId) {
     const { ctx } = this
     return ctx.model.Ticket
-      .find({ boxId: boxId, type: 'share' })
+      .find({ boxId, type: 'share' })
       .select('boxId isAudited')
       .sort('-createdAt')
       .lean()

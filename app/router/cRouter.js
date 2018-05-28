@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/24 15:27:02 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/28 18:07:45 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,41 +15,42 @@
  * @param {Egg.Application} app - egg application
  */
 module.exports = app => {
-  const { router, controller } = app
+  const { router, middleware, controller } = app
 
   const subRouter = router.namespace('/c/v1')
+  const { authUser } = middleware
+  const { token, user, ticket, station, box } = controller.c
   // token
-  subRouter.get('/token', controller.c.token.oauth2)
-  subRouter.post('/token', controller.c.token.mpToken)
+  subRouter.get('/token', token.oauth2)
+  subRouter.post('/token', token.mpToken)
   // user
-  subRouter.post('/users', controller.c.user.create) // FIXME:
-  subRouter.get('/users/:id', controller.c.user.show)
-  subRouter.get('/users/:id/stations', controller.c.user.findStations)
-  subRouter.get('/users/:userId/interestingPerson', controller.c.user.findInteresting)
-  subRouter.get('/users/:userId/interesting/personId', controller.c.user.findInterestingSources)
+  subRouter.get('/users/:id', authUser(), user.show)
+  subRouter.get('/users/:id/stations', authUser(), user.findStations)
+  subRouter.get('/users/:userId/interestingPerson', authUser(), user.findInteresting)
+  subRouter.get('/users/:userId/interesting/personId', authUser(), user.findInterestingSources)
   // ticket
-  subRouter.get('/tickets', controller.c.ticket.index)
-  subRouter.get('/tickets/:id', controller.c.ticket.show)
-  subRouter.post('/tickets/:id/invite', controller.c.ticket.inviteUser)
-  subRouter.post('/tickets/:ticketId/boxes/:boxId/share', controller.c.ticket.shareBox)
-  subRouter.get('/tickets/:id/users', controller.c.ticket.findAllUser)
-  subRouter.post('/tickets/:id/users', controller.c.ticket.createUser)
-  subRouter.get('/tickets/:id/users/:userId', controller.c.ticket.findUser)
+  subRouter.get('/tickets', authUser(), ticket.index)
+  subRouter.get('/tickets/:id', authUser(), ticket.show)
+  subRouter.post('/tickets/:id/invite', authUser(), ticket.inviteUser)
+  subRouter.post('/tickets/:ticketId/boxes/:boxId/share', authUser(), ticket.shareBox)
+  subRouter.get('/tickets/:id/users', authUser(), ticket.findAllUser)
+  subRouter.post('/tickets/:id/users', authUser(), ticket.createUser)
+  subRouter.get('/tickets/:id/users/:userId', authUser(), ticket.findUser)
   // station
-  subRouter.get('/stations/:id', controller.c.station.show)
-  subRouter.get('/stations/:id/users', controller.c.station.findUsers)
-  subRouter.post('/stations/:id/pipe', controller.c.station.storeFile)
-  subRouter.get('/stations/:id/pipe', controller.c.station.fetchFile)
-  subRouter.get('/stations/:id/json', controller.c.station.getJson)
-  subRouter.post('/stations/:id/json', controller.c.station.postJson)
+  subRouter.get('/stations', authUser(), station.index)
+  subRouter.get('/stations/:id', authUser(), station.show)
+  subRouter.get('/stations/:id/users', authUser(), station.findUsers)
+  subRouter.post('/stations/:id/pipe', authUser(), station.storeFile)
+  subRouter.get('/stations/:id/pipe', authUser(), station.fetchFile)
+  subRouter.get('/stations/:id/json', authUser(), station.getJson)
+  subRouter.post('/stations/:id/json', authUser(), station.postJson)
   // box
-  subRouter.get('/boxes', controller.c.box.index)
-  subRouter.get('/boxes/:boxId', controller.c.box.show)
-  subRouter.get('/boxes/:boxId/users', controller.c.box.findUser)
-  subRouter.get('/boxes/:boxId/ticket', controller.c.box.findShareTicket)
-  subRouter.post('/boxes/:boxId/stations/:stationId/pipe', controller.c.box.storeFile)
-  subRouter.get('/boxes/:boxId/stations/:stationId/pipe', controller.c.box.fetchFile)
-  subRouter.get('/boxes/:boxId/stations/:stationId/json', controller.c.box.getJson)
-  subRouter.post('/boxes/:boxId/stations/:stationId/json', controller.c.box.postJson)
-  // tweet
+  subRouter.get('/boxes', authUser(), box.index)
+  subRouter.get('/boxes/:boxId', authUser(), box.show)
+  subRouter.get('/boxes/:boxId/users', authUser(), box.findUser)
+  subRouter.get('/boxes/:boxId/ticket', authUser(), box.findShareTicket)
+  subRouter.post('/boxes/:boxId/stations/:stationId/pipe', authUser(), box.storeFile)
+  subRouter.get('/boxes/:boxId/stations/:stationId/pipe', authUser(), box.fetchFile)
+  subRouter.get('/boxes/:boxId/stations/:stationId/json', authUser(), box.getJson)
+  subRouter.post('/boxes/:boxId/stations/:stationId/json', authUser(), box.postJson)
 }

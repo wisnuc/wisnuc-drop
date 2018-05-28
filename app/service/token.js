@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/19 15:12:50 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 15:08:55 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/28 18:13:59 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,23 @@ const jwt = require('../lib/jwt')
  * @class TokenService
  */
 class TokenService extends Service {
+  /**
+   * @param {String} userId - user uuid
+   * @return {object} token
+   */
+  async getToken(userId) {
+    const user = await User.findOne({ _id: userId })
+    const userData = {
+      id: user.id,
+      nickName: user.nickName,
+      avatarUrl: user.avatarUrl,
+    }
+    const token = { user: userData }
+    return {
+      user: userData,
+      token: jwt.encode(token),
+    }
+  }
   /**
 	 * web, mobile 获取 token
 	 * 若没有该用户 create new user and return token
