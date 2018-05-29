@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/19 15:12:50 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/28 18:13:59 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 09:52:51 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,10 @@ class TokenService extends Service {
    * @return {object} token
    */
   async getToken(userId) {
-    const user = await User.findOne({ _id: userId })
+    const { ctx } = this
+    const user = await ctx.model.User.findOne({ _id: userId })
     const userData = {
-      id: user.id,
+      id: user._id,
       nickName: user.nickName,
       avatarUrl: user.avatarUrl,
     }
@@ -58,7 +59,6 @@ class TokenService extends Service {
     // 	unionid: 'oOMKGwt3tX67LcyaG-IPaExMSvDw'
     // }
     const { ctx, service } = this
-    const { User } = ctx.model
     const wechatInfo = await service.wechatInfo.oauth2UserInfo(platform, code)
     const conditions = { unionId: wechatInfo.unionid }
     const update = {
@@ -67,10 +67,10 @@ class TokenService extends Service {
       avatarUrl: wechatInfo.headimgurl,
     }
     const options = { upsert: true }
-    const user = await User.findOneAndUpdate(conditions, update, options)
+    const user = await ctx.model.User.findOneAndUpdate(conditions, update, options)
 
     const userData = {
-      id: user.id,
+      id: user._id,
       nickName: user.nickName,
       avatarUrl: user.avatarUrl,
     }
@@ -105,7 +105,6 @@ class TokenService extends Service {
     // 	}
     // }
     const { ctx, service } = this
-    const { User } = ctx.model
     const wechatInfo = await service.wechatInfo.mpUserInfo(code, iv, encryptedData)
     const conditions = { unionId: 'oOMKGwgcl2HoJgiGZ-BxDFW3GW1E' || wechatInfo.unionid }
     const update = {
@@ -114,10 +113,10 @@ class TokenService extends Service {
       avatarUrl: wechatInfo.avatarUrl,
     }
     const options = { upsert: true }
-    const user = await User.findOneAndUpdate(conditions, update, options)
+    const user = await ctx.model.User.findOneAndUpdate(conditions, update, options)
 
     const userData = {
-      id: user.id,
+      id: user._id,
       nickName: user.nickName,
       avatarUrl: user.avatarUrl,
     }

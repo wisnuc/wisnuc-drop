@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/25 15:10:48 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 16:40:23 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,8 +86,8 @@ class StationService extends Service {
   async findUsers(stationId) {
     const { ctx } = this
     const station = await ctx.model.Station
-      .find({ _id: stationId })
-      .populate({ path: 'users', select: '-unionId' })
+      .findOne({ _id: stationId })
+      .populate({ path: 'users', select: '-unionId -stations' })
       .lean()
     return station.users
   }
@@ -126,6 +126,34 @@ class StationService extends Service {
       },
     }
     return { seed, encryptData, token: jwt.encode(token) }
+  }
+   /**
+	 * return double arrow checked stations
+	 * @param {String} userId - user uuid
+	 * @return {Array} stations - station list
+	 */
+  async getCheckedStations (userId) {
+    const { ctx } = this
+    const data = await Promise.props({
+      user: ctx.model.User
+        .findOne({ _id: userId })
+        .select('-unionId')
+        .populate({ path: 'stations', select: '-publicKey -users' })
+        .lean(),
+      stationList: ctx.model.Station
+        .find({ users: userId })
+        .select('-publicKey')
+        .lean()
+    })
+    const { user, stationList } = data
+    const { stations } = data.user
+    let stationArr = []
+    for (const station of stations) {
+      for (const s of stationList) {
+        if (station._id === s._id) stationArr.push(s)
+      }
+    }
+    return stationArr
   }
 }
 

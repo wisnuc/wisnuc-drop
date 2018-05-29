@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/25 17:31:50 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 16:07:17 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ module.exports = app => {
     _id: { type: String, default: uuid.v4() },
     name: String,
     owner: { type: String, required: true, ref: 'User' },
-    station: { type: String, required: true, ref: 'Station' },
     stationId: { type: String, required: true, ref: 'Station' },
     users: [{ type: String, ref: 'User' }], // field level
     tweet: { type: String, ref: 'Tweet' }, // last tweet

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/28 18:07:45 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 16:34:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,8 @@ module.exports = app => {
   subRouter.get('/users/:id', authUser(), user.show)
   subRouter.get('/users/:id/stations', authUser(), user.findStations)
   subRouter.get('/users/:userId/interestingPerson', authUser(), user.findInteresting)
-  subRouter.get('/users/:userId/interesting/personId', authUser(), user.findInterestingSources)
+  subRouter.get('/users/:userId/interestingPerson/:personId', authUser(), user.findInterestingSources)
   // ticket
-  subRouter.get('/tickets', authUser(), ticket.index)
   subRouter.get('/tickets/:id', authUser(), ticket.show)
   subRouter.post('/tickets/:id/invite', authUser(), ticket.inviteUser)
   subRouter.post('/tickets/:ticketId/boxes/:boxId/share', authUser(), ticket.shareBox)
@@ -37,7 +36,6 @@ module.exports = app => {
   subRouter.post('/tickets/:id/users', authUser(), ticket.createUser)
   subRouter.get('/tickets/:id/users/:userId', authUser(), ticket.findUser)
   // station
-  subRouter.get('/stations', authUser(), station.index)
   subRouter.get('/stations/:id', authUser(), station.show)
   subRouter.get('/stations/:id/users', authUser(), station.findUsers)
   subRouter.post('/stations/:id/pipe', authUser(), station.storeFile)

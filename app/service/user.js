@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/28 15:32:40 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 16:24:07 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,18 @@ const E = require('../lib/error')
  * @class UserService
  */
 class UserService extends Service {
+  /**
+   * return user list
+   * @param {Array} userIds
+   * @return {Array} users
+   */
+  async index(userIds) {
+    const { ctx } = this
+    return ctx.model.User
+      .find({ _id: userIds })
+      .select('-unionId')
+      .lean()
+  }
   /**
 	 * get user information
 	 * @param {String} userId - user uuid
@@ -40,7 +52,7 @@ class UserService extends Service {
 	 */
   async create(user) {
     const { ctx } = this
-    return ctx.model.User.create(user)
+    await ctx.model.User.create(user)
   }
   /**
 	 * get stations
@@ -68,18 +80,21 @@ class UserService extends Service {
 	 * @param {String} userId - user uuid
 	 * @return {Array} stations - station list
 	 */
-  async findStations(userId) {
+  async index (userId) {
     const { ctx } = this
-    const user = await ctx.model.User
-      .findOne({ _id: userId })
-      .select('-unionId')
-      .populate({ path: 'stations', select: '-publicKey -users' })
-      .lean()
-    const { stations } = user
-    const stationUsers = await ctx.model.Station
-      .find({ users: { $in: [ userId ] } })
-      .select('_id')
-      .lean()
+    const data = await Promise.props({
+      user: ctx.model.User
+        .findOne({ _id: userId })
+        .select('-unionId')
+        .populate({ path: 'stations', select: '-publicKey -users' })
+        .lean(),
+      stationUsers: ctx.model.Station
+        .find({ users: userId })
+        .select('_id')
+        .lean()
+    })
+    const { user, stationUsers } = data
+    const { stations } = data.user
     for (const station of stations) {
       station.isValid = false
       for (const su of stationUsers) {
@@ -95,13 +110,46 @@ class UserService extends Service {
    * @return {Array} users - interesting users
    */
   async findInteresting(userId) {
-
+    const { ctx } = this
+    const data = await Promise.props({
+      // boxes I own and boxes including me
+      boxes: ctx.model.Box.find({ users: userId }).select('users'),
+      // stations I own and stations including me
+      stations: ctx.service.station.getCheckedStations(userId)
+    })
+    const { boxes, stations } = data
+    let userIds = []
+    if (Array.isArray(boxes) && boxes.length > 0) {
+      for (let box of boxes) {
+        userIds = userIds.concat(box.users)
+      }
+    }
+    if (Array.isArray(stations) && stations.length > 0) {
+      userIds = userIds.concat(_.flatMapDeep(_.map(stations, 'users')))
+    }
+    userIds = userIds.filter(u => u != userId)
+    return this.index(userIds)
   }
   /**
    * return interesting person data sources
    * @param {String} userId -user uuid
    */
-  async findInterestingSources() {}
+  async findInterestingSources(userId) {
+    const { ctx } = this
+    const stations = await ctx.service.station.getCheckedStations(userId)
+    const stationIds = _.map(stations, 'id')
+    let boxes = await ctx.model.Box
+      .find({ stationId: { $in: stationIds } })
+      .select('name stationId')
+      .lean()
+    for (let station of stations) {
+      station.boxes = []
+      for (let box of boxes) {
+        if (station.id === box.stationId) station.boxes.push(box)
+      }
+    }
+    return stations
+  }
 }
 
 module.exports = UserService

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/10 16:36:10 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/28 18:05:12 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 11:26:18 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@ const jwt = require('../lib/jwt')
 
 module.exports = () => {
   return async (ctx, next) => {
-    const token = req.headers.authorization
-    // decode
     try {
+      const token = ctx.request.header.authorization
+      if (!token)
+        return ctx.error(new Error('token not found'), 401)
+       // decode
       const decoded = jwt.decode(token)
       if (!decoded)
         return ctx.error(new Error('decode failed'), 401, false)

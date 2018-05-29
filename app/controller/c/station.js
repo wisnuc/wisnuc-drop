@@ -6,14 +6,15 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:36:12 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/28 15:58:50 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/29 17:27:17 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const { Controller } = require('egg')
+const Joi = require('joi')
 
 class StationController extends Controller {
-  async index() {
+  async show() {
     const { ctx, service } = this
     try {
       await ctx.joiValidate({
@@ -21,17 +22,42 @@ class StationController extends Controller {
           id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
         },
       })
-      const userId = ctx.params.id
-      const stations = await service.user.findStations(userId)
-      if (!stations) return ctx.error(new Error('station not found'), 404)
-      ctx.success(stations)
+      const stationId = ctx.params.id
+      const data = await service.station.show(stationId)
+      ctx.success(data)
     } catch (err) {
       ctx.error(err)
     }
   }
-  async show() {}
-  async findUsers() {}
-  async storeFile() {}
+  async findUsers() {
+    const { ctx, service } = this
+    try {
+      await ctx.joiValidate({
+        params: {
+          id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
+        },
+      })
+      const stationId = ctx.params.id
+      const data = await service.station.findUsers(stationId)
+      ctx.success(data)
+    } catch (err) {
+      ctx.error(err)
+    }
+  }
+  async storeFile() {
+    const { ctx, service } = this
+    try {
+      await ctx.joiValidate({
+        params: {
+          id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
+        },
+      })
+      const server = await service.storeFile.createServer(ctx)
+      await server.run()
+    } catch (err) {
+      ctx.error(err)
+    }
+  }
   async fetchFile() {}
   async getJson() {}
   async postJson() {}
