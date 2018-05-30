@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 17:52:24 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 18:17:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@ const Service = require('egg').Service
 const debug = require('debug')('app:store')
 const uuid = require('uuid')
 const Dicer = require('dicer')
-const EventEmitter = require('events').EventEmitter
 
+
+const mixin = require('../lib/mixin')
 const threadify = require('../lib/threadify')
 
 const RE_BOUNDARY = /^multipart\/.+?(?: boundary=(?:(?:"(.+)")|(?:([^\s]+))))$/i
@@ -29,39 +30,42 @@ const RE_BOUNDARY = /^multipart\/.+?(?: boundary=(?:(?:"(.+)")|(?:([^\s]+))))$/i
 */
 
 /**
- * pload file
- * @class Server
- * @extends {EventEmitter}
+ * formidable upload file
+ * @class StoreFileService
+ * @extends Service
  */
-class Server extends threadify(EventEmitter) {
+class StoreFileService extends threadify(Service) {
 
-  constructor(req, res) {
-    super()
-    this.req = req
-    this.res = res
+  constructor(ctx) {
+    super(ctx)
     this.jobId = uuid.v4()
-    this.timer = Date.now() + 15 * 1000
-    this.req.on('close', err => {
+    this.timer = Date.now() + 5 * 1000
+    this.ctx.req.on('close', err => {
       debug('request close')
       this.error(err)
     })
     // req error
-    this.req.on('error', err => {
+    this.ctx.req.on('error', err => {
       debug('request error')
       this.error(err)
     })
-    this.req.on('abort', err => {
+    this.ctx.req.on('abort', err => {
       debug('request abort')
       this.error(err)
     })
+    // join concurrency queue
+    ctx.service.queue.set(this)
   }
 
+  createServer() {
+    return this
+  }
   // dicer
   async run() {
-    let stationId = this.req.params.id || this.req.params.stationId
-    let user = this.req.auth.user
+    let stationId = this.ctx.params.id || this.ctx.params.stationId
+    let user = this.ctx.auth.user
 
-    const m = RE_BOUNDARY.exec(this.req.headers['content-type'])
+    const m = RE_BOUNDARY.exec(this.ctx.request.header['content-type'])
     let dicer = new Dicer({ boundary: m[1] || m[2] })
 
     let filePart
@@ -89,15 +93,13 @@ class Server extends threadify(EventEmitter) {
           let name = parseHeader(header)
           if (name === 'manifest') {
             onField(part)
-          }
-          else {
+          } else {
             filePart = part
           }
         }
         catch(err) {
           return this.error(err)
         }
-
       })
     }
     const errorHandler = () => {
@@ -105,7 +107,7 @@ class Server extends threadify(EventEmitter) {
       if(dicer) {
         dicer.removeAllListeners()
         dicer.on('error', () => {})
-        this.req.unpipe(dicer)
+        this.ctx.req.unpipe(dicer)
         dicer.end()
         dicer = null
       }
@@ -165,13 +167,13 @@ class Server extends threadify(EventEmitter) {
       debug('End of parts')
     })
     dicer.on('error', err => {
-      this.req.unpipe(dicer)
+      this.ctx.req.unpipe(dicer)
       dicer.end()
       dicer = null
       this.res.error(err)
     })
     // pipe dicer
-    this.req.pipe(dicer)
+    this.ctx.req.pipe(dicer)
   }
 	/**
 	 * find matched station, and send message
@@ -180,146 +182,63 @@ class Server extends threadify(EventEmitter) {
 	 * @memberof Server
 	 */
   async notice(stationId, manifest) {
-    debug(`manifest pipe successfully`)
+    debug(`manifest pipe successfully`, this.app)
     await mqttService.pipe(stationId, manifest)
   }
 
 	/**
-	 * station repay
-	 * @param {any} writeStream
+	 * station reponse this request
+	 * @param {Object} resCtx - response ctx
 	 * @memberof Server
 	 */
-  repay(writeStream) {
+  response(resCtx) {
+    this.resCtx = resCtx
     debug(`this ws start`)
+    if (this.isTimeOut()) this.error('response storeFile timeout')
     // this.ws 是个转折点
     this.ws = writeStream
   }
+  // step 3: report result to client
+  reportResult(repCtx) {
+    const { error, data } = repCtx.body
+    // if error exist, server.error()
+    if (error) {
+      const { message, code } = error
+      this.error(message, code)
+    } else {
+      this.success(data)
+    }
+    repCtx.res.end()
+  }
 
   isTimeOut() {
-    if (Date.now() > this.timer) {
-      let e = new E.PipeResponseTimeout()
-      this.error(e)
-      return true
-    }
-    return false
+    return !!Date.now() > this.timer
   }
 
   finished() {
-    return this.res.finished
+    return this.ctx.res.finished
   }
 
   success(data) {
     if (this.finished()) return
-    this.res.success(data)
+    this.ctx.success(data)
+    this.resCtx.res.end()
+    this.close()
   }
 
   error(err, code) {
     if (this.finished()) return
-    this.res.error(err, code)
+    this.ctx.error(err, code)
+    this.resCtx.res.end()
+    this.close()
   }
 
   abort() {
-    this.res.finished = true
+    this.finished() = true
   }
-}
-
-
-/**
- * formidable upload file
- * @class StoreFileService
- * @extends Service
- */
-class StoreFileService extends Service {
-
-  constructor() {
-    this.limit = 1024
-    this.map = new Map()
-    // global handle map
-    setInterval(() => {
-      if (this.map.size === 0) return
-      this.schedule()
-    }, 30000)
-  }
-
-  // schedule
-  schedule() {
-    this.map.forEach((v, k) => {
-      if (v.finished()) this.map.delete(k)
-    })
-  }
-
-  request(req, res) {
-    let jobId = req.params.jobId
-    let server = this.map.get(jobId)
-    if (!server) return res.error(new E.StoreFileQueueNoServer(), 403, false)
-    // timeout
-    if (server.isTimeOut()) {
-      let e = new E.PipeResponseTimeout()
-      // end
-      this.close(jobId)
-      return res.error(e)
-    }
-    if (server.finished()) {
-      let e = new E.PipeResponseHaveFinished()
-      this.close(jobId)
-      return res.error(e)
-    }
-    // repay
-    server.repay(res)
-    // req error
-    req.on('error', err => {
-      // response
-      res.error(err)
-      server.error(err)
-    })
-  }
-
-  createServer(req, res) {
-    this.schedule()
-    debug('store size: ', this.map.size)
-    if (this.map.size > this.limit)
-      throw new E.PipeTooMuchTask()
-    let server = new Server(req, res)
-    this.map.set(server.jobId, server)
-    return server
-  }
-	/**
-	 * response store error to client
-	 * @param {any} req
-	 * @param {any} res
-	 * @memberof StoreFileService
-	 */
-  response(req, res) {
-    let jobId = req.params.jobId
-    let server = this.map.get(jobId)
-    if (!server) return res.error(new E.StoreFileQueueNoServer(), 403, false)
-    // finished
-    if (server.finished()) return res.end()
-
-    let { error, data } = req.body
-    // if error exist, server.error()
-    if (error) {
-      let { message, code } = error
-      server.error(message, code)
-    }
-    else {
-      server.success(data)
-    }
-    res.success()
-    // end
-    this.close(jobId)
-  }
-	/**
-	 * close life cycle of the instance
-	 * @param {any} jobId
-	 * @param {any} err
-	 * @memberof StoreFileService
-	 */
-  close(jobId) {
-    let server = this.map.get(jobId)
-    if (!server) return
-    // delete map
-    this.map.delete(jobId)
+  // delete this server
+  close() {
+    this.ctx.service.queue.close(this.jobId)
   }
 }
 

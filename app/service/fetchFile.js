@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 17:42:05 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 18:12:15 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@ const debug = require('debug')('app:fetch')
 const uuid = require('uuid')
 const EventEmiiter = require('events').EventEmitter
 
+const mixin = require('../lib/mixin')
 const threadify = require('../lib/threadify')
-const mqttService = require('./mqttService')
 
 /**
  * Fetch file.
@@ -35,9 +35,8 @@ const mqttService = require('./mqttService')
  *   2. station res.end().
  *   3. delete worker in map.
  * @class Server
- * @extends {threadify(EventEmiiter)}
  */
-class Server extends threadify(EventEmiiter) {
+class FetchFileService extends threadify(Service) {
 
   constructor(req, res) {
     super()
@@ -118,100 +117,6 @@ class Server extends threadify(EventEmiiter) {
 
   abort() {
     this.res.finished = true
-  }
-}
-
-/**
- * @class FetchFileService
- * @extends Service
- */
-class FetchFileService extends Service {
-
-  constructor() {
-    super()
-    this.limit = 1024
-    this.map = new Map()
-    // global handle map
-    setInterval(() => {
-      if (this.map.size === 0) return
-      this.schedule()
-    }, 30000)
-  }
-
-  // schedule
-  schedule() {
-    this.map.forEach((v, k) => {
-      if (v.finished()) this.map.delete(k)
-    })
-  }
-
-  request(req, res) {
-    let jobId = req.params.jobId
-    let server = this.map.get(jobId)
-    if (!server) return res.error(new E.FetchFileQueueNoServer(), 403, false)
-    // timeout
-    if (server.isTimeOut()) {
-      let e = new E.PipeResponseTimeout()
-      // end
-      this.close(jobId)
-      return res.error(e)
-    }
-    if (server.finished()) {
-      let e = new E.PipeResponseHaveFinished()
-      this.close(jobId)
-      return res.error(e)
-    }
-    // pipe
-    req.pipe(server.res)
-    // error
-    req.on('error', err => {
-      // response
-      res.error(err)
-      server.error(err)
-    })
-  }
-
-  createServer(req, res) {
-    this.schedule()
-    debug('fetch size: ', this.map.size)
-    if (this.map.size > this.limit)
-      throw new E.PipeTooMuchTask()
-    let server = new Server(req, res)
-    this.map.set(server.jobId, server)
-    return server
-  }
-	/**
-	 * response fetch error to client
-	 * @param {any} req
-	 * @param {any} res
-	 * @memberof FetchFileService
-	 */
-  response(req, res) {
-    let jobId = req.params.jobId
-    let server = this.map.get(jobId)
-    if (!server) return res.error(new E.FetchFileQueueNoServer(), 403, false)
-    // finished
-    if (server.finished()) return res.end()
-
-    // backwards compatible
-    let responseError = req.body.error || req.body
-    let { message, code } = responseError
-    server.error(message, code)
-    res.success()
-    // end
-    this.close(jobId)
-  }
-	/**
-	 * close life cycle of the instance
-	 * @param {any} jobId
-	 * @param {any} err
-	 * @memberof FetchFileService
-	 */
-  close(jobId) {
-    let server = this.map.get(jobId)
-    if (!server) return
-    // delete map
-    this.map.delete(jobId)
   }
 }
 

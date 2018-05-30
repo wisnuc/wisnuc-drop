@@ -12,32 +12,8 @@
 
 const Service = require('egg').Service
 const debug = require('debug')('app:mqtt')
-const config = require('getconfig')
 
 const client = require('../lib/mqtt')
-const stationService = require('./stationService')
-
-// message
-client.on('message', (topic, message, packet) => {
-  // message is Buffer
-  debug(`message`, topic, message.toString(), packet)
-  try {
-    let { stationId } = JSON.parse(message)
-    switch (topic) {
-    case 'station/connect':
-      debug('station: connect')
-      stationService.updateOnline(stationId, true)
-      break
-    case 'station/disconnect':
-      debug('station: disconnect')
-      stationService.updateOnline(stationId, false)
-      break
-    }
-  }
-  catch (err) {
-    throw err
-  }
-})
 
 /**
  * This is mqtt service.
@@ -95,4 +71,4 @@ class MqttService extends Service {
   }
 }
 
-module.exports = new MqttService
+module.exports = MqttService

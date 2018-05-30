@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 14:08:03 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 17:00:38 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,9 @@ module.exports = app => {
   subRouter.delete('/stations/:id', authStation(), station.destory)
   subRouter.get('/stations/:id/token', authStation(), station.getToken)
   subRouter.get('/stations/:id/users', authStation(), station.findUsers)
-  subRouter.post('/stations/:id/response/:jobId', authStation(), station.storeFile)
-  subRouter.get('/stations/:id/response/:jobId/pipe/store', authStation(), station.fetchFile)
-  subRouter.post('/stations/:id/response/:jobId', authStation(), station.getJson)
-  subRouter.post('/stations/:id/response/:jobId/pipe/fetch', authStation(), station.postJson)
+  subRouter.post('/stations/:id/response/:jobId', authStation(), station.resStoreFileResult)
+  subRouter.get('/stations/:id/response/:jobId/pipe/store', authStation(), station.resStoreFile)
+  subRouter.post('/stations/:id/response/:jobId/pipe/fetch', authStation(), station.resFetchFile)
   subRouter.post('/stations/:id/response/:jobId/json', authStation(), station.postJson)
   // box
   subRouter.post('/boxes', authStation(), box.create)

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:36:12 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 17:27:17 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 18:14:06 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,8 @@ class StationController extends Controller {
           id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
         },
       })
-      const server = await service.storeFile.createServer(ctx)
+      // create server
+      const server = service.storeFile.createServer()
       await server.run()
     } catch (err) {
       ctx.error(err)

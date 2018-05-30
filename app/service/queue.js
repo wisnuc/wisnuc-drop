@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 18:00:03 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 17:46:29 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ const threadify = require('../lib/threadify')
  */
 class QueueService extends Service {
 
-  constructor() {
-    super()
+  constructor(ctx) {
+    super(ctx)
     this.limit = 1024
     this.map = new Map()
     // global handle map
@@ -43,67 +43,18 @@ class QueueService extends Service {
     })
   }
 
-  request(req, res) {
-    let jobId = req.params.jobId
+  get(jobId) {
     let server = this.map.get(jobId)
-    if (!server) return res.error(new E.StoreFileQueueNoServer(), 403, false)
-    // timeout
-    if (server.isTimeOut()) {
-      let e = new E.PipeResponseTimeout()
-      // end
-      this.close(jobId)
-      return res.error(e)
-    }
-    if (server.finished()) {
-      let e = new E.PipeResponseHaveFinished()
-      this.close(jobId)
-      return res.error(e)
-    }
-    // repay
-    server.repay(res)
-    // req error
-    req.on('error', err => {
-      // response
-      res.error(err)
-      server.error(err)
-    })
+    if (!server) throw new Error('server not found')
   }
 
-  createServer(req, res) {
+  set(server) {
     this.schedule()
     debug('store size: ', this.map.size)
-    if (this.map.size > this.limit)
-      throw new E.PipeTooMuchTask()
-    let server = new Server(req, res)
+    if (this.map.size > this.limit) throw new Error(' have too much server')
     this.map.set(server.jobId, server)
-    return server
   }
-	/**
-	 * response store error to client
-	 * @param {any} req
-	 * @param {any} res
-	 * @memberof StoreFileService
-	 */
-  response(req, res) {
-    let jobId = req.params.jobId
-    let server = this.map.get(jobId)
-    if (!server) return res.error(new E.StoreFileQueueNoServer(), 403, false)
-    // finished
-    if (server.finished()) return res.end()
 
-    let { error, data } = req.body
-    // if error exist, server.error()
-    if (error) {
-      let { message, code } = error
-      server.error(message, code)
-    }
-    else {
-      server.success(data)
-    }
-    res.success()
-    // end
-    this.close(jobId)
-  }
 	/**
 	 * close life cycle of the instance
 	 * @param {any} jobId

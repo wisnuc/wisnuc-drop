@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/18 11:22:28 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/23 16:11:40 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 17:45:02 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ module.exports = () => {
         url: ctx.request.originalUrl,
         errcode: code,
         errmsg: message,
+        stack: error.stack
       }
 
     }

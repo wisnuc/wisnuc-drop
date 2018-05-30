@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 17:41:19 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/30 18:11:05 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,15 +15,15 @@ const debug = require('debug')('app:json')
 const uuid = require('uuid')
 const EventEmitter = require('events').EventEmitter
 
+const mixin = require('../lib/mixin')
 const threadify = require('../lib/threadify')
 // const mqttService = require('./mqttService')
 
 /**
  * transform json - server
  * @class Server
- * @extends {EventEmitter}
  */
-class Server extends threadify(EventEmitter) {
+class Server extends threadify(Service) {
 
   constructor(req, res) {
     super()
