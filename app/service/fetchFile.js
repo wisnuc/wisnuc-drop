@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/30 18:12:15 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/31 15:25:14 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@ const debug = require('debug')('app:fetch')
 const uuid = require('uuid')
 const EventEmiiter = require('events').EventEmitter
 
-const mixin = require('../lib/mixin')
 const threadify = require('../lib/threadify')
 
 /**

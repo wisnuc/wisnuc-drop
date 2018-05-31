@@ -25,7 +25,7 @@ class MqttService extends Service {
    * @param {string} stationId
    * @param {object} manifest
    */
-  async pipe(stationId, manifest) {
+  pipe(stationId, manifest) {
     // {
     //   method: 'GET',
     //   resource: 'L3VzZXJz',
@@ -48,8 +48,8 @@ class MqttService extends Service {
     )
     debug('pipe:', stationId, message)
 
-    let data = JSON.stringify(message)
-    client.publish(`station/${stationId}/pipe`, data, { qos: 1 }, err => {
+    const data = JSON.stringify(message)
+    this.ctx.mqtt.publish(`station/${stationId}/pipe`, data, { qos: 1 }, err => {
       debug(`publish_err: ${err}`)
     })
   }
@@ -66,7 +66,7 @@ class MqttService extends Service {
     for (let userId of userIds) {
       debug(userId, message)
       // seed message to client
-      client.publish(`client/user/${userId}/box`, message, { qos: 1 })
+      this.ctx.mqtt.publish(`client/user/${userId}/box`, message, { qos: 1 })
     }
   }
 }

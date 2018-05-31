@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/30 18:17:09 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/31 18:20:15 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,6 @@ const debug = require('debug')('app:store')
 const uuid = require('uuid')
 const Dicer = require('dicer')
 
-
-const mixin = require('../lib/mixin')
 const threadify = require('../lib/threadify')
 
 const RE_BOUNDARY = /^multipart\/.+?(?: boundary=(?:(?:"(.+)")|(?:([^\s]+))))$/i
@@ -57,7 +55,7 @@ class StoreFileService extends threadify(Service) {
     ctx.service.queue.set(this)
   }
 
-  createServer() {
+  create() {
     return this
   }
   // dicer
@@ -96,8 +94,7 @@ class StoreFileService extends threadify(Service) {
           } else {
             filePart = part
           }
-        }
-        catch(err) {
+        } catch(err) {
           return this.error(err)
         }
       })
@@ -137,21 +134,21 @@ class StoreFileService extends threadify(Service) {
           resource = body.resource
           delete body.method
           delete body.resource
-          let manifest = Object.assign({},
-            {
-              method: method,
-              resource: resource,
-              body: body,
-              sessionId: this.jobId,
-              user: {
-                id: user.id,
-                nickName: user.nickName,
-                unionId: user.unionId
-              }
+          let manifest = Object.assign({}, {
+            method: method,
+            resource: resource,
+            body: body,
+            sessionId: this.jobId,
+            user: {
+              id: user.id,
+              nickName: user.nickName,
+              unionId: user.unionId
             }
-          )
+          })
+          debug(`manifest pipe successfully`)
           // notice station to response
-          await this.notice(stationId, manifest)
+          this.ctx.service.mqtt.pipe(stationId, manifest)
+          await this.response()
         }
         catch (err) {
           this.error(err)
@@ -175,17 +172,6 @@ class StoreFileService extends threadify(Service) {
     // pipe dicer
     this.ctx.req.pipe(dicer)
   }
-	/**
-	 * find matched station, and send message
-	 * @param {string} stationId
-	 * @param {object} manifest - queryString
-	 * @memberof Server
-	 */
-  async notice(stationId, manifest) {
-    debug(`manifest pipe successfully`, this.app)
-    await mqttService.pipe(stationId, manifest)
-  }
-
 	/**
 	 * station reponse this request
 	 * @param {Object} resCtx - response ctx

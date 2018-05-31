@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:36:12 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/30 18:14:06 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/05/31 18:20:34 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class StationController extends Controller {
         },
       })
       // create server
-      const server = service.storeFile.createServer()
+      const server = service.storeFile.create()
       await server.run()
     } catch (err) {
       ctx.error(err)
