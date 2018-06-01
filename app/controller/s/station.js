@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:37:15 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/30 15:45:28 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 17:45:38 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,7 @@ class BoxController extends Controller {
   async index() {}
   async update() {}
   async destory() {}
-  async getToken() {}
-  async findUsers() {}
-  async resStoreFile() {
+  async getToken() {
     const { ctx, service } = this
     try {
       await ctx.joiValidate({
@@ -28,7 +26,25 @@ class BoxController extends Controller {
           id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
         },
       })
-      const server = ctx.service.queue.get(jobId)
+      const stationId = ctx.params.id
+      const data = await service.station.getToken(stationId)
+      ctx.success(data)
+    } catch (err) {
+      ctx.error(err)
+    }
+  }
+  async findUsers() {}
+  async resStoreFile() {
+    const { ctx, service } = this
+    try {
+      // await ctx.joiValidate({
+      //   params: {
+      //     id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
+      //     jobId: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
+      //   },
+      // })
+      const jobId = ctx.params.jobId
+      const server = service.queue.get(jobId)
       await server.response(ctx)
     } catch (err) {
       ctx.error(err)
@@ -47,7 +63,8 @@ class BoxController extends Controller {
           data: Joi.any(),
         },
       })
-      const server = ctx.service.queue.get(jobId)
+      const jobId = ctx.params.jobId
+      const server = service.queue.get(jobId)
       await server.reportResult(ctx)
     } catch (err) {
       ctx.error(err)

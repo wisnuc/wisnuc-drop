@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 15:15:06 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 17:35:13 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,14 @@ const Promise = require('bluebird')
 const EABORT = Object.assign(new Error('aborted'), { code: 'EABORT' })
 
 /**
- * observable class
+ * observable class.
  * @class Threadify
  */
 module.exports = base => class extends base {
 
   constructor(...args) {
     super(...args)
-    this.EABORT = EABORT
+    // this.EABORT = EABORT
     this._thrListeners = []
   }
 

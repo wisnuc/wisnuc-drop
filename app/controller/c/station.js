@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:36:12 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/31 18:20:34 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 16:57:40 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,18 @@ class StationController extends Controller {
         },
       })
       // create server
-      const server = service.storeFile.create()
+      const server = service.storeFile.createServer(ctx)
       await server.run()
+      const data = await new Promise((resolve, reject) => {
+        // response
+        setTimeout(async () => {
+          console.log(22222222)
+          // resolve({name: 'xxxxxx'})
+          // rejected(new Error('xxxxx'))
+        }, 2000)
+        // clear timeout
+      })
+       ctx.success(data)
     } catch (err) {
       ctx.error(err)
     }

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/01/04 17:18:07 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/31 14:33:49 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 15:14:35 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,11 @@ const assert = require('assert')
 const mqtt = require('mqtt')
 
 module.exports = app => {
-  app.addSingleton('mqtt', createOneClient)
-}
-
-function createOneClient(config, app) {
+  // app.addSingleton('mqtt', createOneClient)
   const { config, logger } = app
   const url = config.mqtt.url
   assert(url, '[mqtt] url is required on config')
-
+  
   const settings = {
     clientId: 'cloud_' + Math.random().toString(16).substr(2, 8),
     clean: true,
@@ -52,6 +49,8 @@ function createOneClient(config, app) {
   client.on('offline', () => {
     logger.error(`[mqtt] ${config.mqtt.url} offline`)
   })
+  app.mqtt = client
   return client
 }
+
 

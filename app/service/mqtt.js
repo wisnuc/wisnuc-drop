@@ -12,6 +12,7 @@
 
 const Service = require('egg').Service
 const debug = require('debug')('app:mqtt')
+const Promise = require('bluebird')
 
 const client = require('../lib/mqtt')
 
@@ -22,10 +23,11 @@ const client = require('../lib/mqtt')
 class MqttService extends Service {
   /**
    * send message to station
-   * @param {string} stationId
-   * @param {object} manifest
+   * @param {String} stationId - station uuid
+   * @param {Object} manifest - formdata info
+   * @return {Promise} Promise
    */
-  pipe(stationId, manifest) {
+  async pipe(stationId, manifest) {
     // {
     //   method: 'GET',
     //   resource: 'L3VzZXJz',
@@ -39,31 +41,34 @@ class MqttService extends Service {
     //   type: 'pipe',
     //   serverAddr: '10.10.9.87:4000'
     // }
-    let WANIP = global.server.WANIP
-    let message = Object.assign({}, manifest,
-      {
+    return new Promise((resolve, reject) => {
+      const WANIP = global.server.WANIP
+      const message = Object.assign({}, manifest, {
         type: 'pipe',
-        serverAddr: WANIP + ':' + config.port
-      }
-    )
-    debug('pipe:', stationId, message)
-
-    const data = JSON.stringify(message)
-    this.ctx.mqtt.publish(`station/${stationId}/pipe`, data, { qos: 1 }, err => {
-      debug(`publish_err: ${err}`)
+        serverAddr: WANIP + ': 4000', // config.port
+      })
+      debug('pipe:', stationId, message)
+      const data = JSON.stringify(message)
+      this.ctx.mqtt.publish(`station/${stationId}/pipe`, data, { qos: 1 }, err => {
+        debug(`publish_err: ${err}`)
+        if (err) {
+          return reject(new Error('publish message error'))
+        }
+        resolve()
+      })
     })
   }
   /**
    * send message to client
-   * @param {array} userIds
-   * @param {array} data
+   * @param {Array} userIds - user uuid array
+   * @param {Array} data - message
    * @memberof MqttService
    */
   notice(userIds, data) {
-    userIds = Array.isArray(userIds) ? userIds : [userIds]
-    data = Array.isArray(data) ? data : [data]
-    let message = JSON.stringify(data)
-    for (let userId of userIds) {
+    userIds = Array.isArray(userIds) ? userIds : [ userIds ]
+    data = Array.isArray(data) ? data : [ data ]
+    const message = JSON.stringify(data)
+    for (const userId of userIds) {
       debug(userId, message)
       // seed message to client
       this.ctx.mqtt.publish(`client/user/${userId}/box`, message, { qos: 1 })

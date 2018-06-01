@@ -6,16 +6,13 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/18 16:43:25 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/31 15:25:14 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 17:33:55 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const Service = require('egg').Service
 const debug = require('debug')('app:fetch')
 const uuid = require('uuid')
-const EventEmiiter = require('events').EventEmitter
-
-const threadify = require('../lib/threadify')
 
 /**
  * Fetch file.
@@ -35,7 +32,7 @@ const threadify = require('../lib/threadify')
  *   3. delete worker in map.
  * @class Server
  */
-class FetchFileService extends threadify(Service) {
+class FetchFileService extends Service {
 
   constructor(req, res) {
     super()
@@ -50,10 +47,12 @@ class FetchFileService extends threadify(Service) {
   }
 
   async run() {
-    let stationId = this.req.params.id || this.req.params.stationId
-    let user = this.req.auth.user
+    const stationId = this.req.params.id || this.req.params.stationId
+    const user = this.req.auth.user
 
-    let method, resource, body
+    let method,
+      resource,
+      body
     if (this.req.method === 'GET') body = this.req.query
     method = body.method
     resource = body.resource

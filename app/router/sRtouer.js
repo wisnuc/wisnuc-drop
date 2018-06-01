@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/30 17:00:38 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 16:06:55 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ module.exports = app => {
   subRouter.get('/tickets/:id/users/:userId', authStation(), ticket.findUser)
   subRouter.patch('/tickets/:id/users/:userId', authStation(), ticket.updateUser)
   // station
+  subRouter.get('/stations/:id/token', station.getToken)
   subRouter.post('/stations/', authStation(), station.create)
   subRouter.get('/stations/:id', authStation(), station.index)
   subRouter.patch('/stations/:id', authStation(), station.update)
   subRouter.delete('/stations/:id', authStation(), station.destory)
-  subRouter.get('/stations/:id/token', authStation(), station.getToken)
   subRouter.get('/stations/:id/users', authStation(), station.findUsers)
   subRouter.post('/stations/:id/response/:jobId', authStation(), station.resStoreFileResult)
   subRouter.get('/stations/:id/response/:jobId/pipe/store', authStation(), station.resStoreFile)

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 16:40:23 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 16:12:22 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,6 @@ class StationService extends Service {
     const { ctx } = this
     const station = await ctx.model.Station
       .findOne({ _id: stationId })
-      .select('name')
       .lean()
     if (!station) throw new E.StationNotExist()
     // random number
@@ -121,18 +120,18 @@ class StationService extends Service {
     const encryptData = crt.encrypt(seed, 'utf8', 'base64')
     const token = {
       station: {
-        id: station.id,
+        id: station._id,
         name: station.name,
       },
     }
     return { seed, encryptData, token: jwt.encode(token) }
   }
-   /**
+  /**
 	 * return double arrow checked stations
 	 * @param {String} userId - user uuid
 	 * @return {Array} stations - station list
 	 */
-  async getCheckedStations (userId) {
+  async getCheckedStations(userId) {
     const { ctx } = this
     const data = await Promise.props({
       user: ctx.model.User
@@ -143,11 +142,11 @@ class StationService extends Service {
       stationList: ctx.model.Station
         .find({ users: userId })
         .select('-publicKey')
-        .lean()
+        .lean(),
     })
     const { user, stationList } = data
-    const { stations } = data.user
-    let stationArr = []
+    const stations = user.stations
+    const stationArr = []
     for (const station of stations) {
       for (const s of stationList) {
         if (station._id === s._id) stationArr.push(s)
