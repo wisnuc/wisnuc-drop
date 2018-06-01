@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/01 18:08:26 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/01 18:11:38 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/01 18:21:20 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ const RE_BOUNDARY = /^multipart\/.+?(?: boundary=(?:(?:"(.+)")|(?:([^\s]+))))$/i
 
 class Upload {
 
-  constructor() {
-
+  constructor(ctx) {
+    this.ctx = ctx
   }
 
   async run() {
@@ -58,7 +58,7 @@ class Upload {
         // { 'content-disposition': [ 'form-data; name="file"; filename="nodejs-server-server-generated.zip"' ], 'content-type': [ 'application/zip' ] }
         // let x = header['content-disposition'][0].split('; ')
         try {
-          let name = parseHeader(header)
+          let name = this.parseHeader(header)
           if (name === 'manifest') {
             onField(part)
           } else {
@@ -68,15 +68,6 @@ class Upload {
           return this.error(err)
         }
       })
-    }
-
-    const parseHeader = header => {
-      const x = Buffer.from(header['content-disposition'][0], 'binary').toString('utf8').replace(/%22/g, '"').split('; ')
-      // fixed %22
-      if (x[0] !== 'form-data') throw new Error('not form-data')
-      if (!x[1].startsWith('name="') || !x[1].endsWith('"')) throw new Error('invalid name')
-      const name = x[1].slice(6, -1)
-      return name
     }
     // file pipe
     const onFile = part => part.pipe(this.ws)
@@ -134,6 +125,24 @@ class Upload {
     })
     // pipe dicer
     this.ctx.req.pipe(dicer)
+  }
+  errorHandler() {
+    debug('dicer errror')
+    if (dicer) {
+      dicer.removeAllListeners()
+      dicer.on('error', () => {})
+      this.ctx.req.unpipe(dicer)
+      dicer.end()
+      dicer = null
+    }
+  }
+  parseHeader(header) {
+    const x = Buffer.from(header['content-disposition'][0], 'binary').toString('utf8').replace(/%22/g, '"').split('; ')
+    // fixed %22
+    if (x[0] !== 'form-data') throw new Error('not form-data')
+    if (!x[1].startsWith('name="') || !x[1].endsWith('"')) throw new Error('invalid name')
+    const name = x[1].slice(6, -1)
+    return name
   }
 }
 
