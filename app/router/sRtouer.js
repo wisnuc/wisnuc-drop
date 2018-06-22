@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/01 16:06:55 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/22 14:17:41 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ module.exports = app => {
   const { authStation } = middleware
   const { user, ticket, station, box, tweet } = controller.s
   // // user
-  subRouter.get('/users/:id', authStation(), user.index)
+  subRouter.get('/users/:id', authStation(), user.show)
   // ticket
   subRouter.post('/tickets', authStation(), ticket.create)
   subRouter.get('/tickets', authStation(), ticket.index)
@@ -33,8 +33,8 @@ module.exports = app => {
   subRouter.patch('/tickets/:id/users/:userId', authStation(), ticket.updateUser)
   // station
   subRouter.get('/stations/:id/token', station.getToken)
-  subRouter.post('/stations/', authStation(), station.create)
-  subRouter.get('/stations/:id', authStation(), station.index)
+  subRouter.post('/stations', authStation(), station.create)
+  subRouter.get('/stations/:id', authStation(), station.show)
   subRouter.patch('/stations/:id', authStation(), station.update)
   subRouter.delete('/stations/:id', authStation(), station.destory)
   subRouter.get('/stations/:id/users', authStation(), station.findUsers)

@@ -12,3 +12,8 @@ exports.routerPlus = {
   enable: true,
   package: 'egg-router-plus',
 }
+
+exports.validateJoi = {
+  enable: true,
+  package: 'egg-validate-joi',
+}

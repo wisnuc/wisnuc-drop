@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:36:12 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/01 16:57:40 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/20 16:50:04 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ class StationController extends Controller {
         }, 2000)
         // clear timeout
       })
-       ctx.success(data)
+      ctx.success(data)
     } catch (err) {
       ctx.error(err)
     }

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 16:34:09 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/22 14:03:17 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ module.exports = app => {
   subRouter.get('/users/:userId/interestingPerson', authUser(), user.findInteresting)
   subRouter.get('/users/:userId/interestingPerson/:personId', authUser(), user.findInterestingSources)
   // ticket
+  subRouter.get('/tickets', authUser(), ticket.index)
   subRouter.get('/tickets/:id', authUser(), ticket.show)
   subRouter.post('/tickets/:id/invite', authUser(), ticket.inviteUser)
   subRouter.post('/tickets/:ticketId/boxes/:boxId/share', authUser(), ticket.shareBox)

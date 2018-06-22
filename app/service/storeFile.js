@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/01 18:07:28 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/20 17:09:53 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,9 @@ class Server extends threadify(EventEmitter) {
   constructor(ctx) {
     super(ctx)
     this.ctx = ctx
-    this.jobId = '123456' // uuid.v4()
+    this.jobId = '123456' // FIXME: uuid.v4()
     this.timer = 5 * 1000
+    this.state = 'pending' // pending, working, fnished
     this.ctx.req.on('close', () => {
       debug('request close')
       const err = new Error('storefile request close')

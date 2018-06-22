@@ -22,10 +22,11 @@ module.exports = appInfo => {
     match: '/',
   }
 
-  // config.joiValidate = {
-  //   enable: true,
-  //   match: '/',
-  // }
+  config.validateJoi = {
+    options: {
+      abortEarly: false,
+    },
+  }
 
   return config
 }

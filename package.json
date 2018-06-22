@@ -11,6 +11,7 @@
     "egg-mongoose": "^2.2.1",
     "egg-router-plus": "^1.2.0",
     "egg-scripts": "^2.6.0",
+    "egg-validate-joi": "^1.1.2",
     "formidable": "^1.2.1",
     "fs-ext": "^1.0.0",
     "getconfig": "^4.4.1",
@@ -22,8 +23,6 @@
     "mqtt": "^2.18.0",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
-    "socket.io": "^2.1.1",
-    "socket.io-client": "^2.1.1",
     "ursa": "^0.9.4",
     "uuid": "^3.2.1"
   },

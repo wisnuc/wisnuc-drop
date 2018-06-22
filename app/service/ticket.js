@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/25 17:12:53 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/22 15:31:06 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,24 @@ class TicketService extends Service {
     const { ctx } = this
     const ticket = await ctx.model.Ticket
       .findOne({ _id: ticketId, boxId, type: 'share' })
+      .lean()
+    if (!ticket) throw new E.TicketNotExist()
+
+    await ctx.model.Ticket.findOneAndUpdate(
+      { _id: ticketId },
+      { $set: { users: { user: userId, type: ticket.isAudited ? 'pending' : 'resolved' } } }
+    )
+    return true
+  }
+  /**
+	 * find all tickets by params
+	 * @param {Object} conditions - find conditions
+	 * @return {Object} tickets
+	 */
+  async findAllUser(conditions) {
+    const { ctx } = this
+    const ticket = await ctx.model.Ticket
+      .find(conditions)
       .lean()
     if (!ticket) throw new E.TicketNotExist()
 
