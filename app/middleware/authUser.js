@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/10 16:36:10 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/22 13:27:13 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/28 16:45:44 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ module.exports = () => {
       // decode
       const decoded = jwt.decode(token)
       if (!decoded) return ctx.error(new Error('decode failed'), 401)
-      // expire
-      if (!decoded.exp || decoded.exp <= Date.now()) {
-        return ctx.error(new Error('token overdue, login again please！'), 401)
-      }
+      // FIXME: expire
+      // if (!decoded.exp || decoded.exp <= Date.now()) {
+      //   return ctx.error(new Error('token overdue, login again please！'), 401)
+      // }
       if (!decoded.user) return ctx.error(new Error('authentication failed'), 401)
       const user = await ctx.service.user.show({ _id: decoded.user.id })
       if (!user) return ctx.error(new E.UserNotExist(), 401)

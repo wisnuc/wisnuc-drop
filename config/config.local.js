@@ -2,6 +2,12 @@
 
 module.exports = () => {
   const config = exports = {}
+
+  config.security = {
+    csrf: {
+      ignore: '/*',
+    },
+  }
   // add mongoose
   config.mongoose = {
     client: {

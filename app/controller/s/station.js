@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:37:15 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/22 14:23:45 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/28 17:50:43 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,9 +133,9 @@ class BoxController extends Controller {
       //     jobId: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
       //   },
       // })
-      const jobId = ctx.params.jobId
-      const server = service.queue.get(jobId)
-      await server.response(ctx)
+      console.log(12312322)
+      // const server = service.queue.get(jobId)
+      await service.storeFile.request(ctx)
     } catch (err) {
       ctx.error(err)
     }
@@ -143,19 +143,17 @@ class BoxController extends Controller {
   async resStoreFileResult() {
     const { ctx, service } = this
     try {
-      await ctx.joiValidate({
-        params: {
-          id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
-          jobId: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
-        },
-        body: {
-          error: Joi.any(),
-          data: Joi.any(),
-        },
-      })
-      const jobId = ctx.params.jobId
-      const server = service.queue.get(jobId)
-      await server.reportResult(ctx)
+      // await ctx.joiValidate({
+      //   params: {
+      //     id: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
+      //     jobId: Joi.string().guid({ version: [ 'uuidv4' ] }).required(),
+      //   },
+      //   body: {
+      //     error: Joi.any(),
+      //     data: Joi.any(),
+      //   },
+      // })
+      await service.storeFile.reportResult(ctx)
     } catch (err) {
       ctx.error(err)
     }

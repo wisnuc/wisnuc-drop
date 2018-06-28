@@ -6,13 +6,12 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/04 14:48:16 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/01 17:44:39 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/28 16:52:30 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const Service = require('egg').Service
 const debug = require('debug')('app:queue')
-const uuid = require('uuid')
 
 const map = new Map()
 /**

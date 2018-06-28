@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/20 17:09:53 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/28 17:53:42 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,7 @@ const threadify = require('../lib/threadify')
 
 const RE_BOUNDARY = /^multipart\/.+?(?: boundary=(?:(?:"(.+)")|(?:([^\s]+))))$/i
 
-/**
- * store file
-	notication:
-	1. filed 处理
-	2. 并发请求
-	3. buffer []
-*/
+// store file
 class Server extends threadify(EventEmitter) {
   constructor(ctx) {
     super(ctx)
@@ -51,7 +45,7 @@ class Server extends threadify(EventEmitter) {
   }
 
   // dicer
-  run() {
+  async run() {
     return new Promise((resolve, reject) => {
       const stationId = this.ctx.params.id || this.ctx.params.stationId
       const user = this.ctx.auth.user
@@ -69,49 +63,6 @@ class Server extends threadify(EventEmitter) {
           dicer = null
         }
       }
-
-      let filePart
-      // until ws come in, emit different action
-      this.defineSetOnce('ws', () => {
-        debug('ws defineSetOnce')
-        return filePart && onFile(filePart)
-      })
-      // two part
-      const dicerOnPart = part => {
-        debug('New Part')
-        // hanlder error
-        part.on('error', err => {
-          debug(`part err${err}`)
-          part.removeAllListeners()
-          part.on('error', () => {})
-          errorHandler()
-        })
-        // Request header
-        part.on('header', function (header) {
-          // { 'content-disposition': [ 'form-data; name="manifest"' ] }
-          // { 'content-disposition': [ 'form-data; name="file"; filename="nodejs-server-server-generated.zip"' ], 'content-type': [ 'application/zip' ] }
-          // let x = header['content-disposition'][0].split('; ')
-          try {
-            let name = parseHeader(header)
-            if (name === 'manifest') {
-              onField(part)
-            } else {
-              filePart = part
-            }
-          } catch (err) {
-            return this.error(err)
-          }
-        })
-      }
-
-      const parseHeader = header => {
-        const x = Buffer.from(header['content-disposition'][0], 'binary').toString('utf8').replace(/%22/g, '"').split('; ')
-        // fixed %22
-        if (x[0] !== 'form-data') throw new Error('not form-data')
-        if (!x[1].startsWith('name="') || !x[1].endsWith('"')) throw new Error('invalid name')
-        const name = x[1].slice(6, -1)
-        return name
-      }
       // file pipe
       const onFile = part => part.pipe(this.ws)
       // field
@@ -123,41 +74,81 @@ class Server extends threadify(EventEmitter) {
           debug('End of part')
           try {
             debug('field data start')
-            let body = JSON.parse(Buffer.concat(dataBuffers))
-            let method, resource
-            method = body.method
-            resource = body.resource
+            const body = JSON.parse(Buffer.concat(dataBuffers))
+            const method = body.method
+            const resource = body.resource
             delete body.method
             delete body.resource
-            let manifest = Object.assign({}, {
-              method: method,
-              resource: resource,
-              body: body,
+            const manifest = Object.assign({}, {
+              method,
+              resource,
+              body,
               sessionId: this.jobId,
               user: {
                 id: user.id,
                 nickName: user.nickName,
-                unionId: user.unionId
-              }
+                unionId: user.unionId,
+              },
             })
-            debug(`manifest pipe successfully`)
+            debug('manifest pipe successfully')
             // notice station to response
             await this.ctx.service.mqtt.pipe(stationId, manifest)
-            resolve()
-          }
-          catch (err) {
+          } catch (err) {
             // this.error(err)
             reject(err)
           }
         })
         part.on('err', err => debug(`error: ${err}`))
       }
+      let filePart
+      // until ws come in, emit different action
+      this.defineSetOnce('ws', () => {
+        debug('ws defineSetOnce')
+        return filePart && onFile(filePart)
+      })
+      const parseHeader = header => {
+        const x = Buffer.from(header['content-disposition'][0], 'binary').toString('utf8').replace(/%22/g, '"').split('; ')
+        // fixed %22
+        if (x[0] !== 'form-data') throw new Error('not form-data')
+        if (!x[1].startsWith('name="') || !x[1].endsWith('"')) throw new Error('invalid name')
+        const name = x[1].slice(6, -1)
+        return name
+      }
+      // two part
+      const dicerOnPart = part => {
+        debug('New Part')
+        // hanlder error
+        part.on('error', err => {
+          debug(`part err${err}`)
+          part.removeAllListeners()
+          part.on('error', () => {})
+          errorHandler()
+        })
+        // Request header
+        part.on('header', header => {
+          // { 'content-disposition': [ 'form-data; name="manifest"' ] }
+          // { 'content-disposition': [ 'form-data; name="file"; filename="nodejs-server-server-generated.zip"' ], 'content-type': [ 'application/zip' ] }
+          // let x = header['content-disposition'][0].split('; ')
+          try {
+            const name = parseHeader(header)
+            if (name === 'manifest') {
+              onField(part)
+            } else {
+              filePart = part
+            }
+          } catch (err) {
+            return this.error(err)
+          }
+        })
+      }
+
       // dicer part
       dicer.on('part', dicerOnPart)
       dicer.on('finish', () => {
         dicer = null
         if (this.ws) this.ws.end()
         debug('End of parts')
+        // resolve('asdasdasd')
       })
       dicer.on('error', err => {
         this.ctx.req.unpipe(dicer)
@@ -168,40 +159,20 @@ class Server extends threadify(EventEmitter) {
       })
       // pipe dicer
       this.ctx.req.pipe(dicer)
+      console.log(1231333323)
     })
   }
-  /**
-	 * notice station
-   * @param {String} stationId - station uuid
-	 * @param {Object} manifest
-	 * @memberof Server
-	 */
+  // notice station
   notice(stationId, manifest) {
     this.ctx.mqtt.pipe(stationId, manifest)
   }
-  /**
-	 * station reponse this request
-	 * @param {Object} resCtx - response ctx
-	 * @memberof Server
-	 */
-  response(resCtx) {
+  // station reponse this request
+  repay(resCtx) {
     this.resCtx = resCtx
-    debug(`this ws start`)
+    debug('this ws start')
     if (this.isTimeOut()) this.error('response storeFile timeout')
     // this.ws 是个转折点
     this.ws = resCtx.res
-  }
-  // step 3: report result to client
-  reportResult(repCtx) {
-    const { error, data } = repCtx.body
-    // if error exist, server.error()
-    if (error) {
-      const { message, code } = error
-      this.error(message, code)
-    } else {
-      this.success(data)
-    }
-    repCtx.res.end()
   }
 
   isTimeOut() {
@@ -234,88 +205,76 @@ class Server extends threadify(EventEmitter) {
     this.ctx.service.queue.close(this.jobId)
   }
 }
+
 /**
  * upload file.
  * @class StoreFileService
  * @extends Service
  */
 class StoreFileService extends Service {
-
+  // create store file server
   createServer(ctx) {
     const server = new Server(ctx)
     this.service.queue.set(server.jobId, server)
     return server
   }
-  // step 3: report result to client
-  reportResult(repCtx) {
-    const { error, data } = repCtx.body
-    // if error exist, server.error()
-    if (error) {
-      const { message, code } = error
-      this.error(message, code)
-    } else {
-      this.success(data)
-    }
-    repCtx.res.end()
-  }
-
+  // step 2: request to client
   request(ctx) {
-    const jobId = ctx.params.jobId
-    const server = this.map.get(jobId)
-    if (!server) return ctx.error(new E.StoreFileQueueNoServer(), 403, false)
-    // timeout
-    if (server.isTimeOut()) {
-      const e = new E.PipeResponseTimeout()
-      // end
-      this.close(jobId)
-      return ctx.error(e)
-    }
-    if (server.finished()) {
-      const e = new E.PipeResponseHaveFinished()
-      this.close(jobId)
-      return ctx.error(e)
-    }
-    // repay
-    server.repay(ctx)
-    // req error
-    ctx.on('error', err => {
-      // response
-      ctx.error(err)
-      server.error(err)
+    return new Promise((resolve, reject) => {
+      const jobId = ctx.params.jobId
+      const server = this.service.queue.get(jobId)
+      if (!server) return reject(new E.StoreFileQueueNoServer())
+      // timeout
+      if (server.isTimeOut()) {
+        const e = new E.PipeResponseTimeout()
+        // end
+        this.close(jobId)
+        return reject(e)
+      }
+      if (server.finished()) {
+        const e = new E.PipeResponseHaveFinished()
+        this.close(jobId)
+        return reject(e)
+      }
+      // repay
+      server.repay(ctx)
+      // req error
+      ctx.req.on('error', err => {
+        // response
+        reject(err)
+        server.error(err)
+      })
     })
   }
-	/**
-	 * response store error to client
-	 * @param {Object} repCtx
-	 * @memberof StoreFile
-	 */
-  response(repCtx) {
-    const jobId = repCtx.params.jobId
-    const server = this.map.get(jobId)
-    if (!server) return repCtx.error(new E.StoreFileQueueNoServer(), 403, false)
-    // finished
-    if (server.finished()) return repCtx.end()
-    const { error, data } = repCtx.body
-    // if error exist, server.error()
-    if (error) {
-      const { message, code } = error
-      server.error(message, code)
-    } else {
-      server.success(data)
-    }
-    repCtx.success()
-  }
-  /**
-	 * close life cycle of the instance
-	 * @param {String} jobId - job uuid
-	 * @param {Object} err
-	 * @memberof StoreFile
-	 */
-  close(jobId) {
-    const server = this.map.get(jobId)
-    if (!server) return
-    // delete map
-    this.map.delete(jobId)
+  // step 3: report result to client
+  reportResult(repCtx) {
+    return new Promise((resolve, reject) => {
+      const jobId = repCtx.params.jobId
+      const server = this.service.queue.get(jobId)
+      if (!server) return reject(new E.StoreFileQueueNoServer())
+      // finished
+      if (server.finished()) return repCtx.end()
+      const { error, data } = repCtx.request.body
+      // if error exist, server.error()
+      if (error) {
+        const { message, code } = error
+        return reject(message)
+      }
+      console.log('asdasd123123')
+      // return resolve()
+      // if (!server) return repCtx.error(new E.StoreFileQueueNoServer(), 403, false)
+      // // finished
+      // if (server.finished()) return repCtx.end()
+      // const { error, data } = repCtx.body
+      // // if error exist, server.error()
+      // if (error) {
+      //   const { message, code } = error
+      //   server.error(message, code)
+      // } else {
+      //   server.success(data)
+      // }
+      // repCtx.success()
+    })
   }
 }
 

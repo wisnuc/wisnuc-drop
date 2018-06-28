@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/17 18:06:08 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/22 14:17:41 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/28 16:56:31 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ module.exports = app => {
   subRouter.patch('/stations/:id', authStation(), station.update)
   subRouter.delete('/stations/:id', authStation(), station.destory)
   subRouter.get('/stations/:id/users', authStation(), station.findUsers)
-  subRouter.post('/stations/:id/response/:jobId', authStation(), station.resStoreFileResult)
   subRouter.get('/stations/:id/response/:jobId/pipe/store', authStation(), station.resStoreFile)
   subRouter.post('/stations/:id/response/:jobId/pipe/fetch', authStation(), station.resFetchFile)
+  subRouter.post('/stations/:id/response/:jobId', authStation(), station.resStoreFileResult)
   subRouter.post('/stations/:id/response/:jobId/json', authStation(), station.postJson)
   // box
   subRouter.post('/boxes', authStation(), box.create)
