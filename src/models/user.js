@@ -5,93 +5,32 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/06/07 17:10:30 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Created: 2018/03/29 10:25:14 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/06/29 15:07:00 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// const moment = require('moment')
-const { UserStation } = require('./index')
-/**
- * This is user model.
- * @module User
- */
-module.exports = function (sequelize, DataTypes) {
-  let User = sequelize.define('User', {
-    id: {
-      primaryKey: true,
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4
-    },
-    // -1: 失效 1: 正常
-    status: {
-      type: DataTypes.INTEGER,
-      defaultValue: 1
-    },
-    unionId: { type: DataTypes.STRING, unique: true },
-    nickName: DataTypes.STRING,
-    avatarUrl: DataTypes.STRING,
+const uuid = require('uuid')
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
 
-    email: { type: DataTypes.STRING, unique: true },
-    phoneNO: { type: DataTypes.STRING, unique: true },
-    password: DataTypes.STRING,
+const UserSchema = new Schema({
+  _id: { type: String, default: uuid.v4() },
+  status: { type: Number, default: 1 }, // -1: 失效 1: 正常
+  unionId: { type: String, required: true },
+  nickName: String,
+  avatarUrl: String,
+  email: String,
+  phoneNO: String,
+  password: String,
+  stations: [{ type: String, ref: 'Station' }],
+}, {
+  timestamps: true,
+})
 
-    // createdAt: {
-    // 	type: DataTypes.DATE,
-    // 	get: function() {
-    // 		return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss')
-    // 	}
-    // },
-    // updatedAt: {
-    // 	type: DataTypes.DATE,
-    // 	get: function() {
-    // 		return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss')
-    // 	}
-    // }
-  }, {
-    freezeTableName: true,
-    tableName: 'users',
-    indexes: [
-      {
-        name: 'status',
-        method: 'BTREE',
-        fields: ['status']
-      },
-      {
-        name: 'nickName',
-        method: 'BTREE',
-        fields: ['nickName']
-      }
-    ],
-    classMethods: {
-      associate: function (models) {
-        User.hasMany(models.UserStation, { foreignKey: 'userId', as: 'stations' })
-        User.hasMany(models.TicketUser, { foreignKey: 'userId' })
-      }
-    },
-    // apply to find, findAll, update, count and destroy
-    defaultScope: {
-      where: {
-        status: 1
-      }
-    },
-    scopes: {
-      deleted: {
-        status: 0
-      },
-      stations: {
-        include: {
-          model: UserStation,
-          where: {
-            status: 1
-          },
-          attributes: ['stationId']
-          // attributes: [ [Sequelize.col('stationId'), 'id'] ]
-        }
+UserSchema.index({ nickName: 1 })
+UserSchema.index({ unionId: 1 }, { unique: true }) // schema level
+// UserSchema.index({ email: 1 }, { unique: true })
+// UserSchema.index({ phoneNO: 1 }, { unique: true })
 
-      }
-    }
-  })
-
-  return User
-}
+module.exports = mongoose.model('User', UserSchema)

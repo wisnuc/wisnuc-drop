@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 16:32:09 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,6 @@ const jwt = require('../lib/jwt')
 const {
 	Station,
   User,
-  UserStation,
-  StationUser,
-  WisnucDB
  } = require('../models')
 
 /**
@@ -33,25 +30,25 @@ class StationService {
 	 * @param {any} stationId 
 	 * @memberof StationService
 	 */
-  async clientCheckStation(userId, stationId) {
-    let data = await Promise.props({
-      findStation: UserStation.find({
-        where: {
-          userId: userId,
-          stationId: stationId
-        },
-        raw: true
-      }),
-      findUser: StationUser.find({
-        where: {
-          userId: userId,
-          stationId: stationId
-        },
-        raw: true
-      })
-    })
-    return data.findStation && data.findUser ? true : false
-  }
+  // async clientCheckStation(userId, stationId) {
+  //   let data = await Promise.props({
+  //     findStation: UserStation.find({
+  //       where: {
+  //         userId: userId,
+  //         stationId: stationId
+  //       },
+  //       raw: true
+  //     }),
+  //     findUser: StationUser.find({
+  //       where: {
+  //         userId: userId,
+  //         stationId: stationId
+  //       },
+  //       raw: true
+  //     })
+  //   })
+  //   return data.findStation && data.findUser ? true : false
+  // }
 	/**
 	 * create new station
 	 * @param {object} station 
@@ -62,129 +59,110 @@ class StationService {
   }
 	/**
 	 * get station
-	 * @param {string} id 
+	 * @param {String} stationId 
 	 * @memberof StationService
 	 */
-  find(id) {
-    return Station.find({
-      where: {
-        id: id
-      },
-      attributes: ['id', 'name']
-    })
+  find(stationId) {
+    return Station
+      .findOne({ _id: stationId })
+      .select('-publicKey')
+      .lean()
   }
 	/**
 	 * update station
-	 * @param {object} obj 
-	 * @param {string} id
+	 * @param {object} station - station object 
    * @memberof StationService
 	 */
   update(station) {
-    return Station.update(station, {
-      where: {
-        id: station.id
-      }
-    })
+    return Station.update({ _id: station.id }, station)
   }
 	/**
 	 * update users
-	 * clear station_user and bulk create. 
-	 * @param {any} stationId 
-	 * @param {any} usersId 
+	 * clear station_user and bulk create.
+	 * @param {String} stationId - station uuid
+	 * @param {Array} usersId - user uuid array
 	 * @memberof StationService
 	 */
   updateUsers(stationId, usersId) {
-    return WisnucDB.transaction(async t => {
-      await StationUser.destroy({
-        where: {
-          stationId: stationId
-        },
-        transaction: t,
-        raw: true
-      })
-      let arr = []
-      usersId.forEach(userId => {
-        arr.push({
-          userId: userId,
-          stationId: stationId
-        })
-      })
-      await StationUser.bulkCreate(arr, { transaction: t })
-    })
+    return Station.update({ _id: stationId }, { users: usersId })
   }
 	/**
 	 * delete station
-	 * @param {string} id 
+	 * @param {String} stationId 
 	 * @memberof StationService
 	 */
-  delete(id) {
-    return Station.update({ status: -1 }, {
-      where: {
-        id: id
-      }
-    })
+  delete(stationId) {
+    return Station.deleteOne({ _id: stationId })
   }
 	/**
 	 * user list
-	 * @param {any} id
+	 * @param {String} stationId
 	 * @memberof StationService
 	 */
-  findUsers(id) {
-    return User.findAll({
-      include: {
-        model: UserStation,
-        as: 'stations',
-        where: {
-          stationId: id
-        },
-        attributes: ['stationId']
-      }
-    })
+  async findUsers(stationId) {
+    const station = await Station
+      .findOne({ _id: stationId })
+      .populate({ path: 'users', select: '-unionId -stations' })
+      .lean()
+    return station.users
   }
 	/**
 	 * update station online
-	 * @param {*} stationId
-	 * @param {boolean} flag
+	 * @param {String} stationId
+	 * @param {Boolean} flag
    * @memberof StationService
 	 */
   updateOnline(stationId, flag) {
-    let isOnline = flag ? 1 : 0
-    return Station.update({ isOnline: isOnline }, {
-      where: {
-        id: stationId
-      }
-    })
+    return Station.update({ _id: stationId }, { isOnline: !!flag })
   }
 	/**
 	 * get station token
-	 * @param {*} stationId
+	 * @param {String} stationId
    * @memberof StationService
 	 */
   async getToken(stationId) {
-
-
-    let station = await Station.find({
-      where: {
-        id: stationId
-      },
-      attirbutes: ['id', 'name', 'publicKey'],
-      raw: true
-    })
-
+    const station = await Station
+      .findOne({ _id: stationId })
+      .lean()
     if (!station) throw new E.StationNotExist()
-
     // random number
-    let seed = uuid.v4()
-    let crt = ursa.createPublicKey(station.publicKey)
-    let encryptData = crt.encrypt(seed, 'utf8', 'base64')
-
-    let token = {
+    const seed = uuid.v4()
+    const crt = ursa.createPublicKey(station.publicKey)
+    const encryptData = crt.encrypt(seed, 'utf8', 'base64')
+    const token = {
       station: {
-        id: station.id,
-        name: station.name
-      }
+        id: station._id,
+        name: station.name,
+      },
     }
     return { seed, encryptData, token: jwt.encode(token) }
+  }
+   /**
+	 * return double arrow checked stations
+	 * @param {String} userId - user uuid
+	 * @return {Array} stations - station list
+	 */
+  async getCheckedStations(userId) {
+    const data = await Promise.props({
+      user: User
+        .findOne({ _id: userId })
+        .select('-unionId')
+        .populate({ path: 'stations', select: '-publicKey -users' })
+        .lean(),
+      stationList: Station
+        .find({ users: userId })
+        .select('-publicKey')
+        .lean(),
+    })
+    const { user, stationList } = data
+    const stations = user.stations
+    const stationArr = []
+    for (const station of stations) {
+      for (const s of stationList) {
+        if (station._id === s._id) stationArr.push(s)
+      }
+    }
+    return stationArr
   }
 }
 

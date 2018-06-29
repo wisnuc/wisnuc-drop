@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ticketService.js                                   ::      ::    ::   */
-/*                                                    : :         :     */
-/*   By: Jianjin Wu <mosaic101@foxmail.com>         #  :       #        */
-/*                                                #####   #           */
-/*   Created: 2017/11/10 11:34:45 by Jianjin Wu        ##    ##             */
-/*   Updated: 2018/02/24 16:54:49 by Jianjin Wu       ###   ########.fr       */
+/*   ticketService.js                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2018/06/29 16:34:45 by Jianjin Wu        #+#    #+#             */
+/*   Updated: 2018/06/29 16:50:45 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,8 @@ const _ = require('lodash')
 const moment = require('moment')
 const {
 	Ticket,
-  TicketUser,
   User,
-  UserStation,
   Station,
-  StationUser,
-  WisnucDB
 } = require('../models')
 
 /**
@@ -27,54 +23,33 @@ const {
  * @class TicketService
  */
 class TicketService {
-
 	/**
 	 * create new ticket
 	 * if type === invite , return url
-	 * @param {object} ticket 
-	 * @returns {object} ticket
+	 * @param {Object} ticket 
+	 * @returns {Object} ticket
 	 */
   async create(ticket) {
-    let station, data
-    switch (ticket.type) {
+    const { type } = ticket
+    const station = await Station
+      .find({ _id: ticket.stationId })
+      .lean()
+    if (!station) throw new E.StationNotExist()
+    let data
+    switch (type) {
     case 'invite':
-      station = await Station.find({
-        where: {
-          id: ticket.stationId
-        },
-        raw: true
-      })
-      if (!station) throw new E.StationNotExist()
       // add expire date
       ticket.expiredDate = moment(Date.now()).add(1, 'd')
       data = await Ticket.create(ticket)
-      return {
-        url: '/v1/tickets/' + data.id
-      }
+      return { url: '/v1/tickets/' + data._id }
     case 'bind':
-      station = await Station.find({
-        where: {
-          id: ticket.stationId
-        },
-        raw: true
-      })
-      if (!station) throw new E.StationNotExist()
       data = await Ticket.create(ticket)
-      return {
-        id: data.id
-      }
+      return { id: data.id }
     case 'share':
-      station = await Station.find({
-        where: {
-          id: ticket.stationId
-        },
-        raw: true
-      })
-      if (!station) throw new E.StationNotExist()
       data = await Ticket.create(ticket)
-      return {
-        id: data.id
-      }
+      return { id: data.id }
+    default:
+      return
     }
   }
 	/**
@@ -82,158 +57,96 @@ class TicketService {
 	 * 1. 用户是否经在此 station 中
 	 * 2. 用户是否填写过 ticket，并返回 ticket_user info
 	 * 3. 用户是否填写过有效 ticket， 并返回 ticket_user info
-	 * @param {string} ticketId 
-	 * @param {string} userId
-	 * @returns {object} ticket
+	 * @param {String} ticketId - ticket uuid
+	 * @param {String} userId - user uuid
+	 * @return {Object} ticket
 	 * @memberof TicketService
 	 */
   async findByClient(ticketId, userId) {
-    return WisnucDB.transaction(async t => {
-      let ticket = await Ticket.find({
-        where: {
-          id: ticketId
-        },
-        include: [
-          {
-            model: User,
-            as: 'creatorInfo',
-            attributes: ['id', 'nickName', 'avatarUrl']
-          },
-          {
-            model: Station,
-            as: 'station',
-            attributes: ['id', 'name']
-          }
-        ],
-        transaction: t
-      })
-      if (!ticket) throw new E.TicketNotExist()
-      let { type, expiredDate, stationId } = ticket
-      if (type == 'invite' && Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
-      let stationUser = await StationUser.find({
-        where: {
-          stationId: stationId,
-          userId: userId
-        },
-        transaction: t,
-        raw: true
-      })
-      if (stationUser) throw new E.UserAlreadyExist()
-      let tickets = await Ticket.findAll({
-        where: {
-          stationId: stationId,
-          type: 'invite'
-        },
-        transaction: t,
-        attributes: ['id'],
-        raw: true
-      })
-      let ticketIds = _.map(tickets, 'id')
-      let user = await TicketUser.find({
-        where: {
-          ticketId: ticketIds,
-          userId: userId
-        },
-        transaction: t,
-        attributes: ['userId', 'ticketId', 'type'],
-        order: 'createdAt DESC',
-        raw: true
-      })
-      // add user
-      ticket.dataValues.user = user
-      return ticket
-    })
+    const ticket = await Ticket
+      .findOne({ _id: ticketId, 'users.user': userId })
+      .populate({ path: 'stationId', select: 'name' })
+      .populate({ path: 'users', select: 'user type' })
+      .lean()
+
+    if (!ticket) throw new E.TicketNotExist()
+    const { type, expiredDate, stationId } = ticket
+    if (type === 'invite' && Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
+    const station = await Station
+      .findOne({ _id: stationId, users: { $in: [ userId ] } })
+      .lean()
+    if (station) throw new E.UserAlreadyExist()
+    return ticket
   }
 	/**
 	 * invite user
 	 * 1. 判断 expiredDate 是否过期
 	 * 2. 判断 user 是否已在此 ticket 中
-	 * 3. 判断 user 是否已经有 fill 过属于 station 的 ticket 
+	 * 3. 判断 user 是否已经有 fill 过属于 station 的 ticket
 	 * 4. create left arrow
-	 * @param {object} args 
+	 * @param {String} ticketId - ticket uuid
+   * @param {String} userId - user uuid
 	 * @memberof TicketService
+   * @return {Object} ticket - ticket
 	 */
-  inviteUser(args) {
-    let { ticketId, userId } = args
-    return WisnucDB.transaction(async t => {
-      let ticket = await Ticket.find({
-        where: {
-          id: ticketId,
-          type: 'invite'
-        },
-        transaction: t,
-        raw: true
+  async inviteUser(ticketId, userId) {
+    const ticket = await Ticket
+      .findOne({
+        _id: ticketId,
+        type: 'invite',
+        'users.user': userId,
       })
-      if (!ticket) throw new E.TicketNotExist()
-      let { stationId, expiredDate } = ticket
-      if (Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
-      let stationUser = await StationUser.find({
-        where: {
-          userId: userId,
-          stationId: stationId
-        },
-        transaction: t,
-        raw: true
+      .populate({ path: 'stationId', select: 'name' })
+      .populate({ path: 'users', select: 'user type' })
+      .lean()
+    if (!ticket) throw new E.TicketNotExist()
+    const { stationId, expiredDate } = ticket
+    if (Date.now() > expiredDate) throw new E.TicketAlreadyExpired()
+    // let stationUser = await StationUser.find({
+    //   where: {
+    //     userId: userId,
+    //     stationId: stationId
+    //   },
+    //   transaction: t,
+    //   raw: true
+    // })
+    // if (stationUser) throw new E.UserAlreadyExist()
+
+    // find station`s tickets
+    /**
+     * 找到该 user 最近一次 fill 的记录
+     * 如果该记录为 pending、resolved 则直接返回
+     */
+    await Ticket
+      .find({
+        _id: ticketId,
+        type: 'invite',
+        'users.user': userId,
       })
-      if (stationUser) throw new E.UserAlreadyExist()
-      // find station`s tickets
-      let tickets = await Ticket.findAll({
-        where: {
-          stationId: stationId,
-          type: 'invite'
-        },
-        transaction: t,
-        attributes: ['id'],
-        raw: true
-      })
-      let ticketIds = _.map(tickets, 'id')
-			/**
-			 * 找到该 user 最近一次 fill 的记录
-			 * 如果该记录为 pending、resolved 则直接返回
-			 */
-      let ticketUser = await TicketUser.find({
-        where: {
-          ticketId: ticketIds,
-          userId: userId,
-          type: ['pending', 'resolved']
-        },
-        transaction: t,
-        attributes: ['userId', 'type'],
-        order: 'createdAt DESC',
-        raw: true
-      })
-      if (ticketUser) throw new E.TicketUserAlreadyExist()
-      // create ticket_user adn user_station(left arrow)
-      let result = await Promise.props({
-        // create left user_station arrow
-        createLeftArrow: UserStation.findOrCreate({
-          where: {
-            userId: userId,
-            stationId: stationId
-          },
-          defaults: {
-            userId: userId,
-            stationId: stationId
-          },
-          transaction: t,
-          raw: true
-        }),
-        // create ticket_user
-        createTicketUser: await TicketUser.findOrCreate({
-          where: {
-            ticketId: ticketId,
-            userId: userId
-          },
-          defaults: args,
-          transaction: t,
-          attributes: ['userId', 'type'],
-          raw: true
-        }).spread(newObj => newObj)
-      })
-      // add user property
-      ticket.user = result.createTicketUser
-      return ticket
-    })
+      .lean()
+    // let ticketUser = await TicketUser.find({
+    //   where: {
+    //     ticketId: ticketIds,
+    //     userId: userId,
+    //     type: ['pending', 'resolved']
+    //   },
+    //   transaction: t,
+    //   attributes: ['userId', 'type'],
+    //   order: 'createdAt DESC',
+    //   raw: true
+    // })
+    // if (ticketUser) throw new E.TicketUserAlreadyExist()
+
+    // create ticket_user adn user_station(left arrow)
+    await User.findOneAndUpdate(
+      { _id: userId },
+      { $set: { stations: stationId } }
+    )
+    await Ticket.findOneAndUpdate(
+      { _id: ticketId },
+      { $set: { users: { user: userId } } }
+    )
+    return ticket
   }
   /**
    * invite user to box
@@ -241,74 +154,42 @@ class TicketService {
    * 2. 判断 box 是否存在
    * 3. 判断 user 是否存在
    * 4. add this user to ticket_user
-   * @param {object} args 
+   * @param {String} ticketId - ticket uuid
+   * @param {String} boxId - box uuid
+   * @param {String} userId - user uuid
    * @memberof TicketService
+   * @return {Object} box - box
    */
-  async shareBox(args) {
-    let { ticketId, boxId, userId } = args
-    let ticket = await Ticket.find({
-      where: {
-        id: ticketId,
-        boxId: boxId,
-        type: 'share'
-      },
-      attributes: ['isAudited'],
-      raw: true
-    })
+  async shareBox(ticketId, boxId, userId) {
+    const ticket = await Ticket
+      .findOne({ _id: ticketId, boxId, type: 'share' })
+      .lean()
     if (!ticket) throw new E.TicketNotExist()
-    await TicketUser.findOrCreate({
-      where: {
-        ticketId: ticketId,
-        userId: userId
-      },
-      defaults: {
-        ticketId: ticketId,
-        userId: userId,
-        type: ticket.isAudited ? 'pending' : 'resolved'
-      },
-      attributes: ['userId', 'type'],
-      raw: true
-    })
+
+    await Ticket.findOneAndUpdate(
+      { _id: ticketId },
+      { $set: { users: { user: userId, type: ticket.isAudited ? 'pending' : 'resolved' } } }
+    )
     return true
   }
 	/**
-	 * 以 user 查询 ticket
-	 * @param {string} ticketId 
-	 * @param {string} stationId
-	 * @returns {object} ticket
+	 * 以 station 查询 ticket
+	 * @param {String} ticketId 
+	 * @param {String} stationId
+	 * @returns {Object} ticket
 	 * @memberof TicketService
 	 */
   async findByStation(ticketId, stationId) {
-    let props = await Promise.props({
-      ticket: Ticket.find({
-        where: {
-          id: ticketId,
-          stationId: stationId
-        },
-        raw: true
-      }),
-      users: User.findAll({
-        include: {
-          model: TicketUser,
-          where: {
-            ticketId: ticketId
-          },
-          attributes: []
-        },
-        attributes: ['id', 'nickName', 'avatarUrl', 'unionId']
-      })
-    })
-
-    if (props.ticket) {
-      props.ticket.users = props.users
-    }
-
-    return props.ticket
+    return Ticket
+      .findOne({ _id: ticketId, 'stationId': stationId })
+      .populate({ path: 'stationId', select: 'name' })
+      .populate({ path: 'users', select: 'user type' })
+      .lean()
   }
 	/**
 	 * find all tickets by params
-	 * @param {object} params
-	 * @returns {object} tickets
+	 * @param {Object} params
+	 * @returns {Object} tickets
 	 */
   async findAll(params) {
     let tickets = await Ticket.findAll({
@@ -357,9 +238,7 @@ class TicketService {
 	 * @memberof TicketService
 	 */
   createUser(args) {
-
     let { ticketId, userId } = args
-
     return WisnucDB.transaction(async t => {
 
       let ticket = await Ticket.find({
@@ -392,9 +271,7 @@ class TicketService {
 	 * @memberof TicketService
 	 */
   async update(args) {
-
     let { id, stationId, status } = args
-
     return WisnucDB.transaction(async t => {
       let ticket = await Ticket.find({
         where: {
@@ -428,19 +305,14 @@ class TicketService {
   }
 	/**
 	 * get users
-	 * @param {any} ticketId 
+	 * @param {Object} conditions 
 	 * @memberof TicketService
 	 */
-  findAllUser(ticketId) {
-    return User.findAll({
-      include: {
-        model: TicketUser,
-        where: {
-          ticketId: ticketId
-        },
-        attributes: []
-      }
-    })
+  findAllUser(conditions) {
+    return Ticket
+      .find(conditions)
+      .populate({ path: 'users', select: 'user type' })
+      .lean()
   }
 	/**
 	 * update user or users

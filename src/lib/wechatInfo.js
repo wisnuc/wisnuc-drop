@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 14:01:22 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 15:33:17 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ const request = require('request')
 const config = require('getconfig')
 
 const BASE_URL = 'https://api.weixin.qq.com'
-const WXBizDataCrypt = require('../lib/WXBizDataCrypt')
+const WXBizDataCrypt = require('../lib/wXBizDataCrypt')
 
 /**
   错误时返回JSON数据包(示例为Code无效)

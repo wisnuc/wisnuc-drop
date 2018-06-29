@@ -6,21 +6,16 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 16:21:09 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 16:56:49 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const debug = require('debug')('app:user')
 const _ = require('lodash')
+
 const E = require('../lib/error')
-const {
-	User,
-  UserStation,
-  Station,
-  StationUser,
-  WisnucDB
- } = require('../models')
-const { Box } = require('../schema')
+const { User, Box, Station } = require('../models')
+const stationService = require('./stationService')
 
 /**
  * This is user service.
@@ -29,7 +24,7 @@ const { Box } = require('../schema')
 class UserService {
 	/**
 	 * create new user
-	 * @param {object} user 
+	 * @param {Object} user 
 	 * @memberof UserService
 	 */
   create(user) {
@@ -37,26 +32,14 @@ class UserService {
   }
 	/**
 	 * get user information
-	 * @param {string} userId 
-	 * @returns {object} user 
+	 * @param {String} userId 
+	 * @returns {Object} user 
 	 */
   async find(userId) {
-    let user = await User.find({
-      where: {
-        id: userId
-      },
-      include: {
-        model: UserStation,
-        as: 'stations',
-        required: false,
-        where: {
-          userId: userId,
-          status: 1
-        },
-        attributes: ['stationId']
-        // attributes: [ [Sequelize.col('stationId'), 'id'] ]
-      }
-    })
+    let user = await User
+    .findOne({ _id: userId })
+    .select('-unionId')
+    .lean()
     if (!user) throw new E.EUSERNOTEXIST()
     debug(`user_info: ${user}`)
     return user
@@ -84,45 +67,27 @@ class UserService {
           "isValid": false
         }
     ]   
-	 * @param {string} userId 
-	 * @returns {array} stations 
+	 * @param {String} userId 
+	 * @returns {Array} stations 
 	 */
   async findStations(userId) {
-
-    let stations = await Station.findAll({
-      include: [
-        {
-          model: UserStation,
-          where: {
-            userId: userId
-          },
-          attributes: [],
-        }
-      ],
-      attributes: ['id', 'name', 'isOnline', 'LANIP'],
-      raw: true
+    const data = await Promise.props({
+      user: User
+        .findOne({ _id: userId })
+        .select('-unionId')
+        .populate({ path: 'stations', select: '-publicKey -users' })
+        .lean(),
+      stationUsers: Station
+        .find({ users: userId })
+        .select('_id')
+        .lean()
     })
-    if (stations.length < 1) return stations
-
-    let stationIds = _.map(stations, 'id')
-    let stationCopys = await StationUser.findAll({
-      where: {
-        userId: userId,
-        stationId: { $in: stationIds }
-      },
-      attributes: ['stationId'],
-      raw: true
-    })
-
-    for (let station of stations) {
-      station.isOnline = Boolean(station.isOnline)
-      station.LANIP = station.LANIP ? station.LANIP.split(',') : null
+    const { user, stationUsers } = data
+    const { stations } = data.user
+    for (const station of stations) {
       station.isValid = false
-      for (let sc of stationCopys) {
-        if (station.id === sc.stationId) {
-          station.isValid = true
-          break
-        }
+      for (const su of stationUsers) {
+        if (station._id === su._id) station.isValid = true
       }
     }
     return stations
@@ -130,91 +95,41 @@ class UserService {
   /**
    * 1. There are users of the box I own and the users in the box including me.
    * 2. There are users of the station I own and the users in the station including me(check double arrow).
-   * @param {string} userId 
+   * @param {String} userId 
    * @memberof UserService
    */
   async findInteresting(userId) {
-    // need to check double arrow
-    const sqlQuery = 
-      `SELECT 
-        su.userId, su.stationId
-      FROM
-        station_user AS su,
-        (SELECT 
-          u.userId, u.stationId
-        FROM
-          user_station AS u, (SELECT 
-          stationId
-        FROM
-          user_station
-        WHERE
-          userId = '${userId}') AS us
-        WHERE
-          u.stationId = us.stationId) AS res
-      WHERE
-        su.stationId = res.stationId
-          AND su.userId = res.userId`
-    // const sqlQuery = `select u.userId from user_station as u, 
-    //   (select stationId from user_station where userId = '${userId}') as us 
-    let data = await Promise.props({
+    const data = await Promise.props({
       // boxes I own and boxes including me
-      boxes: Box.find({ users: userId }, { users: 1 }),
-      // stations I own and stations station me
-      stationUsers: WisnucDB.query(sqlQuery, { 
-        // raw: true, 
-        // type: WisnucDB.QueryTypes.SELECT,
-        nest: true // deduplication
-      })
+      boxes: Box.find({ users: userId }).select('users'),
+      // stations I own and stations including me
+      stations: stationService.getCheckedStations(userId)
     })
-    let { boxes, stationUsers } = data
+    const { boxes, stations } = data
     let userIds = []
     if (Array.isArray(boxes) && boxes.length > 0) {
-      for (let box of boxes) {
+      for (const box of boxes) {
         userIds = userIds.concat(box.users)
       }
     }
-    if (Array.isArray(stationUsers) && stationUsers.length > 0) {
-      userIds = userIds.concat(_.map(stationUsers, 'userId'))
+    if (Array.isArray(stations) && stations.length > 0) {
+      userIds = userIds.concat(_.flatMapDeep(_.map(stations, 'users')))
     }
-    // return users info
-    return User.findAll({
-      where: {
-        id: userIds
-      },
-      attributes: ['id', 'nickName', 'avatarUrl'],
-      raw: true
-    })
+    userIds = userIds.filter(u => u != userId)
+    return this.index(userIds)
   }
   /**
    * return interesting person data sources
-   * @param {string} userId 
+   * @param {String} userId 
    * @memberof UserService
    */
   async findInterestingSources(userId) {
-    
-    let stations = await Station.findAll({
-      include: [
-        {
-          model: UserStation,
-          where: {
-            userId: userId
-          },
-          attributes: []
-        },
-        {
-          model: StationUser,
-          where: {
-            userId: userId
-          },
-          attributes: []
-        }
-      ],
-      attributes: ['id', 'name', 'LANIP'],
-      raw: true
-    })
-
-    let stationIds = _.map(stations, 'id')
-    let boxes = await Box.find({ stationId: { $in: stationIds } }, { name: 1, stationId: 1, uuid: 1 })
+    const stations = await stationService.getCheckedStations(userId)
+    const stationIds = _.map(stations, 'id')
+    let boxes = await Box
+      .find({ stationId: { $in: stationIds } })
+      .select('name stationId')
+      .lean()
     for (let station of stations) {
       station.boxes = []
       for (let box of boxes) {
@@ -223,7 +138,6 @@ class UserService {
     }
     return stations
   }
-  
 }
 
 module.exports = new UserService()

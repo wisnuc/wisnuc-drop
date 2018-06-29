@@ -6,70 +6,15 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/09/21 10:23:17 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 17:41:49 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+const serverService = require('../services/serverService')
 
-const os = require('os')
-const publicIp = require('public-ip')
-const { Server } = require('../models')
-
-/**
- * According to different server, init data.
- * @class InitService
- */
-class InitService {
-  /**
-   * get LANIP
-   * @returns {string} LANIP
-   */
-  LANIP() {
-    let interfaces = os.networkInterfaces()
-    for (let devName in interfaces) {
-      let iface = interfaces[devName]
-      for (let i = 0; i < iface.length; i++) {
-        let alias = iface[i]
-        if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-          return alias.address
-        }
-      }
-    }
-  }
-  /**
-   * if no server information, create server info.
-   */
-  register() {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let LANIP = this.LANIP()
-        let WANIP = await publicIp.v4()
-
-        return Server.findOrCreate({
-          where: {
-            $or: [
-              { LANIP: LANIP },
-              { WANIP: WANIP }
-            ]
-          },
-          defaults: {
-            LANIP: LANIP,
-            WANIP: WANIP
-          }
-        }).spread(function (newObj, created) {
-           // add to global
-          global.server = newObj.dataValues
-          if (created) return newObj
-          return newObj.save()
-        })
-      }
-      catch (err) {
-        reject(err)
-      }
-  
-    })
-  }
+// global server
+module.exports = () => {
+  return new Promise(async () => {
+    global.server = await serverService.info()
+  })
 }
-
-
-module.exports = new InitService()

@@ -6,13 +6,13 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:35:39 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 17:42:19 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 require('./utils/global')
-require('../src/utils/init').register()
-require('../src/schema')
+require('../src/models')
+require('../src/utils/init')()
 
 const express = require('express')
 const cookieParser = require('cookie-parser')
