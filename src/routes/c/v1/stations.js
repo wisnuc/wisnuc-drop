@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/02 16:30:59 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,18 +54,19 @@ const transformJson = require('../../../services/transformJson')
 // FIXME: box auth: only user have wechat account
 function checkDoubleArrow() {
   return function (req, res, next) {
-    let userId = req.auth.user.id
-    let stationId = req.params.id
-    return stationService.clientCheckStation(userId, stationId)
-      .then(flag => {
-        if (!flag) {
-          return res.error(new Error('check double arrow failed'), 401, false)
-        }
-        next()
-      })
-      .catch(err => {
-        return res.error(err, 401, false)
-      })
+    next()
+    // let userId = req.auth.user.id
+    // let stationId = req.params.id
+    // return stationService.clientCheckStation(userId, stationId)
+    //   .then(flag => {
+    //     if (!flag) {
+    //       return res.error(new Error('check double arrow failed'), 401)
+    //     }
+    //     next()
+    //   })
+    //   .catch(err => {
+    //     return res.error(err, 401)
+    //   })
   }
 }
 /**

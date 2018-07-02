@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/02/10 16:36:10 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/02 16:27:18 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,14 +36,14 @@ module.exports = {
     try {
       const decoded = jwt.decode(token)
       if (!decoded)
-        return res.error(new Error('decode failed'), 401, false)
+        return res.error(new Error('decode failed'), 401)
 
       // expire
       if (!decoded.exp || decoded.exp <= Date.now())
-        return res.error(new Error('token overdue, login again please！'), 401, false)
+        return res.error(new Error('token overdue, login again please！'), 401)
 
       if (!decoded.user)
-        return res.error(new Error('authentication failed'), 401, false)
+        return res.error(new Error('authentication failed'), 401)
 
       let user = await User.find({
         where: {
@@ -51,14 +51,14 @@ module.exports = {
         },
         raw: true
       })
-      if (!user) return res.error(new E.UserNotExist(), 401, false)
+      if (!user) return res.error(new E.UserNotExist(), 401)
 
       req.auth = decoded
       debug(`checkUser: ${decoded}`)
       next()
 
     } catch (error) {
-      return res.error(new Error('authentication failed'), 401, false)
+      return res.error(new Error('authentication failed'), 401)
     }
   },
 	/**
@@ -73,11 +73,11 @@ module.exports = {
     try {
       const decoded = jwt.decode(token)
       if (!decoded)
-        return res.error(new Error('decode failed'), 401, false)
+        return res.error(new Error('decode failed'), 401)
 
       // no expire
       if (!decoded.station)
-        return res.error(new Error('authentication failed'), 401, false)
+        return res.error(new Error('authentication failed'), 401)
 
       let station = await Station.find({
         where: {
@@ -85,13 +85,13 @@ module.exports = {
         },
         raw: true
       })
-      if (!station) return res.error(new E.StationNotExist(), 401, false)
+      if (!station) return res.error(new E.StationNotExist(), 401)
 
       req.auth = decoded
       next()
 
     } catch (error) {
-      return res.error(new Error('authentication failed'), 401, false)
+      return res.error(new Error('authentication failed'), 401)
     }
   },
   /**
@@ -105,11 +105,11 @@ module.exports = {
     let stationId = req.params.id
     try {
       let flag = await stationService.clientCheckStation(userId, stationId)
-      if (!flag) res.error(new Error('check double arrow failed'), 401, false)
+      if (!flag) res.error(new Error('check double arrow failed'), 401)
       next()
     }
     catch(err) {
-      return res.error(err, 401, false)
+      return res.error(err, 401)
     }
   }
 }

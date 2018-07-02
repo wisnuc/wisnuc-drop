@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/02 14:10:08 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,16 @@ module.exports = (req, res, next) => {
       // string
       else if (typeof error === 'string') {
         code = status || 403
-        message = error
+        message = error 
       }
       // others
       else {
         code = error.code || status || 403
         message = error.message || httpCode[status] || 'forbidden'
       }
+      const loggerArr = [ 400, 401, 404 ]
       // error log
-      if (loggerFlag) {
+      if (getconfig['env'] === 'production' && loggerFlag && loggerArr.includes(status)) {
         logger.error({
           method: req.method,
           url: req.originalUrl,

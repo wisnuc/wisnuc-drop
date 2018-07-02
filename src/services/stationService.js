@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/29 16:32:09 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/02 14:04:46 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,7 @@ const ursa = require('ursa')
 const uuid = require('uuid')
 
 const jwt = require('../lib/jwt')
-const {
-	Station,
-  User,
- } = require('../models')
+const {	Station, User } = require('../models')
 
 /**
  * This is station service.

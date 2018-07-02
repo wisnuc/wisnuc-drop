@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:35:39 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/29 17:42:19 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/02 11:32:27 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ app.use('/', routes)
 app.use((req, res, next) => {
   let err = new Error('Not Found')
   err.status = 404
-  res.error(err, 404, false)
+  res.error(err, 404)
   next()
 })
 

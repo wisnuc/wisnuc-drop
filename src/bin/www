@@ -8,7 +8,6 @@
 
 /* eslint-disable */
 var app = require('../app');
-var debug = require('debug')('app:server');
 var http = require('http');
 
 var logger = Logger(__filename)
@@ -42,11 +41,11 @@ function onError(error) {
   // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
-      debug(bind + ' requires elevated privileges');
+      console.log(bind + ' requires elevated privileges');
       process.exit(1);
       break;
     case 'EADDRINUSE':
-      debug(bind + ' is already in use');
+      console.log(bind + ' is already in use');
       process.exit(1);
       break;
     default:
@@ -63,12 +62,11 @@ function onListening() {
   var bind = typeof addr === 'string' ?
     'pipe ' + addr :
     'port ' + addr.port;
-
-  debug('Listening on ' + bind);
+    console.log('Listening on ' + bind);
 }
 
 // catch global error
 process.on('uncaughtException', function (err) {
-  debug('uncaught exception: ', err);
+  console.log('uncaught exception: ', err);
   logger.error('uncaught exception: ', err)
 })
