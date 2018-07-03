@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/03 13:52:56 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -360,7 +360,7 @@ router.get('/:id/response/:jobId', joiValidator({
 router.post('/:id/response/:jobId/pipe/store', joiValidator({
   params: {
     id: Joi.string().guid({ version: ['uuidv4'] }).required(),
-    jobId: Joi.string().guid({ version: ['uuidv4'] }).required()
+    // jobId: Joi.string().guid({ version: ['uuidv4'] }).required()
   },
   body: {
     error: Joi.any(),

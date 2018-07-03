@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/12 14:00:30 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/07/02 14:04:46 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/03 12:28:50 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,34 +21,18 @@ const {	Station, User } = require('../models')
  * @class StationService
  */
 class StationService {
-	/**
+	/**  
 	 * user vist the station, must be in station_user.
-	 * @param {any} userId 
-	 * @param {any} stationId 
+	 * @param {String} userId 
+	 * @param {String} stationId 
 	 * @memberof StationService
 	 */
-  // async clientCheckStation(userId, stationId) {
-  //   let data = await Promise.props({
-  //     findStation: UserStation.find({
-  //       where: {
-  //         userId: userId,
-  //         stationId: stationId
-  //       },
-  //       raw: true
-  //     }),
-  //     findUser: StationUser.find({
-  //       where: {
-  //         userId: userId,
-  //         stationId: stationId
-  //       },
-  //       raw: true
-  //     })
-  //   })
-  //   return data.findStation && data.findUser ? true : false
-  // }
+  checkDoubleArrow(userId, stationId) {
+    return this.getCheckedStations(userId).includes(stationId)
+  }
 	/**
 	 * create new station
-	 * @param {object} station 
+	 * @param {Object} station 
 	 * @memberof StationService
 	 */
   create(station) {

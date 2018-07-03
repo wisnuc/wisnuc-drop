@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:35:39 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/07/02 11:32:27 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/03 14:47:41 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ const options = {
       description: 'This api document follow the RESTful API is about Client and Station.',
       version: '1.0.0', // Version (required)
     },
-    host: 'http://test.siyouqun.com'
+    host: 'http://test.siyouqun.com:4000'
   },
   apis: ['./src/routes/*/*.js', './src/routes/*/*/*.js', './src/routes/*/*/*/*.js'], // Path to the API docs
 }

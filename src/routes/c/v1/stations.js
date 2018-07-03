@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/07/02 16:30:59 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/03 13:50:13 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,17 @@ const fetchFile = require('../../../services/fetchFile')
 const storeFile = require('../../../services/storeFile')
 const transformJson = require('../../../services/transformJson')
 
+// station auth: check double arrow
+// box auth: only user have wechat account
+const checkDoubleArrow = () => {
+  return async (req, res, next) => {
+    const userId = req.auth.user.id
+    const stationId = req.params.id
+    const flag = await stationService.checkDoubleArrow(userId, stationId)
+    if (!flag) return res.error(new Error('check double arrow failed'), 401)
+    next()
+  }
+}
 /**
  * @swagger
  * definitions:
@@ -50,25 +61,6 @@ const transformJson = require('../../../services/transformJson')
  *         example: 1
  */
 
-// station auth: check double arrow
-// FIXME: box auth: only user have wechat account
-function checkDoubleArrow() {
-  return function (req, res, next) {
-    next()
-    // let userId = req.auth.user.id
-    // let stationId = req.params.id
-    // return stationService.clientCheckStation(userId, stationId)
-    //   .then(flag => {
-    //     if (!flag) {
-    //       return res.error(new Error('check double arrow failed'), 401)
-    //     }
-    //     next()
-    //   })
-    //   .catch(err => {
-    //     return res.error(err, 401)
-    //   })
-  }
-}
 /**
  * @swagger
  * /c/v1/stations/{id}:

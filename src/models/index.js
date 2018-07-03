@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/16 13:58:48 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/03 16:43:00 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ const config = require('getconfig')
 const { username, password, host, port, database } = config.mongodb
 
 const DATABASE_URL = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`
-
+// const DATABASE_URL = `mongodb://${username}:${password}@${host}:${port}/admin`
+debug(DATABASE_URL)
 const options = {
   autoIndex: true, // Don't build indexes
   reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
@@ -29,13 +30,13 @@ const options = {
   bufferMaxEntries: 0,
   promiseLibrary: global.Promise
 }
-
+// const DATABASE_URL = `mongodb://${username}:${password}@${host}:${port}/${database}?authSource=admin`
 mongoose.connect(DATABASE_URL, options)
 
 const mongodb = mongoose.connection
 
-mongodb.on('error', err => debug(`connection error:${err}`))
-mongodb.once('open', () => debug('mongodb connect successfully'))
+mongodb.on('error', err => debug(`connection error: ${err}`))
+mongodb.once('open', () => debug('mongodb connect successfully!'))
 
 let db = {}
 
