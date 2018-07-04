@@ -1,22 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   users.js                                           :+:      :+:    :+:   */
+/*   user.test.js                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:36 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/04 16:54:25 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const path = require('path')
 const uuid = require('uuid')
-const chai = require('chai')
-// chai.use(require('chai-as-promised'))
-const sinon = require('sinon')
-const expect = chai.expect
-const should = chai.should()
+const assert = require('power-assert')
 const request = require('supertest')
 const app = require('src/app')
 
@@ -31,7 +27,6 @@ const {
 const user = USERS['mosaic']
 
 describe(path.basename(__filename), () => {
-
   describe('no client token', () => {
     it('should fail auth if no client token', done => {
       request(app)
@@ -42,7 +37,6 @@ describe(path.basename(__filename), () => {
   })
 
   describe('have client token', () => {
-
     before(async () => {
       // create new user
       await User.create(user)

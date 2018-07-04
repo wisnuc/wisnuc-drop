@@ -59,6 +59,7 @@
     "jsdoc-strip-async-await": "^0.1.0",
     "mocha": "^3.4.2",
     "nodemon": "^1.14.1",
+    "power-assert": "^1.6.0",
     "sinon": "^2.3.8",
     "supertest": "^3.0.0"
   },

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/05/15 14:57:04 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/07/02 14:10:08 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/04 13:51:48 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,32 +51,30 @@ module.exports = (req, res, next) => {
   * @param {boolean} loggerFlag - default true
   */
   res.error = (error, status, loggerFlag) => {
-    let code, message
+    let code, message, data
     status = status || DEFAULT_ERROR_STATUS
     loggerFlag = loggerFlag === undefined ? true : !!loggerFlag
     if (error) {
       if (error instanceof Error) {
         code = error.code || status
         message = error.message
-      }
-      // 400
-      else if (error instanceof Array) {
-        code = 400
-        message = httpCode[status]
-      }
-      // string
-      else if (typeof error === 'string') {
+      } else if (typeof error === 'string') {
+        // string
         code = status || 403
         message = error 
-      }
-      // others
-      else {
+      } else if (status === 400) {
+        // 400
+        code = 400
+        message = httpCode[status]
+        data = error
+      } else {
+        // others
         code = error.code || status || 403
         message = error.message || httpCode[status] || 'forbidden'
       }
       const loggerArr = [ 400, 401, 404 ]
       // error log
-      if (getconfig['env'] === 'production' && loggerFlag && loggerArr.includes(status)) {
+      if (getconfig['env'] === 'production' && loggerFlag && !loggerArr.includes(status)) {
         logger.error({
           method: req.method,
           url: req.originalUrl,
@@ -85,10 +83,11 @@ module.exports = (req, res, next) => {
         })
       }
     }
-    let response = {
+    const response = {
       url: req.originalUrl,
       code: code,
-      message: message
+      message: message,
+      data: data
     }
     // show stack in production environment
     if (getconfig['env'] === 'production' && loggerFlag) fundebug.notifyError(error)

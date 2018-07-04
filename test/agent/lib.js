@@ -6,55 +6,74 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 10:53:26 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/03/30 14:49:35 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/04 17:05:56 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const jwt = require('src/lib/jwt')
-const {
-	User,
-  Station,
-  Server,
-  sequelize
-} = require('src/models')
+const {	User, Station, Server } = require('src/models')
 
 
 const USERS = {
   mosaic: {
-    id: '03f3abf9-fe3e-4e9b-a6f5-5e53ef9fd1a5',
-    unionId: 'oOMKGwt3tX67LcyaG-IPaExMSvDw',
-    nickName: 'mosaic',
-    avatarUrl: 'http://wx.qlogo.cn/mmopen/PiajxSqBRaELMY20dSuicj4uXzO4ok9mu7Zvkh27IgomrfE65pBNV4K98NclHDfEurHUou2Yhm2CjLHXfE7amndQ/0'
+    '_id' : 'c4d249dd-ed57-4655-9497-2a93ae3af1d1',
+    'unionId' : 'oOMKGwt3tX67LcyaG-IPaExMSvDx',
+    'nickName' : 'mosaic',
+    'avatarUrl' : 'http://thirdwx.qlogo.cn/mmopen/vi_32/DYAIOgq83epetUHR5HCOBJTl1fon9e7zDIk93UpRsicWLYYhIbaSFYpRdhszp5yiaUbzolia4gdeZnKjLXlEmAicFA/132',
+    'stations' : [ 
+      '4303984e-6f32-422b-8eda-11a050a1dd37', 
+      '0014787b-0b7e-4359-ae3b-da9c61f42106'
+    ],
+    'status' : 1
   },
   jackYang: {
-    id: 'd9a50642-5e28-4338-b714-a87d09c660b6',
-    unionId: 'oOMKGwveI2u10xIVhhI3b9SMnurw',
+    _id: 'd9a50642-5e28-4338-b714-a87d09c660b5',
+    unionId: 'oOMKGwveI2u10xIVhhI3b9SMnurD',
     nickName: 'JackYang',
-    avatarUrl: 'http://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJJQYnrTXgWgrlSfSto6QfRIY3t9gOVp3Da6ia8eNhgttK1nK7yk9VkmiaTYOU6SqeXYOhFNzqQ4ZMQ/0'
+    avatarUrl: 'http://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJJQYnrTXgWgrlSfSto6QfRIY3t9gOVp3Da6ia8eNhgttK1nK7yk9VkmiaTYOU6SqeXYOhFNzqQ4ZMQ/0',
+    stations : [ 
+      '4303984e-6f32-422b-8eda-11a050a1dd37', 
+      '0014787b-0b7e-4359-ae3b-da9c61f42106'
+    ],
+    status : 1
   }
 }
 
 const STATIONS = {
-  'station_1': {
-    id: 'b185e9e4-9665-4a89-b35d-08b7b9b08c8a',
-    name: 'station_1',
-    publicKey: 'publicKey_1',
+  'HomeStation': {
+    '_id' : '4303984e-6f32-422b-8eda-11a050a1dd37',
+    'status' : 1,
+    'name' : 'HomeStation',
+    'users' : [ 
+      'c4d249dd-ed57-4655-9497-2a93ae3af1d0', 
+      '284b77ea-fcc2-40bd-aa0f-7d576c4ae8f5'
+    ],
+    'publicKey' : '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5ugk4G0Do5hGtyBD20QX\niX6XgmauiEMJojfM5wcWJjw1fs3yHeA6uAD/FPcO9EQCM9UGbg8nW4WR6wP9jjgA\n/5K6bh4Vmyg3kGNBBD7qr+NdiOhYZjgh23/QtLmnW13q5LqtP2W1NR+TPBxti/y7\ng1iPUkNAikGT0b9Zfthowt0j17eY/9u/vA7zIFiL0XMsdqnzwCLZkfO0BhxK0dSk\nE63xWoezLEtHO6Prk363B97vZ+rwGBHpKHVq35SfJiMkAf0Qv5MzLXKthgH2L7PA\nB2uC/xYhxFNsm5k5Y+UWEmhb3xQuKr3Qe7c+XfGes9N7CpaL/HVS+6CWOodA+z8m\nfwIDAQAB\n-----END PUBLIC KEY-----\n',
+    'LANIP' : '10.10.9.229',
+    'isOnline' : false
   },
-  'station_2': {
-    id: '3b8e7dd1-c232-48e8-98b3-7ce3f064dce5',
-    name: 'station_2',
-    publicKey: 'publicKey_2',
+  'companyStation': {
+    '_id' : '0014787b-0b7e-4359-ae3b-da9c61f42106',
+    'status' : 1,
+    'name' : 'companyStation',
+    'users' : [ 
+      'c4d249dd-ed57-4655-9497-2a93ae3af1d0', 
+      '284b77ea-fcc2-40bd-aa0f-7d576c4ae8f5'
+    ],
+    'publicKey' : '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA29rzmUenNrbMB0cz1Gvw\nVG6t5Pw79ugFWahyoAC2t81Kv1zQgGwKMUB5t7PcyXuqiLO5a8GzumeBaI62M3y+\nAK3q1Bya9c1ImUiAbOoF/jYGY1NrPFWOxh1/sErmc7EZidWVe0DjYFgbue/WvTWn\ntf7Juawg+UwaFJFTuJWc1dvSZxfVq9sED0aKQCR5TffxI8ni8hA47LnfjVDHAdTH\n1AnlnGrBgvxyYl5MSlS7Mpev/wiijpvV2VQd1FYH1VcVGzuuQj3HJA7wlGC6Bi2l\nvxwSGQWlH/VQvjXE0oPD8hEuQ1HCNfomKRI+4jLVk3wjIuzT5FzJW5eNUT3nY8Rb\nFQIDAQAB\n-----END PUBLIC KEY-----\n',
+    'LANIP' : '192.168.31.101',
+    'isOnline' : false
   }
 }
 
 const SERVERS = {
   'server_1': {
-    id: '1f48e7c2-a04f-4cd5-94c4-04da1428d315',
+    _id: '1f48e7c2-a04f-4cd5-94c4-04da1428d315',
     WANIP: '10.10.9.59',
     LANIP: '10.10.9.59'
   },
   'server_2': {
-    id: '08db5845-3377-4504-9f5f-8016928f3318',
+    _id: '08db5845-3377-4504-9f5f-8016928f3318',
     WANIP: '10.10.9.81',
     LANIP: '10.10.9.81'
   }
@@ -62,20 +81,20 @@ const SERVERS = {
 
 const TICKETS = {
   bind: {
-    id: '7700c7d1-9289-4c58-80da-71fd27842eb5',
+    _id: '7700c7d1-9289-4c58-80da-71fd27842eb5',
     type: 'bind',
     stationId: undefined,
     data: 123456
   },
   invite: {
-    id: '4efe06ac-4b99-48d7-82f2-ed1a47d2e307',
+    _id: '4efe06ac-4b99-48d7-82f2-ed1a47d2e307',
     type: 'invite',
     creator: undefined,
     stationId: undefined,
     data: 123456
   },
   share: {
-    id: 'c1d6f74c-3380-4778-a983-6e6e324e7734',
+    _id: 'c1d6f74c-3380-4778-a983-6e6e324e7734',
     type: 'share',
     creator: undefined,
     stationId: undefined,
@@ -105,13 +124,6 @@ const FILES = {
   }
 }
 
-const createAsync = async () => {
-
-}
-
-const resetAsync = async () => {
-  await sequelize.sync({ force: true })
-}
 const cToken = jwt.encode({ user: USERS['mosaic'] })
 const sToken = jwt.encode({ station: STATIONS['station_1'] })
 
@@ -123,7 +135,5 @@ module.exports = {
   BOXES,
   FILES,
   cToken,
-  sToken,
-  createAsync,
-  resetAsync
+  sToken
 }

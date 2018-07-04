@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/07/03 13:52:56 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/04 14:00:21 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ const router = express.Router()
 const Joi = require('joi')
 const joiValidator = require('../../../middlewares/joiValidator')
 
-const jwt = require('../../../middlewares/jwt')
+const authStation = require('../../../middlewares/authStation')
 const stationService = require('../../../services/stationService')
 const fetchFile = require('../../../services/fetchFile')
 const storeFile = require('../../../services/storeFile')
@@ -132,7 +132,7 @@ router.post('/', joiValidator({
 })
 
 // authorization
-router.use('*', jwt.sAuth)
+router.use('*', authStation())
 
 /**
  * @swagger
