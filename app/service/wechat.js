@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/24 14:01:22 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/04/23 11:40:49 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 15:29:38 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,18 +52,6 @@ class WechatService extends Service {
       },
     }
     return await rp(options)
-    // function (error, response, body) {
-    //   if (!error && response.statusCode === 200) {
-    //     const data = JSON.parse(body)
-    //     if (data && data.errcode) {
-    //       callback(data.errmsg)
-    //     } else {
-    //       callback(null, data)
-    //     }
-    //   } else {
-    //     callback(error)
-    //   }
-    // })
   }
 
   /**

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/24 10:37:15 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/28 17:50:43 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 13:20:47 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ class BoxController extends Controller {
       // })
       await service.storeFile.reportResult(ctx)
     } catch (err) {
+      console.log('resStoreFileResult', err)
       ctx.error(err)
     }
   }

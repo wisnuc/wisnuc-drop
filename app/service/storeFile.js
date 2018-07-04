@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/28 17:53:42 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 14:09:30 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,6 @@ class Server extends threadify(EventEmitter) {
           }
         })
       }
-
       // dicer part
       dicer.on('part', dicerOnPart)
       dicer.on('finish', () => {
@@ -238,11 +237,26 @@ class StoreFileService extends Service {
       }
       // repay
       server.repay(ctx)
+      console.log('request start')
       // req error
       ctx.req.on('error', err => {
         // response
-        reject(err)
         server.error(err)
+      })
+
+      this.ctx.req.on('close', () => {
+        debug('request close')
+        const err = new Error('storefile request close')
+        this.error(err)
+      })
+      // req error
+      this.ctx.req.on('error', err => {
+        debug('request error')
+        this.error(err)
+      })
+      this.ctx.req.on('abort', err => {
+        debug('request abort')
+        this.error(err)
       })
     })
   }
@@ -254,11 +268,12 @@ class StoreFileService extends Service {
       if (!server) return reject(new E.StoreFileQueueNoServer())
       // finished
       if (server.finished()) return repCtx.end()
+      console.log(123123, repCtx.request.body)
       const { error, data } = repCtx.request.body
       // if error exist, server.error()
       if (error) {
         const { message, code } = error
-        return reject(message)
+        server.error(message, code)
       }
       console.log('asdasd123123')
       // return resolve()

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/04/16 16:45:57 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/05/29 16:24:07 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/06/29 15:14:15 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ class UserService extends Service {
 	 * @param {String} userId - user uuid
 	 * @return {Array} stations - station list
 	 */
-  async index (userId) {
+  async findStations(userId) {
     const { ctx } = this
     const data = await Promise.props({
       user: ctx.model.User
