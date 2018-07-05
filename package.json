@@ -11,7 +11,7 @@
     "pm2-test": "node_modules/.bin/pm2 deploy ecosystem.config.js test --force",
     "pm2-prod": "node_modules/.bin/pm2 deploy ecosystem.config.js production --force",
     "alinode": "ENABLE_NODE_LOG=YES NODE_ENV=test DEBUG='app:*' node_modules/.bin/nodemon src/bin/www",
-    "unit": "npm run mocha",
+    "unit": "NODE_PATH=. NODE_ENV=test node_modules/.bin/nodemon --exec mocha",
     "unit-agent": "NODE_PATH=. NODE_ENV=test node_modules/.bin/nodemon --exec mocha --recursive test/agent",
     "doc": "node_modules/.bin/nodemon --ignore out --ignore tmp --exec 'jsdoc -c jsdoc.conf.json -t node_modules/ink-docstrap/template -r -p src'"
   },
