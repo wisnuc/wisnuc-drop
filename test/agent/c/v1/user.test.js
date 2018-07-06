@@ -6,31 +6,28 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/06/08 17:01:56 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/07/05 15:15:43 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/06 13:39:23 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 const path = require('path') 
-const uuid = require('uuid')
 const assert = require('power-assert')
 const request = require('supertest')
 const app = require('src/app')
 
-const jwt = require('src/lib/jwt')
 const { User } = require('src/models')
-const {
-	USERS,
-  STATIONS,
-  cToken
-} = require('../../lib')
+const tokenService = require('src/services/tokenService')
 
-const user = USERS['mosaic']   
+const { USERS, STATIONS } = require('../../lib')
+
+let user
+let cToken 
 
 describe(path.basename(__filename), () => {
   describe('no client token', () => {
     it('should fail auth if no client token', done => {
       request(app)
-        .get(`/c/v1/users/${user.id}`)
+        .get('/c/v1/users/c4d249dd-ed57-4655-9497-2a93ae3af1d0')
         .expect(401)
         .end(done)
     })
@@ -38,43 +35,20 @@ describe(path.basename(__filename), () => {
 
   describe('have client token', () => {
     before(async () => {
-      // create new user
-      await User.create(user)
-      // await resetAsync()
+      // create user
+      user = await User.create(USERS['mosaic'])
+      const data = await tokenService.getToken(user._id)
+      cToken = data.token
     })
 
     after(async () => {
       // delete user
-      await User.destroy({
-        where: {
-          id: user.id
-        }
-      })
+      await User.deleteOne({ _id: user._id })
     })
 
     it('get user', done => {
       request(app)
-        .get(`/c/v1/users/${user.id}`)
-        .set('Authorization', cToken)
-        .expect(200)
-        .end(done)
-    })
-
-    it('update user', done => {
-      request(app)
-        .patch(`/c/v1/users/${user.id}`)
-        .send({ 
-          nickName: 'test', 
-          avatarUrl: 'http://test.siyouqun.com'
-        })
-        .set('Authorization', cToken)
-        .expect(200)
-        .end(done)
-    })
-
-    it('delete user', done => {
-      request(app)
-        .delete(`/c/v1/users/${user.id}`)
+        .get(`/c/v1/users/${user._id}`)
         .set('Authorization', cToken)
         .expect(200)
         .end(done)
@@ -82,7 +56,7 @@ describe(path.basename(__filename), () => {
 
     it('get stations', done => {
       request(app)
-        .get(`/c/v1/users/${user.id}/stations`)
+        .get(`/c/v1/users/${user._id}/stations`)
         .set('Authorization', cToken)
         .expect(200)
         .end(done)
@@ -90,7 +64,7 @@ describe(path.basename(__filename), () => {
 
     it('get interestingPersons', done => {
       request(app)
-        .get(`/c/v1/users/${user.id}/interestingPerson`)
+        .get(`/c/v1/users/${user._id}/interestingPerson`)
         .set('Authorization', cToken)
         .expect(200)
         .end(done)
@@ -98,7 +72,7 @@ describe(path.basename(__filename), () => {
 
     it('get interestingPerson', done => {
       request(app)
-        .get(`/c/v1/users/${user.id}/interesting/personId`)
+        .get(`/c/v1/users/${user._id}/interesting/personId`)
         .set('Authorization', cToken)
         .expect(200)
         .end(done)

@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/06/29 15:40:04 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/29 15:40:08 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/06 13:38:43 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,7 @@ class TokenService {
    * @return {object} token
    */
   async getToken(userId) {
-    const { ctx } = this
-    const user = await ctx.model.User.findOne({ _id: userId })
+    const user = await User.findOne({ _id: userId })
     const userData = {
       id: user._id,
       nickName: user.nickName,

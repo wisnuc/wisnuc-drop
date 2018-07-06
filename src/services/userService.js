@@ -6,7 +6,7 @@
 /*   By: Jianjin Wu <mosaic101@foxmail.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/15 15:41:42 by Jianjin Wu        #+#    #+#             */
-/*   Updated: 2018/06/29 16:56:49 by Jianjin Wu       ###   ########.fr       */
+/*   Updated: 2018/07/06 13:45:52 by Jianjin Wu       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,11 @@ class UserService {
       userIds = userIds.concat(_.flatMapDeep(_.map(stations, 'users')))
     }
     userIds = userIds.filter(u => u != userId)
-    return this.index(userIds)
+    const users = await User
+      .find({ _id: userIds })
+      .select('-unionId')
+      .lean()
+    return users
   }
   /**
    * return interesting person data sources
